@@ -33,6 +33,12 @@ public class PeopleFragment extends Fragment {
 //        if (getArguments() != null) {
 //              mParam1 = getArguments().getString("");
 //        }
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
 
         component

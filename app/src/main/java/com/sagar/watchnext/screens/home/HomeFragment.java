@@ -37,6 +37,12 @@ public class HomeFragment extends Fragment {
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString("");
 //        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
 
         this.component = DaggerHomeFragmentComponent.builder().
@@ -45,6 +51,7 @@ public class HomeFragment extends Fragment {
                 .build();
         component.inject(this);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
