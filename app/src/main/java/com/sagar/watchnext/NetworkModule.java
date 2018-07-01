@@ -1,7 +1,6 @@
 package com.sagar.watchnext;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
@@ -16,6 +15,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -50,12 +50,21 @@ public class NetworkModule {
         };
     }
 
+    @ApplicationScope
+    @Provides
+    HttpLoggingInterceptor providesHttpLoggingInterceptor() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return loggingInterceptor;
+    }
+
     @Provides
     @ApplicationScope
-    OkHttpClient provideOkHttpClient(Interceptor interceptor) {
+    OkHttpClient provideOkHttpClient(Interceptor interceptor, HttpLoggingInterceptor httpLoggingInterceptor) {
 
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
+                .addInterceptor(httpLoggingInterceptor)
                 .build();
     }
 
