@@ -20,7 +20,7 @@ public class Show {
     private String backdropPath;
 
     @SerializedName("vote_average")
-    private int voteAverage;
+    private float voteAverage;
 
     @SerializedName("overview")
     private String overview;
@@ -46,4 +46,55 @@ public class Show {
     @SerializedName("original_name")
     private String originalName;
 
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public float getPopularity() {
+        return popularity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getFirstAirDate() {
+        return firstAirDate;
+    }
+
+    public List<String> getOriginCountries() {
+        return originCountries;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
 }

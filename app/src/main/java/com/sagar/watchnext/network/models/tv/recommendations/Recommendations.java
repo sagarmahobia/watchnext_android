@@ -19,4 +19,19 @@ public class Recommendations {
     @SerializedName("total_results")
     private int totalResults;
 
+    public int getPage() {
+        return page;
+    }
+
+    public List<Recommendation> getRecommendations() {
+        return recommendations;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public int getTotalResults() {
+        return totalResults;
+    }
 }

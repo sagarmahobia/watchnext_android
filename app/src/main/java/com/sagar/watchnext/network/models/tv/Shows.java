@@ -19,4 +19,19 @@ public class Shows {
     @SerializedName("total_pages")
     private int totalPages;
 
+    public int getPage() {
+        return page;
+    }
+
+    public List<Show> getShows() {
+        return shows;
+    }
+
+    public int getTotalResults() {
+        return totalResults;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
 }

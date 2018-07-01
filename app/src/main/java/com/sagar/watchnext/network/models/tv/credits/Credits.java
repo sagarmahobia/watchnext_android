@@ -16,4 +16,15 @@ public class Credits {
     @SerializedName("id")
     private int id;
 
+    public List<Cast> getCasts() {
+        return casts;
+    }
+
+    public List<Crew> getCrews() {
+        return crews;
+    }
+
+    public int getId() {
+        return id;
+    }
 }

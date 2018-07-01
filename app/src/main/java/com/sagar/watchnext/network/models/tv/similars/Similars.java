@@ -22,4 +22,23 @@ public class Similars {
     @SerializedName("total_results")
     private int totalResults;
 
+    public int getId() {
+        return id;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public List<Similar> getSimilars() {
+        return similars;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public int getTotalResults() {
+        return totalResults;
+    }
 }

@@ -26,4 +26,31 @@ public class Cast {
     @SerializedName("profile_path")
     private String profilePath;
 
+    public String getCharacter() {
+        return character;
+    }
+
+    public String getCreditId() {
+        return creditId;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public String getProfilePath() {
+        return profilePath;
+    }
 }

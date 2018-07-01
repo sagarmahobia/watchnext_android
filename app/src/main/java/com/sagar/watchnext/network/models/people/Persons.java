@@ -23,31 +23,19 @@ public class Persons {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
 
     public List<Person> getPersons() {
         return persons;
     }
 
-    public void setPersons(List<Person> persons) {
-        this.persons = persons;
-    }
 
     public int getTotalResults() {
         return totalResults;
     }
 
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
-    }
 
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
 }

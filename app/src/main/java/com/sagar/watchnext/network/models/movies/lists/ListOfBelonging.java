@@ -26,39 +26,19 @@ public class ListOfBelonging {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getPage() {
         return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
     }
 
     public List<BelongsTo> getListBelongsTo() {
         return listBelongsTo;
     }
 
-    public void setListBelongsTo(List<BelongsTo> listBelongsTo) {
-        this.listBelongsTo = listBelongsTo;
-    }
-
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
     public int getTotalResults() {
         return totalResults;
-    }
-
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
     }
 }

@@ -20,4 +20,23 @@ public class Season {
     @SerializedName("season_number")
     private int seasonNumber;
 
+    public String getAirDate() {
+        return airDate;
+    }
+
+    public int getEpisodeCount() {
+        return episodeCount;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public int getSeasonNumber() {
+        return seasonNumber;
+    }
 }

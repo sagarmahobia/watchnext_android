@@ -46,4 +46,55 @@ public class Recommendation {
     @SerializedName("vote_count")
     private int voteCount;
 
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public String getFirstAirDate() {
+        return firstAirDate;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public List<String> getOriginCountries() {
+        return originCountries;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public float getPopularity() {
+        return popularity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
 }

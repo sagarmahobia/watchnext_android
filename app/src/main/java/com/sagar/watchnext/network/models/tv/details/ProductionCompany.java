@@ -17,4 +17,19 @@ public class ProductionCompany {
     @SerializedName("origin_country")
     private String originCountry;
 
+    public int getId() {
+        return id;
+    }
+
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOriginCountry() {
+        return originCountry;
+    }
 }

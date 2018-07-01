@@ -23,31 +23,15 @@ public class Recommendations {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
-
     public List<Recommendation> getRecommendations() {
         return recommendations;
-    }
-
-    public void setRecommendations(List<Recommendation> recommendations) {
-        this.recommendations = recommendations;
     }
 
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
     public int getTotalResults() {
         return totalResults;
-    }
-
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
     }
 }

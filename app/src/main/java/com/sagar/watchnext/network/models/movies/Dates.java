@@ -15,15 +15,7 @@ public class Dates {
         return maximum;
     }
 
-    public void setMaximum(String maximum) {
-        this.maximum = maximum;
-    }
-
     public String getMinimum() {
         return minimum;
-    }
-
-    public void setMinimum(String minimum) {
-        this.minimum = minimum;
     }
 }

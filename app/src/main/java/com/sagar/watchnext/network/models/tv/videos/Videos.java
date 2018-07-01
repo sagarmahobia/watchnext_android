@@ -13,4 +13,11 @@ public class Videos {
     @SerializedName("results")
     private List<Video> videos ;
 
+    public int getId() {
+        return id;
+    }
+
+    public List<Video> getVideos() {
+        return videos;
+    }
 }

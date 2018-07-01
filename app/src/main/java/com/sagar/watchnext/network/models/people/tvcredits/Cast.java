@@ -59,127 +59,63 @@ public class Cast {
         return creditId;
     }
 
-    public void setCreditId(String creditId) {
-        this.creditId = creditId;
-    }
-
     public String getOriginalName() {
         return originalName;
-    }
-
-    public void setOriginalName(String originalName) {
-        this.originalName = originalName;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public List<Integer> getGenreIds() {
         return genreIds;
-    }
-
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
     }
 
     public String getCharacter() {
         return character;
     }
 
-    public void setCharacter(String character) {
-        this.character = character;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPosterPath() {
         return posterPath;
     }
 
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
     public int getVoteCount() {
         return voteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
     }
 
     public float getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(float voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
     public float getPopularity() {
         return popularity;
-    }
-
-    public void setPopularity(float popularity) {
-        this.popularity = popularity;
     }
 
     public int getEpisodeCount() {
         return episodeCount;
     }
 
-    public void setEpisodeCount(int episodeCount) {
-        this.episodeCount = episodeCount;
-    }
-
     public String getOriginalLanguage() {
         return originalLanguage;
-    }
-
-    public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
     }
 
     public String getFirstAirDate() {
         return firstAirDate;
     }
 
-    public void setFirstAirDate(String firstAirDate) {
-        this.firstAirDate = firstAirDate;
-    }
-
     public String getBackdropPath() {
         return backdropPath;
-    }
-
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
     }
 
     public String getOverview() {
         return overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
-
     public List<String> getOriginCountry() {
         return originCountry;
-    }
-
-    public void setOriginCountry(List<String> originCountry) {
-        this.originCountry = originCountry;
     }
 }

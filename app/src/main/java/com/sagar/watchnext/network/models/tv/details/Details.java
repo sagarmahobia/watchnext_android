@@ -80,9 +80,112 @@ public class Details {
     private String type;
 
     @SerializedName("vote_average")
-    private int voteAverage;
+    private float voteAverage;
 
     @SerializedName("vote_count")
     private int voteCount;
 
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public List<CreatedBy> getCreatedByList() {
+        return createdByList;
+    }
+
+    public List<Integer> getEpisodeRunTimeList() {
+        return episodeRunTimeList;
+    }
+
+    public String getFirstAirDate() {
+        return firstAirDate;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isInProduction() {
+        return inProduction;
+    }
+
+    public List<String> getLanguages() {
+        return languages;
+    }
+
+    public String getLastAirDate() {
+        return lastAirDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Network> getNetworks() {
+        return networks;
+    }
+
+    public int getNumberOfEpisodes() {
+        return numberOfEpisodes;
+    }
+
+    public int getNumberOfSeasons() {
+        return numberOfSeasons;
+    }
+
+    public List<String> getOriginCountries() {
+        return originCountries;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public float getPopularity() {
+        return popularity;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public List<ProductionCompany> getProductionCompanies() {
+        return productionCompanies;
+    }
+
+    public List<Season> getSeasons() {
+        return seasons;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
 }

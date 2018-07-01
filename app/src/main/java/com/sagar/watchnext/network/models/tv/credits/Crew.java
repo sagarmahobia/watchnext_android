@@ -26,4 +26,31 @@ public class Crew {
     @SerializedName("profile_path")
     private String profilePath;
 
+    public String getCreditId() {
+        return creditId;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getProfilePath() {
+        return profilePath;
+    }
 }

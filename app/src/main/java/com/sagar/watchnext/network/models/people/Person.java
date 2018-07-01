@@ -29,47 +29,29 @@ public class Person {
         return profilePath;
     }
 
-    public void setProfilePath(String profilePath) {
-        this.profilePath = profilePath;
-    }
 
     public boolean isAdult() {
         return adult;
     }
 
-    public void setAdult(boolean adult) {
-        this.adult = adult;
-    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public List<KnownFor> getKnownFor() {
         return knownFor;
     }
 
-    public void setKnownFor(List<KnownFor> knownFor) {
-        this.knownFor = knownFor;
-    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public float getPopularity() {
         return popularity;
     }
 
-    public void setPopularity(float popularity) {
-        this.popularity = popularity;
-    }
 }

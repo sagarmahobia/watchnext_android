@@ -16,4 +16,15 @@ public class Images {
     @SerializedName("posters")
     private List<Image> posters;
 
+    public List<Image> getBackdrops() {
+        return backdrops;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<Image> getPosters() {
+        return posters;
+    }
 }

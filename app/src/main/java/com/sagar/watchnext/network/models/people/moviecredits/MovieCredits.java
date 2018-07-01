@@ -20,23 +20,11 @@ public class MovieCredits {
         return casts;
     }
 
-    public void setCasts(List<Cast> casts) {
-        this.casts = casts;
-    }
-
     public List<Crew> getCrews() {
         return crews;
     }
 
-    public void setCrews(List<Crew> crews) {
-        this.crews = crews;
-    }
-
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

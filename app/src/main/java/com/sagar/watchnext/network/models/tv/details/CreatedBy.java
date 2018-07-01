@@ -17,4 +17,19 @@ public class CreatedBy {
     @SerializedName("profile_path")
         private String profilePath;
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public String getProfilePath() {
+        return profilePath;
+    }
 }

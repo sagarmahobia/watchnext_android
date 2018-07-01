@@ -1,6 +1,8 @@
 
 package com.sagar.watchnext.network.models.movies;
 
+import android.util.Log;
+
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -26,39 +28,19 @@ public class MovieList {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
-
     public List<Movie> getMovies() {
         return movies;
-    }
-
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
     }
 
     public Dates getDates() {
         return dates;
     }
 
-    public void setDates(Dates dates) {
-        this.dates = dates;
-    }
-
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
     public int getTotalResults() {
         return totalResults;
-    }
-
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
     }
 }
