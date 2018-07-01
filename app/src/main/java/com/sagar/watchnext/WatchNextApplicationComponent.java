@@ -1,6 +1,7 @@
 package com.sagar.watchnext;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
+import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 
 import dagger.Component;
 
@@ -11,7 +12,10 @@ import dagger.Component;
 @ApplicationScope
 @Component(modules = {ApplicationContextModule.class, NetworkModule.class})
 public interface WatchNextApplicationComponent {
+
     void inject(WatchNextApplication watchNextApplication);
 
-    public TmdbMovieRepo provodeTmdbMovieRepo();
+    TmdbMovieRepo provideTmdbMovieRepo();
+
+    TmdbPeopleRepo provideTmdbPeopleRepo();
 }

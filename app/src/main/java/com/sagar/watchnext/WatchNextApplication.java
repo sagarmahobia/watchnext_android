@@ -2,7 +2,6 @@ package com.sagar.watchnext;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 12:45

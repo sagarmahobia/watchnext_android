@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
+import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 
 import java.io.IOException;
 
@@ -51,11 +52,10 @@ public class NetworkModule {
     @Provides
     @ApplicationScope
     OkHttpClient provideOkHttpClient(Interceptor interceptor) {
-        OkHttpClient okClient = new OkHttpClient.Builder()
+
+        return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .build();
-
-        return okClient;
     }
 
     @Provides
@@ -72,8 +72,15 @@ public class NetworkModule {
 
     @Provides
     @ApplicationScope
-    public TmdbMovieRepo provideTmdpRepo(Retrofit retrofit) {
+    public TmdbMovieRepo provideTmdpMovieRepo(Retrofit retrofit) {
         return retrofit.create(TmdbMovieRepo.class);
+    }
+
+    @Provides
+    @ApplicationScope
+    public TmdbPeopleRepo provideTmdbPeopleRepo(Retrofit retrofit) {
+
+        return retrofit.create(TmdbPeopleRepo.class);
     }
 
 }
