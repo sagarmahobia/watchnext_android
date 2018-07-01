@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
 import java.io.IOException;
 
@@ -73,7 +74,9 @@ public class NetworkModule {
     @Provides
     @ApplicationScope
     public TmdbMovieRepo provideTmdpMovieRepo(Retrofit retrofit) {
+
         return retrofit.create(TmdbMovieRepo.class);
+
     }
 
     @Provides
@@ -81,6 +84,13 @@ public class NetworkModule {
     public TmdbPeopleRepo provideTmdbPeopleRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbPeopleRepo.class);
+    }
+
+    @Provides
+    @ApplicationScope
+    public TmdbTvRepo provideTmdbTvRepo(Retrofit retrofit) {
+
+        return retrofit.create(TmdbTvRepo.class);
     }
 
 }

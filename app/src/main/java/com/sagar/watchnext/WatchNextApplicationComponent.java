@@ -2,6 +2,7 @@ package com.sagar.watchnext;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
 import dagger.Component;
 
@@ -18,4 +19,6 @@ public interface WatchNextApplicationComponent {
     TmdbMovieRepo provideTmdbMovieRepo();
 
     TmdbPeopleRepo provideTmdbPeopleRepo();
+
+    TmdbTvRepo provideTmdbTvRepo();
 }
