@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 
