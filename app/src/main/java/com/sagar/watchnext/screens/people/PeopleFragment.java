@@ -12,9 +12,14 @@ import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 
+import javax.inject.Inject;
 
-public class PeopleFragment extends Fragment {
+
+public class PeopleFragment extends Fragment implements PeopleFragmentMvpContract.View {
     PeopleFragmentComponent component;
+
+    @Inject
+    Presenter presenter;
 
     public PeopleFragment() {
         // Required empty public constructor
@@ -44,7 +49,7 @@ public class PeopleFragment extends Fragment {
         component
                 = DaggerPeopleFragmentComponent.builder().
                 mainActivityComponent(mainActivityComponent).
-                peopleFragmentModule(new PeopleFragmentModule()).
+                peopleFragmentModule(new PeopleFragmentModule(this)).
                 build();
         component.inject(this);
     }
