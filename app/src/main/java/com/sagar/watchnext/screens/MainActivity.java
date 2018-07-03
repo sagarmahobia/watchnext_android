@@ -25,6 +25,10 @@ public class MainActivity extends AppCompatActivity
 
     MainActivityComponent component;
 
+    public MainActivityComponent getComponent() {
+        return component;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(null);
@@ -44,8 +48,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         component = DaggerMainActivityComponent.builder()
-                .mainActivityModule(new MainActivityModule(this))
                 .watchNextApplicationComponent(WatchNextApplication.get(this).getComponent())
+                .mainActivityModule(new MainActivityModule(this))
                 .build();
         component.inject(this);
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -120,7 +124,4 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public MainActivityComponent getComponent() {
-        return component;
-    }
 }

@@ -12,7 +12,7 @@ class TvFragmentModule {
 
     private TvFragment tvFragment;
 
-    public TvFragmentModule(TvFragment tvFragment) {
+    TvFragmentModule(TvFragment tvFragment) {
         this.tvFragment = tvFragment;
     }
 

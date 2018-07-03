@@ -7,8 +7,8 @@ import javax.inject.Inject;
  */
 @TvFragmentScope
 public class Presenter implements TvFragmentMvpContract.Presenter {
-    TvFragmentMvpContract.Model model;
-    TvFragmentMvpContract.View view;
+    private TvFragmentMvpContract.Model model;
+    private TvFragmentMvpContract.View view;
 
     @Inject
     public Presenter(TvFragmentMvpContract.Model model, TvFragmentMvpContract.View view) {

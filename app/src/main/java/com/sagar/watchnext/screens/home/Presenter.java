@@ -9,8 +9,8 @@ import javax.inject.Inject;
 @HomeFragmentScope
 public class Presenter implements HomeFragmentMvpContract.Presenter {
 
-    HomeFragmentMvpContract.View view;
-    HomeFragmentMvpContract.Model model;
+    private HomeFragmentMvpContract.View view;
+    private HomeFragmentMvpContract.Model model;
 
     @Inject
     public Presenter(HomeFragmentMvpContract.View view, HomeFragmentMvpContract.Model model) {

@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 @PeopleFragmentScope
 public class Presenter implements PeopleFragmentMvpContract.Presenter {
-    PeopleFragmentMvpContract.Model model;
-    PeopleFragmentMvpContract.View view;
+    private PeopleFragmentMvpContract.Model model;
+    private PeopleFragmentMvpContract.View view;
 
     @Inject
     public Presenter(PeopleFragmentMvpContract.Model model, PeopleFragmentMvpContract.View view) {
