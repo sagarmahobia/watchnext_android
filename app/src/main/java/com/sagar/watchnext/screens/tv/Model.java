@@ -22,7 +22,7 @@ public class Model implements TvFragmentMvpContract.Model {
         this.tvRepo = tvRepo;
     }
 
-    List<Show> getTopRated() throws IOException {
+    public List<Show> getTopRated() throws IOException {
         Shows shows = tvRepo.getTopRated().execute().body();
         if (shows != null) {
             return shows.getShows();
@@ -30,7 +30,7 @@ public class Model implements TvFragmentMvpContract.Model {
         return null;
     }
 
-    List<Show> getPopular() throws IOException {
+    public List<Show> getPopular() throws IOException {
         Shows shows = tvRepo.getPopular().execute().body();
         if (shows != null) {
             return shows.getShows();
@@ -38,7 +38,7 @@ public class Model implements TvFragmentMvpContract.Model {
         return null;
     }
 
-    List<Show> getOnTheAir() throws IOException {
+    public List<Show> getOnTheAir() throws IOException {
         Shows shows = tvRepo.getOnTheAir().execute().body();
         if (shows != null) {
             return shows.getShows();
@@ -46,7 +46,7 @@ public class Model implements TvFragmentMvpContract.Model {
         return null;
     }
 
-    List<Show> getAiringToday() throws IOException {
+    public List<Show> getAiringToday() throws IOException {
         Shows shows = tvRepo.getAiringToday().execute().body();
         if (shows != null) {
             return shows.getShows();

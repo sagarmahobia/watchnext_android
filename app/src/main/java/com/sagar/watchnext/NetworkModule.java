@@ -1,8 +1,14 @@
 package com.sagar.watchnext;
 
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
@@ -70,6 +76,18 @@ public class NetworkModule {
                 .baseUrl(TMDPEndPoint)
                 .client(client)
                 .build();
+    }
+
+
+    @Provides
+    @ApplicationScope
+    Picasso providePicasso(Context context) {
+        Picasso picasso = new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(context, Integer.MAX_VALUE))
+                .build();
+        picasso.setIndicatorsEnabled(true);
+        picasso.setLoggingEnabled(true);
+        return picasso;
     }
 
     @ApplicationScope

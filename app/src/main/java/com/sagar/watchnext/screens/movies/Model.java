@@ -24,7 +24,8 @@ public class Model implements MoviesFragmentMvpContract.Model {
         this.tmdbMovieRepo = tmdbMovieRepo;
     }
 
-    List<Movie> getNowPlayingMovies() throws IOException {
+    @Override
+    public List<Movie> getNowPlayingMovies() throws IOException {
         MovieList movieList = tmdbMovieRepo.getNowPlayingMovies().execute().body();
 
         if (movieList != null) {
@@ -33,7 +34,8 @@ public class Model implements MoviesFragmentMvpContract.Model {
         return null;
     }
 
-    List<Movie> getUpcomingMovies() throws IOException {
+    @Override
+    public List<Movie> getUpcomingMovies() throws IOException {
         MovieList movieList = tmdbMovieRepo.getUpcomingMovies().execute().body();
 
         if (movieList != null) {
@@ -42,7 +44,8 @@ public class Model implements MoviesFragmentMvpContract.Model {
         return null;
     }
 
-    List<Movie> getPopularMovies() throws IOException {
+    @Override
+    public List<Movie> getPopularMovies() throws IOException {
         MovieList movieList = tmdbMovieRepo.getPopularMovies().execute().body();
 
         if (movieList != null) {
@@ -51,7 +54,8 @@ public class Model implements MoviesFragmentMvpContract.Model {
         return null;
     }
 
-    List<Movie> getTopRatedMovies() throws IOException {
+    @Override
+    public List<Movie> getTopRatedMovies() throws IOException {
         MovieList movieList = tmdbMovieRepo.getTopRatedMovies().execute().body();
 
         if (movieList != null) {

@@ -37,4 +37,5 @@
          ads:adUnitId="@string/banner_home_footer">
          </com.google.android.gms.ads.AdView>
      -->
+
 </LinearLayout>

@@ -4,6 +4,7 @@ import com.sagar.watchnext.WatchNextApplicationComponent;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.squareup.picasso.Picasso;
 
 import dagger.Component;
 
@@ -20,4 +21,6 @@ public interface MainActivityComponent {
     TmdbPeopleRepo provideTmdbPeopleRepo();
 
     TmdbTvRepo provideTmdbTvRepo();
+
+    Picasso providesPicasso();
 }

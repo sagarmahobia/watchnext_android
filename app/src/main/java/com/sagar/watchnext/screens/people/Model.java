@@ -21,7 +21,7 @@ public class Model implements PeopleFragmentMvpContract.Model {
         this.peopleRepo = peopleRepo;
     }
 
-    List<Person> getPopularPeople() throws IOException {
+    public List<Person> getPopularPeople() throws IOException {
 
         Persons persons = peopleRepo.getPopularPeople().execute().body();
         if (persons != null) {
