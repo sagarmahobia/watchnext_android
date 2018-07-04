@@ -21,7 +21,10 @@ public interface TmdbMovieRepo {
 
     //Lists
     @GET("movie/now_playing")
-    Call<MovieList> getNowPlayingMovies();
+    Call<MovieList> getInTheaterMovies();
+
+    @GET("movie/upcoming")
+    Call<MovieList> getUpcomingMovies();
 
     @GET("movie/popular")
     Call<MovieList> getPopularMovies();
@@ -29,8 +32,7 @@ public interface TmdbMovieRepo {
     @GET("movie/top_rated")
     Call<MovieList> getTopRatedMovies();
 
-    @GET("movie/upcoming")
-    Call<MovieList> getUpcomingMovies();
+
 
     //per movie
     @GET("movie/{movie_id}")

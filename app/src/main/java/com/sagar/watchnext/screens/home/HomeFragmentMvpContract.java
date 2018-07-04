@@ -14,10 +14,12 @@ public interface HomeFragmentMvpContract {
     interface View {
         void showToast(String msg);
 
+        //Movie
         void onSucceedLoadingMovieList();
 
         void onErrorLoadingMovieList();
 
+        //Tv
         void onSucceedLoadingTvList();
 
         void onErrorLoadingTvList();
@@ -51,9 +53,10 @@ public interface HomeFragmentMvpContract {
     }
 
     interface Model {
+        //movie
+        List<Movie> getInTheaterMovies() throws IOException;
 
-        List<Movie> getNowPlayingMovies() throws IOException;
-
+        //tv
         List<Show> getOnTheAirTv() throws IOException;
 
     }

@@ -40,7 +40,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
 
         Single<List<Movie>> singleMovie = Single.create(emitter -> {
             try {
-                emitter.onSuccess(model.getNowPlayingMovies());
+                emitter.onSuccess(model.getInTheaterMovies());
             } catch (IOException e) {
                 emitter.onError(e);
             }
@@ -48,6 +48,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
         disposables.add(singleMovie.subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
+                    //todo handle null movies
                     this.movies = movies;
                     view.onSucceedLoadingMovieList();
                 }, e -> {
@@ -65,6 +66,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
         disposables.add(singleTv.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shows -> {
+                    //todo handle null movies
                     this.shows = shows;
                     view.onSucceedLoadingTvList();
                 }, e -> {
@@ -83,7 +85,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
     public void onBindMovieCard(Card card, int position) {
         Movie movie = movies.get(position);
         card.setTitle(movie.getTitle());
-        card.setImage(movies.get(position).getPosterPath());
+        card.setImage(movie.getPosterPath());
 
     }
 
@@ -104,7 +106,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
     public void onBindTvCard(Card card, int position) {
         Show show = shows.get(position);
         card.setTitle(show.getName());
-        card.setImage(shows.get(position).getPosterPath());
+        card.setImage(show.getPosterPath());
     }
 
     @Override

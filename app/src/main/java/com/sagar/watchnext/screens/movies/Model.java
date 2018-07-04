@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import retrofit2.Response;
-
 /**
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:06
  */
@@ -25,8 +23,8 @@ public class Model implements MoviesFragmentMvpContract.Model {
     }
 
     @Override
-    public List<Movie> getNowPlayingMovies() throws IOException {
-        MovieList movieList = tmdbMovieRepo.getNowPlayingMovies().execute().body();
+    public List<Movie> getInTheaterMovies() throws IOException {
+        MovieList movieList = tmdbMovieRepo.getInTheaterMovies().execute().body();
 
         if (movieList != null) {
             return movieList.getMovies();

@@ -29,8 +29,8 @@ public class Model implements HomeFragmentMvpContract.Model {
     }
 
     @Override
-    public List<Movie> getNowPlayingMovies() throws IOException {
-        MovieList movieList = movieRepo.getNowPlayingMovies().execute().body();
+    public List<Movie> getInTheaterMovies() throws IOException {
+        MovieList movieList = movieRepo.getInTheaterMovies().execute().body();
 
         if (movieList != null) {
             return movieList.getMovies();
