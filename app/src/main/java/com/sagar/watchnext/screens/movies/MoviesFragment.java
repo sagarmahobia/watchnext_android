@@ -39,7 +39,6 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     @Inject
     PopularMoviesAdapter popularMoviesAdapter;
 
-
     @Inject
     TopRatedMoviesAdapter topRatedMoviesAdapter;
 
