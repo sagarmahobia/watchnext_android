@@ -3,6 +3,7 @@ package com.sagar.watchnext.screens.home;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,11 +27,11 @@ import javax.inject.Inject;
 
 public class HomeFragment extends Fragment implements HomeFragmentMvpContract.View {
 
-    RecyclerView recyclerViewOnTv;
-    RecyclerView recyclerViewInTheaters;
+    private RecyclerView recyclerViewOnTv;
+    private RecyclerView recyclerViewInTheaters;
 
-    RelativeLayout inTheatersCard;
-    RelativeLayout onTvCard;
+    private RelativeLayout inTheatersCard;
+    private RelativeLayout onTvCard;
 
     @Inject
     TvRecyclerAdapter onTvRecyclerAdapter;
@@ -68,7 +69,7 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_movies, container, false);
+        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_home, container, false);
         LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
 
 
@@ -111,7 +112,11 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
+        if (actionBar != null) {
+            actionBar.setTitle("WatchNext - Home");
+        }
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
 
         DaggerHomeFragmentComponent.builder().

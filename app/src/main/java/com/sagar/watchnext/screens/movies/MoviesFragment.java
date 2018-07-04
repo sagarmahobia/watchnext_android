@@ -3,6 +3,7 @@ package com.sagar.watchnext.screens.movies;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,10 +29,15 @@ import javax.inject.Inject;
 
 public class MoviesFragment extends Fragment implements MoviesFragmentMvpContract.View {
 
-    RelativeLayout inTheatersMoviesCard;
-    RelativeLayout upcomingMoviesCard;
-    RelativeLayout popularMoviesCard;
-    RelativeLayout topRatedMoviesCard;
+    private RelativeLayout inTheatersMoviesCard;
+    private RelativeLayout upcomingMoviesCard;
+    private RelativeLayout popularMoviesCard;
+    private RelativeLayout topRatedMoviesCard;
+
+    private RecyclerView recyclerViewInTheaters;
+    private RecyclerView recyclerViewUpcoming;
+    private RecyclerView recyclerViewPopular;
+    private RecyclerView recyclerViewTopRated;
 
     @Inject
     InTheatersMoviesAdapter inTheatersMoviesAdapter;
@@ -47,11 +53,6 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
 
     @Inject
     MoviesFragmentMvpContract.Presenter presenter;
-
-    RecyclerView recyclerViewInTheaters;
-    RecyclerView recyclerViewUpcoming;
-    RecyclerView recyclerViewPopular;
-    RecyclerView recyclerViewTopRated;
 
     public MoviesFragment() {
         // Required empty public constructor
@@ -79,7 +80,6 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
 
         ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_movies, container, false);
         LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
@@ -144,6 +144,12 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+
+
+        if (actionBar != null) {
+            actionBar.setTitle("Movies");
+        }
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
 
         DaggerMoviesFragmentComponent.builder()

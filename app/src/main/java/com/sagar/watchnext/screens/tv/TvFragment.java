@@ -1,9 +1,9 @@
 package com.sagar.watchnext.screens.tv;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,15 +31,15 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
     @Inject
     Presenter presenter;
 
-    RelativeLayout airingTodayTvCard;
-    RelativeLayout onTheAirTvCard;
-    RelativeLayout popularTvCard;
-    RelativeLayout topRatedTvCard;
+    private RelativeLayout airingTodayTvCard;
+    private RelativeLayout onTheAirTvCard;
+    private RelativeLayout popularTvCard;
+    private RelativeLayout topRatedTvCard;
 
-    RecyclerView airingTodayRecycler;
-    RecyclerView onTheAirRecycler;
-    RecyclerView popularRecycler;
-    RecyclerView topRatedRecycler;
+    private RecyclerView airingTodayRecycler;
+    private RecyclerView onTheAirRecycler;
+    private RecyclerView popularRecycler;
+    private RecyclerView topRatedRecycler;
 
     @Inject
     AiringTodayAdapter airingTodayAdapter;
@@ -143,7 +143,11 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
+        if (actionBar != null) {
+            actionBar.setTitle("TV Shows");
+        }
         DaggerTvFragmentComponent.builder()
                 .mainActivityComponent(mainActivityComponent)
                 .tvFragmentModule(new TvFragmentModule(this))

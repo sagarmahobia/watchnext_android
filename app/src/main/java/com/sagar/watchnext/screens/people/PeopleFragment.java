@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import javax.inject.Inject;
 
 
 public class PeopleFragment extends Fragment implements PeopleFragmentMvpContract.View, View.OnClickListener {
-    PeopleFragmentComponent component;
 
     @Inject
     Presenter presenter;
@@ -50,13 +50,15 @@ public class PeopleFragment extends Fragment implements PeopleFragmentMvpContrac
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
-        component
-                = DaggerPeopleFragmentComponent.builder().
+        if (actionBar != null) {
+            actionBar.setTitle("People");
+        }
+          DaggerPeopleFragmentComponent.builder().
                 mainActivityComponent(mainActivityComponent).
                 peopleFragmentModule(new PeopleFragmentModule(this)).
-                build();
-        component.inject(this);
+                build() .inject(this);
     }
 
     @Override
