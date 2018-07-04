@@ -1,5 +1,6 @@
 package com.sagar.watchnext.screens.movies;
 
+import com.sagar.watchnext.WatchNextApplicationComponent;
 import com.sagar.watchnext.screens.MainActivityComponent;
 
 import dagger.Component;
@@ -9,7 +10,7 @@ import dagger.Component;
  */
 
 @MoviesFragmentScope
-@Component(modules = MoviesFragmentModule.class, dependencies = MainActivityComponent.class)
+@Component(modules = MoviesFragmentModule.class, dependencies = {MainActivityComponent.class})
 public interface MoviesFragmentComponent {
 
     void inject(MoviesFragment moviesFragment);

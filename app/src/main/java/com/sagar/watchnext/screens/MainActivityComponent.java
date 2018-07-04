@@ -1,6 +1,10 @@
 package com.sagar.watchnext.screens;
 
 import com.sagar.watchnext.WatchNextApplicationComponent;
+import com.sagar.watchnext.network.repo.TmdbMovieRepo;
+import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.squareup.picasso.Picasso;
 
 import dagger.Component;
 
@@ -11,4 +15,12 @@ import dagger.Component;
 @Component(modules = MainActivityModule.class, dependencies = WatchNextApplicationComponent.class)
 public interface MainActivityComponent {
     void inject(MainActivity mainActivity);
+
+    TmdbMovieRepo getTmdbMovieRepo();
+
+    TmdbPeopleRepo provideTmdbPeopleRepo();
+
+    TmdbTvRepo provideTmdbTvRepo();
+
+    Picasso providesPicasso();
 }

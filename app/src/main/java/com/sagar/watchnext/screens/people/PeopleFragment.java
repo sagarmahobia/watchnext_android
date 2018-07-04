@@ -7,14 +7,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 
+import javax.inject.Inject;
 
-public class PeopleFragment extends Fragment {
+
+public class PeopleFragment extends Fragment implements PeopleFragmentMvpContract.View, View.OnClickListener {
     PeopleFragmentComponent component;
+
+    @Inject
+    Presenter presenter;
 
     public PeopleFragment() {
         // Required empty public constructor
@@ -44,7 +54,7 @@ public class PeopleFragment extends Fragment {
         component
                 = DaggerPeopleFragmentComponent.builder().
                 mainActivityComponent(mainActivityComponent).
-                peopleFragmentModule(new PeopleFragmentModule()).
+                peopleFragmentModule(new PeopleFragmentModule(this)).
                 build();
         component.inject(this);
     }
@@ -53,7 +63,22 @@ public class PeopleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_people, container, false);
+
+        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_people, container, false);
+        LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
+
+
+        RelativeLayout popularPeople = (RelativeLayout) inflater.inflate(
+                R.layout.card_horizontal_recycler,
+                linearLayout, false);
+        ((TextView) popularPeople.findViewById(R.id.card_header_text)).setText("Popular");
+
+        popularPeople.findViewById(R.id.see_all_button).setOnClickListener(this);
+
+        linearLayout.addView(popularPeople);
+
+
+        return scrollView;
     }
 
 
@@ -68,4 +93,11 @@ public class PeopleFragment extends Fragment {
         super.onDetach();
     }
 
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.see_all_button) {
+            Toast.makeText(getContext(), "stub . to be implemented", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

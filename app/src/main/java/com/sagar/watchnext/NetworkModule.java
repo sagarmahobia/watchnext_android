@@ -1,12 +1,14 @@
 package com.sagar.watchnext;
 
-import android.support.annotation.NonNull;
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
-
-import java.io.IOException;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
@@ -14,7 +16,6 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,23 +31,20 @@ public class NetworkModule {
     @Provides
     @ApplicationScope
     Interceptor provideInterceptor() {
-        return new Interceptor() {
-            @Override
-            public Response intercept(@NonNull Chain chain) throws IOException {
-                Request original = chain.request();
-                HttpUrl originalHttpUrl = original.url();
+        return chain -> {
+            Request original = chain.request();
+            HttpUrl originalHttpUrl = original.url();
 
-                HttpUrl url = originalHttpUrl.newBuilder()
-                        .addQueryParameter("api_key", API_KEY)
-                        .build();
+            HttpUrl url = originalHttpUrl.newBuilder()
+                    .addQueryParameter("api_key", API_KEY)
+                    .build();
 
-                // Request customization: add request headers
-                Request.Builder requestBuilder = original.newBuilder()
-                        .url(url);
+            // Request customization: add request headers
+            Request.Builder requestBuilder = original.newBuilder()
+                    .url(url);
 
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
+            Request request = requestBuilder.build();
+            return chain.proceed(request);
         };
     }
 
@@ -80,9 +78,21 @@ public class NetworkModule {
                 .build();
     }
 
+
     @Provides
     @ApplicationScope
-    public TmdbMovieRepo provideTmdpMovieRepo(Retrofit retrofit) {
+    Picasso providePicasso(Context context) {
+        Picasso picasso = new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(context, Integer.MAX_VALUE))
+                .build();
+        picasso.setIndicatorsEnabled(true);
+        picasso.setLoggingEnabled(true);
+        return picasso;
+    }
+
+    @ApplicationScope
+    @Provides
+    TmdbMovieRepo provideTmdpMovieRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbMovieRepo.class);
 
@@ -90,14 +100,14 @@ public class NetworkModule {
 
     @Provides
     @ApplicationScope
-    public TmdbPeopleRepo provideTmdbPeopleRepo(Retrofit retrofit) {
+    TmdbPeopleRepo provideTmdbPeopleRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbPeopleRepo.class);
     }
 
     @Provides
     @ApplicationScope
-    public TmdbTvRepo provideTmdbTvRepo(Retrofit retrofit) {
+    TmdbTvRepo provideTmdbTvRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbTvRepo.class);
     }

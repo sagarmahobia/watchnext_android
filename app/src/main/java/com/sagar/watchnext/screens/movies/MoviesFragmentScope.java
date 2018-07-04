@@ -13,5 +13,5 @@ import javax.inject.Scope;
  */
 @Scope
 @Retention(RetentionPolicy.CLASS)
-public @interface MoviesFragmentScope {
+@interface MoviesFragmentScope {
 }

@@ -25,9 +25,12 @@ public class MainActivity extends AppCompatActivity
 
     MainActivityComponent component;
 
+    public MainActivityComponent getComponent() {
+        return component;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(null);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -44,8 +47,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         component = DaggerMainActivityComponent.builder()
-                .mainActivityModule(new MainActivityModule(this))
                 .watchNextApplicationComponent(WatchNextApplication.get(this).getComponent())
+                .mainActivityModule(new MainActivityModule(this))
                 .build();
         component.inject(this);
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -85,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -120,7 +123,4 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public MainActivityComponent getComponent() {
-        return component;
-    }
 }

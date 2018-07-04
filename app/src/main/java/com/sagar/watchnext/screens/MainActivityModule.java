@@ -14,7 +14,7 @@ public class MainActivityModule {
     private MainActivity activity;
 
 
-    public MainActivityModule(MainActivity activity) {
+    MainActivityModule(MainActivity activity) {
         this.activity = activity;
     }
 

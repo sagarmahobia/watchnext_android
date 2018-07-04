@@ -7,15 +7,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 
+import javax.inject.Inject;
 
-public class MoviesFragment extends Fragment {
+
+public class MoviesFragment extends Fragment implements MoviesFragmentMvpContract.View, View.OnClickListener {
 
     MoviesFragmentComponent component;
+
+    @Inject
+    Presenter presenter;
 
     public MoviesFragment() {
         // Required empty public constructor
@@ -45,7 +55,7 @@ public class MoviesFragment extends Fragment {
 
         component = DaggerMoviesFragmentComponent.builder()
                 .mainActivityComponent(mainActivityComponent)
-                .moviesFragmentModule(new MoviesFragmentModule())
+                .moviesFragmentModule(new MoviesFragmentModule(this))
                 .build();
         component.inject(this);
     }
@@ -54,7 +64,47 @@ public class MoviesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movies, container, false);
+
+
+        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_movies, container, false);
+        LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
+
+
+        RelativeLayout nowPlayingMoviesCard = (RelativeLayout) inflater.inflate(
+                R.layout.card_horizontal_recycler,
+                linearLayout, false);
+
+        RelativeLayout upcomingMoviesCard = (RelativeLayout) inflater.inflate(
+                R.layout.card_horizontal_recycler,
+                linearLayout, false);
+
+        RelativeLayout popularMoviesCard = (RelativeLayout) inflater.inflate(
+                R.layout.card_horizontal_recycler,
+                linearLayout, false);
+
+        RelativeLayout topRatedCard = (RelativeLayout) inflater.inflate(
+                R.layout.card_horizontal_recycler,
+                linearLayout, false);
+
+
+        ((TextView) nowPlayingMoviesCard.findViewById(R.id.card_header_text)).setText("In Theaters");
+        ((TextView) upcomingMoviesCard.findViewById(R.id.card_header_text)).setText("Upcoming");
+        ((TextView) popularMoviesCard.findViewById(R.id.card_header_text)).setText("Popular");
+        ((TextView) topRatedCard.findViewById(R.id.card_header_text)).setText("Top Rated");
+
+        nowPlayingMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(this);
+        upcomingMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(this);
+        popularMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(this);
+        topRatedCard.findViewById(R.id.see_all_button).setOnClickListener(this);
+
+
+        linearLayout.addView(nowPlayingMoviesCard);
+        linearLayout.addView(upcomingMoviesCard);
+        linearLayout.addView(popularMoviesCard);
+        linearLayout.addView(topRatedCard);
+
+
+        return scrollView;
     }
 
     @Override
@@ -68,5 +118,12 @@ public class MoviesFragment extends Fragment {
         super.onDetach();
     }
 
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.see_all_button) {
+            Toast.makeText(getContext(), "stub . to be implemented", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
