@@ -1,7 +1,6 @@
 package com.sagar.watchnext.screens.tv;
 
 import com.sagar.watchnext.adapters.Card;
-import com.sagar.watchnext.adapters.CardViewHolder;
 import com.sagar.watchnext.network.models.tv.Show;
 
 import java.io.IOException;
@@ -50,9 +49,9 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.airingTodayShows = movies;
-                    view.onSucceedLoadingAiringTodayShowList();
+                    view.onSucceedLoadingShowList(ListType.AiringToday);
                 }, e -> {
-                    view.onErrorLoadingAiringTodayShowList();
+                    view.onErrorLoadingShowList(ListType.AiringToday);
                 }));
 
         //on the air
@@ -68,9 +67,10 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.onTheAirShows = movies;
-                    view.onSucceedLoadingOnTheAirShowList();
+                    view.onSucceedLoadingShowList(ListType.OnTheAir);
+
                 }, e -> {
-                   view.onErrorLoadingOnTheAirShowList();
+                    view.onErrorLoadingShowList(ListType.OnTheAir);
                 }));
 
         //popular
@@ -86,9 +86,11 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.popularShows = movies;
-                     view.onSucceedLoadingPopularList();
+                    view.onSucceedLoadingShowList(ListType.Popular);
+
                 }, e -> {
-                    view.onErrorLoadingPopularList();
+                    view.onErrorLoadingShowList(ListType.Popular);
+
                 }));  //popular
 
 //top rated
@@ -104,9 +106,9 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.topRatedShows = movies;
-                     view.onSucceedLoadingTopRatedShowList();
+                    view.onSucceedLoadingShowList(ListType.TopRated);
                 }, e -> {
-                    view.onErrorLoadingTopRatedShowList();
+                    view.onErrorLoadingShowList(ListType.TopRated);
                 }));
 
 
@@ -117,76 +119,36 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
         disposables.dispose();
     }
 
+    private List<Show> getListByType(ListType listType) {
+        switch (listType) {
+            case AiringToday:
+                return airingTodayShows;
+            case OnTheAir:
+                return onTheAirShows;
+            case Popular:
+                return popularShows;
+            default://top Rated
+                return topRatedShows;
+        }
+    }
+
     @Override
-    public void onBindAiringTodayShowCard(Card card, int position) {
-        Show show = airingTodayShows.get(position);
+    public void onBindCard(ListType listType, Card card, int position) {
+        Show show = getListByType(listType).get(position);
         card.setTitle(show.getName());
         card.setImage(show.getPosterPath());
     }
 
     @Override
-    public void onAiringTodayRecyclerItemClick(int position) {
-        view.showToast(airingTodayShows.get(position).getName() + " was clicked");
-
+    public void onRecyclerItemClick(ListType listType, int position) {
+        //todo modify on click listener
+        String name = getListByType(listType).get(position).getName();
+        view.showToast(name + " was clicked");
     }
 
     @Override
-    public int getAiringTodayCardsCount() {
-        return airingTodayShows.size();
-    }
+    public int getCardsCount(ListType listType) {
+        return getListByType(listType).size();
 
-    @Override
-    public void onBindOnTheAirShowCard(Card card, int position) {
-        Show show = onTheAirShows.get(position);
-        card.setTitle(show.getName());
-        card.setImage(show.getPosterPath());
-
-    }
-
-    @Override
-    public void onOnTheAirRecyclerItemClick(int position) {
-        view.showToast(onTheAirShows.get(position).getName() + " was clicked");
-    }
-
-    @Override
-    public int getOnTheAirCardsCount() {
-        return onTheAirShows.size();
-    }
-
-    @Override
-    public void onBindPopularShowCard(Card card, int position) {
-        Show show = popularShows.get(position);
-        card.setTitle(show.getName());
-        card.setImage(show.getPosterPath());
-    }
-
-    @Override
-    public void onPopularRecyclerItemClick(int position) {
-        view.showToast(popularShows.get(position).getName() + " was clicked");
-
-    }
-
-    @Override
-    public int getPopularCardsCount() {
-        return popularShows.size();
-
-    }
-
-    @Override
-    public void onBindTopRatedShowCard(Card card, int position) {
-        Show show = topRatedShows.get(position);
-        card.setTitle(show.getName());
-        card.setImage(show.getPosterPath());
-    }
-
-    @Override
-    public void onTopRatedRecyclerItemClick(int position) {
-        view.showToast(topRatedShows.get(position).getName() + " was clicked");
-
-    }
-
-    @Override
-    public int getTopRatedCardsCount() {
-        return topRatedShows.size();
     }
 }

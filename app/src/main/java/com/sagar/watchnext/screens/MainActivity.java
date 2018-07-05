@@ -103,9 +103,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.tv) {
             fragment = TvFragment.newInstance();
 
-        } else if (id == R.id.people) {
-            fragment = PeopleFragment.newInstance();
         }
+//        else if (id == R.id.people) {
+//            fragment = PeopleFragment.newInstance();
+//        }
 
         if (fragment != null) {
             transactFragment(fragment);

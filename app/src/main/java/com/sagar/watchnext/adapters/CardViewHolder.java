@@ -31,6 +31,6 @@ public class CardViewHolder extends RecyclerView.ViewHolder implements Card {
     @Override
     public void setImage(String url) {
         url = "https://image.tmdb.org/t/p/w500/" + url;
-        picasso.load(url).into((ImageView) view.findViewById(R.id.imageBackdrop));
+        picasso.load(url).into((ImageView) view.findViewById(R.id.imagePoster));
     }
 }

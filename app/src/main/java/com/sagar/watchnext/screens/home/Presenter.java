@@ -50,9 +50,9 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.movies = movies;
-                    view.onSucceedLoadingMovieList();
+                    view.onSucceedLoadingList(ListType.InTheaters);
                 }, e -> {
-                    view.onErrorLoadingMovieList();
+                    view.onErrorLoadingList(ListType.InTheaters);
                 }));
 
 
@@ -68,51 +68,53 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                 .subscribe(shows -> {
                     //todo handle null movies
                     this.shows = shows;
-                    view.onSucceedLoadingTvList();
+                    view.onSucceedLoadingList(ListType.OnTv);
                 }, e -> {
-                    view.onErrorLoadingTvList();
+                    view.onErrorLoadingList(ListType.OnTv);
                 }));
 
     }
 
-    ////movie methods
+
+    //combined
+
     @Override
-    public int getMovieCardsCount() {
-        return movies.size();
+    public int getCardsCount(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                return movies.size();
+            default:
+                return shows.size();
+        }
+
     }
 
     @Override
-    public void onBindMovieCard(Card card, int position) {
-        Movie movie = movies.get(position);
-        card.setTitle(movie.getTitle());
-        card.setImage(movie.getPosterPath());
-
+    public void onBindCard(ListType listType, Card card, int position) {
+        switch (listType) {
+            case InTheaters:
+                Movie movie = movies.get(position);
+                card.setTitle(movie.getTitle());
+                card.setImage(movie.getPosterPath());
+                break;
+            default:
+                Show show = shows.get(position);
+                card.setTitle(show.getName());
+                card.setImage(show.getPosterPath());
+        }
     }
 
     @Override
-    public void onMovieRecyclerItemClick(int position) {
-        //todo modify on click listener
-        view.showToast(movies.get(position).getTitle() + " was clicked");
-
-    }
-
-    ////Tv  methods
-    @Override
-    public int getTvCardsCount() {
-        return shows.size();
-    }
-
-    @Override
-    public void onBindTvCard(Card card, int position) {
-        Show show = shows.get(position);
-        card.setTitle(show.getName());
-        card.setImage(show.getPosterPath());
-    }
-
-    @Override
-    public void onTvRecyclerItemClick(int position) {
-        //todo modify on click listener
-        view.showToast(shows.get(position).getName() + " was clicked");
+    public void onRecyclerItemClick(ListType listType, int position) {
+        switch (listType) {
+            case InTheaters:
+                //todo modify on click listener
+                view.showToast(movies.get(position).getTitle() + " was clicked");
+                break;
+            default:
+                //todo modify on click listener
+                view.showToast(shows.get(position).getName() + " was clicked");
+        }
     }
 
 

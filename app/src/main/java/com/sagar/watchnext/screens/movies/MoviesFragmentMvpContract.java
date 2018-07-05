@@ -1,9 +1,7 @@
 package com.sagar.watchnext.screens.movies;
 
 import com.sagar.watchnext.adapters.Card;
-import com.sagar.watchnext.adapters.CardViewHolder;
 import com.sagar.watchnext.network.models.movies.Movie;
-import com.sagar.watchnext.network.models.movies.MovieList;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,26 +13,10 @@ public interface MoviesFragmentMvpContract {
     interface View {
         void showToast(String msg);
 
-        //In theater
-        void onSucceedLoadingInTheatersMovieList();
+        //combined
+        void onSucceedLoadingMovieList(ListType listType);
 
-        void onErrorLoadingInTheatersMovieList();
-
-
-        //Upcoming
-        void onSucceedLoadingUpcomingMovieList();
-
-        void onErrorLoadingUpcomingMovieList();
-
-        //popular
-        void onSucceedLoadingPopularMovieList();
-
-        void onErrorLoadingPopularMovieList();
-
-        //top rated
-        void onSucceedLoadingTopRatedMovieList();
-
-        void onErrorLoadingTopRatedMovieList();
+        void onErrorLoadingMovieList(ListType listType);
     }
 
     interface Presenter {
@@ -43,33 +25,14 @@ public interface MoviesFragmentMvpContract {
 
         void onDestroy();
 
-        //In theater
-        void onBindInTheatersMovieCard(Card card, int position);
+        //combined
+        void onBindMovieCard(ListType listType, Card card, int position);
 
-        void onInTheatersRecyclerItemClick(int position);
+        void onRecyclerItemClick(ListType listType, int position);
 
-        int getInTheatersCardsCount();
+        int getCardsCount(ListType listType);
 
-        //upcoming
-        void onBindUpcomingMovieCard(Card card, int position);
 
-        void onUpcomingRecyclerItemClick(int position);
-
-        int getUpComingCardsCount();
-
-        //top rated
-        void onBindPopularMovieCard(Card card, int position);
-
-        void onPopularRecyclerItemClick(int position);
-
-        int getPopularCardsCount();
-
-        //top rated
-        void onBindTopRatedMovieCard(Card  card , int position);
-
-        void onTopRatedRecyclerItemClick(int position);
-
-        int getTopRatedCardsCount();
     }
 
     interface Model {

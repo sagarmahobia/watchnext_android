@@ -14,16 +14,11 @@ public interface HomeFragmentMvpContract {
     interface View {
         void showToast(String msg);
 
-        //Movie
-        void onSucceedLoadingMovieList();
+        //combined
 
-        void onErrorLoadingMovieList();
+        void onSucceedLoadingList(ListType listType);
 
-        //Tv
-        void onSucceedLoadingTvList();
-
-        void onErrorLoadingTvList();
-
+        void onErrorLoadingList(ListType listType);
     }
 
     interface Presenter {
@@ -33,22 +28,13 @@ public interface HomeFragmentMvpContract {
         void onDestroy();
 
 
-        //movie
+        //combined
 
-        int getMovieCardsCount();
+        int getCardsCount(ListType listType);
 
-        void onBindMovieCard(Card card, int position);
+        void onBindCard(ListType listType, Card card, int position);
 
-        void onMovieRecyclerItemClick(int position);
-
-
-        //tv
-
-        int getTvCardsCount();
-
-        void onBindTvCard(Card card, int position);
-
-        void onTvRecyclerItemClick(int position);
+        void onRecyclerItemClick(ListType listType, int position);
 
     }
 

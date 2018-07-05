@@ -3,6 +3,7 @@ package com.sagar.watchnext.screens.home;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
-import com.sagar.watchnext.screens.home.adapters.MovieRecyclerAdapter;
-import com.sagar.watchnext.screens.home.adapters.TvRecyclerAdapter;
+import com.sagar.watchnext.screens.home.adapters.RecyclerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,11 +35,13 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
     private RelativeLayout inTheatersCard;
     private RelativeLayout onTvCard;
 
-    @Inject
-    TvRecyclerAdapter onTvRecyclerAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
-    MovieRecyclerAdapter inTheatersRecyclerAdapter;
+    RecyclerAdapter onTvRecyclerAdapter;
+
+    @Inject
+    RecyclerAdapter inTheatersRecyclerAdapter;
 
     @Inject
     HomeFragmentMvpContract.Presenter presenter;
@@ -69,9 +73,10 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_home, container, false);
-        LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
-
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
+        LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
+        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate());
 
         inTheatersCard = (RelativeLayout) inflater.inflate(
                 R.layout.card_horizontal_recycler,
@@ -92,27 +97,28 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
         recyclerViewOnTv = onTvCard.findViewById(R.id.horizontal_list_recycler);
         recyclerViewInTheaters = inTheatersCard.findViewById(R.id.horizontal_list_recycler);
 
-        LinearLayoutManager horizontalLayoutManagerForTv
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForMovie
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
+        for (int i = 1; i <= 2; i++) {
+            linearLayoutManagers.add(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        }
 
-        recyclerViewOnTv.setLayoutManager(horizontalLayoutManagerForTv);
-        recyclerViewInTheaters.setLayoutManager(horizontalLayoutManagerForMovie);
+        recyclerViewOnTv.setLayoutManager(linearLayoutManagers.get(0));
+        recyclerViewInTheaters.setLayoutManager(linearLayoutManagers.get(1));
 
 
         linearLayout.addView(inTheatersCard);
         linearLayout.addView(onTvCard);
+
         Log.d("Lifecycle", "On create view called");
 
-        return scrollView;
+        return swipeRefreshLayout;
     }
 
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
         if (actionBar != null) {
             actionBar.setTitle("WatchNext - Home");
@@ -123,6 +129,10 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                 mainActivityComponent(mainActivityComponent)
                 .homeFragmentModule(new HomeFragmentModule(this))
                 .build().inject(this);
+
+        onTvRecyclerAdapter.setListType(ListType.OnTv);
+        inTheatersRecyclerAdapter.setListType(ListType.InTheaters);
+
         presenter.onCreate();
     }
 
@@ -141,28 +151,35 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
 
 
     @Override
-    public void onErrorLoadingMovieList() {
-        inTheatersCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    public void onSucceedLoadingList(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                recyclerViewInTheaters.setAdapter(inTheatersRecyclerAdapter);
+                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            default:
+                recyclerViewOnTv.setAdapter(onTvRecyclerAdapter);
+                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                onTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+
+        }
+        swipeRefreshLayout.setRefreshing(false);
 
     }
 
     @Override
-    public void onSucceedLoadingMovieList() {
-        recyclerViewInTheaters.setAdapter(inTheatersRecyclerAdapter);
-        inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    public void onErrorLoadingList(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
 
-    }
-
-    @Override
-    public void onSucceedLoadingTvList() {
-        recyclerViewOnTv.setAdapter(onTvRecyclerAdapter);
-        onTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingTvList() {
-        onTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        onTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                break;
+            default:
+                onTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+        }
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

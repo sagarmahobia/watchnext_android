@@ -3,6 +3,7 @@ package com.sagar.watchnext.screens.movies;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +20,10 @@ import android.widget.Toast;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
-import com.sagar.watchnext.screens.movies.adapters.InTheatersMoviesAdapter;
-import com.sagar.watchnext.screens.movies.adapters.PopularMoviesAdapter;
-import com.sagar.watchnext.screens.movies.adapters.TopRatedMoviesAdapter;
-import com.sagar.watchnext.screens.movies.adapters.UpcomingMoviesAdapter;
+import com.sagar.watchnext.screens.movies.adapters.RecyclerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -39,17 +40,19 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     private RecyclerView recyclerViewPopular;
     private RecyclerView recyclerViewTopRated;
 
-    @Inject
-    InTheatersMoviesAdapter inTheatersMoviesAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
-    PopularMoviesAdapter popularMoviesAdapter;
+    RecyclerAdapter inTheatersMoviesAdapter;
 
     @Inject
-    TopRatedMoviesAdapter topRatedMoviesAdapter;
+    RecyclerAdapter popularMoviesAdapter;
 
     @Inject
-    UpcomingMoviesAdapter upcomingMoviesAdapter;
+    RecyclerAdapter topRatedMoviesAdapter;
+
+    @Inject
+    RecyclerAdapter upcomingMoviesAdapter;
 
     @Inject
     MoviesFragmentMvpContract.Presenter presenter;
@@ -81,9 +84,10 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_movies, container, false);
-        LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
-
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
+        LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
+        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate());
 
         inTheatersMoviesCard = (RelativeLayout) inflater.inflate(
                 R.layout.card_horizontal_recycler,
@@ -118,19 +122,15 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
         recyclerViewPopular = popularMoviesCard.findViewById(R.id.horizontal_list_recycler);
         recyclerViewTopRated = topRatedMoviesCard.findViewById(R.id.horizontal_list_recycler);
 
-        LinearLayoutManager horizontalLayoutManagerForInTheaters
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForUpcoming
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForPopular
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForTopRated
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
+        for (int i = 1; i <= 4; i++) {
 
-        recyclerViewInTheaters.setLayoutManager(horizontalLayoutManagerForInTheaters);
-        recyclerViewUpcoming.setLayoutManager(horizontalLayoutManagerForUpcoming);
-        recyclerViewPopular.setLayoutManager(horizontalLayoutManagerForPopular);
-        recyclerViewTopRated.setLayoutManager(horizontalLayoutManagerForTopRated);
+            linearLayoutManagers.add(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        }
+        recyclerViewInTheaters.setLayoutManager(linearLayoutManagers.get(0));
+        recyclerViewUpcoming.setLayoutManager(linearLayoutManagers.get(1));
+        recyclerViewPopular.setLayoutManager(linearLayoutManagers.get(2));
+        recyclerViewTopRated.setLayoutManager(linearLayoutManagers.get(3));
 
         linearLayout.addView(inTheatersMoviesCard);
         linearLayout.addView(upcomingMoviesCard);
@@ -138,7 +138,7 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
         linearLayout.addView(topRatedMoviesCard);
 
 
-        return scrollView;
+        return swipeRefreshLayout;
     }
 
     @Override
@@ -157,6 +157,11 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
                 .moviesFragmentModule(new MoviesFragmentModule(this))
                 .build().inject(this);
 
+        inTheatersMoviesAdapter.setListType(ListType.InTheaters);
+        upcomingMoviesAdapter.setListType(ListType.Upcoming);
+        popularMoviesAdapter.setListType(ListType.Popular);
+        topRatedMoviesAdapter.setListType(ListType.TopRated);
+
         presenter.onCreate();
 
     }
@@ -174,54 +179,54 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     }
 
     @Override
-    public void onSucceedLoadingInTheatersMovieList() {
-
-        recyclerViewInTheaters.setAdapter(inTheatersMoviesAdapter);
-        inTheatersMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    public void onSucceedLoadingMovieList(ListType listType) {
+        swipeRefreshLayout.setRefreshing(false);
+        switch (listType) {
+            case InTheaters:
+                recyclerViewInTheaters.setAdapter(inTheatersMoviesAdapter);
+                inTheatersMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                inTheatersMoviesCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            case Upcoming:
+                recyclerViewUpcoming.setAdapter(upcomingMoviesAdapter);
+                upcomingMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                upcomingMoviesCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            case Popular:
+                recyclerViewPopular.setAdapter(popularMoviesAdapter);
+                popularMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                popularMoviesCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            default://top rated
+                recyclerViewTopRated.setAdapter(topRatedMoviesAdapter);
+                topRatedMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                topRatedMoviesCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+        }
     }
 
     @Override
-    public void onErrorLoadingInTheatersMovieList() {
-        inTheatersMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        inTheatersMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
+    public void onErrorLoadingMovieList(ListType listType) {
+        swipeRefreshLayout.setRefreshing(false);
 
-    @Override
-    public void onSucceedLoadingUpcomingMovieList() {
-        recyclerViewUpcoming.setAdapter(upcomingMoviesAdapter);
-        upcomingMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingUpcomingMovieList() {
-        upcomingMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        upcomingMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onSucceedLoadingPopularMovieList() {
-        recyclerViewPopular.setAdapter(popularMoviesAdapter);
-        popularMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingPopularMovieList() {
-        popularMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        popularMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void onSucceedLoadingTopRatedMovieList() {
-        recyclerViewTopRated.setAdapter(topRatedMoviesAdapter);
-        topRatedMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingTopRatedMovieList() {
-        topRatedMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        topRatedMoviesCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-
+        switch (listType) {
+            case InTheaters:
+                inTheatersMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                inTheatersMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            case Upcoming:
+                upcomingMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                upcomingMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            case Popular:
+                popularMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                popularMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            default://top rated
+                topRatedMoviesCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                topRatedMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+        }
     }
 
 }

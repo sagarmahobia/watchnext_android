@@ -17,9 +17,9 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageBackdrop"
+                android:id="@+id/imagePoster"
                 android:layout_width="125dp"
-                android:layout_height="187.5dp"
+                android:layout_height="188dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="TODO"
@@ -27,10 +27,10 @@
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="120dp"
+                android:layout_width="125dp"
                 android:layout_height="55dp"
-                android:layout_alignStart="@+id/imageBackdrop"
-                android:layout_below="@+id/imageBackdrop"
+                android:layout_alignStart="@+id/imagePoster"
+                android:layout_below="@+id/imagePoster"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:gravity="center_vertical|left"

@@ -3,6 +3,7 @@ package com.sagar.watchnext.screens.tv;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,15 +19,15 @@ import android.widget.Toast;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
-import com.sagar.watchnext.screens.tv.Adapters.AiringTodayAdapter;
-import com.sagar.watchnext.screens.tv.Adapters.OnTheAirAdapter;
-import com.sagar.watchnext.screens.tv.Adapters.PopularAdapter;
-import com.sagar.watchnext.screens.tv.Adapters.TopRatedAdapter;
+import com.sagar.watchnext.screens.tv.Adapters.RecyclerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 
-public class TvFragment extends Fragment implements TvFragmentMvpContract.View, View.OnClickListener {
+public class TvFragment extends Fragment implements TvFragmentMvpContract.View {
 
     @Inject
     Presenter presenter;
@@ -41,17 +42,19 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
     private RecyclerView popularRecycler;
     private RecyclerView topRatedRecycler;
 
-    @Inject
-    AiringTodayAdapter airingTodayAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
-    OnTheAirAdapter onTheAirAdapter;
+    RecyclerAdapter airingTodayAdapter;
 
     @Inject
-    PopularAdapter popularAdapter;
+    RecyclerAdapter onTheAirAdapter;
 
     @Inject
-    TopRatedAdapter topRatedAdapter;
+    RecyclerAdapter popularAdapter;
+
+    @Inject
+    RecyclerAdapter topRatedAdapter;
 
     public TvFragment() {
         // Required empty public constructor
@@ -78,9 +81,11 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.fragment_tv, container, false);
-        LinearLayout linearLayout = scrollView.findViewById(R.id.card_list_container);
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
+        LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
 
+        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate());
 
         airingTodayTvCard = (RelativeLayout) inflater.inflate(
                 R.layout.card_horizontal_recycler,
@@ -115,19 +120,17 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
         popularRecycler = popularTvCard.findViewById(R.id.horizontal_list_recycler);
         topRatedRecycler = topRatedTvCard.findViewById(R.id.horizontal_list_recycler);
 
-        LinearLayoutManager horizontalLayoutManagerForAiringToday
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForOnTheAir
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForPopular
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagerForTopRated
-                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
+        for (int i = 1; i <= 4; i++) {
+            linearLayoutManagers.add(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false));
+        }
 
-        airingTodayRecycler.setLayoutManager(horizontalLayoutManagerForAiringToday);
-        onTheAirRecycler.setLayoutManager(horizontalLayoutManagerForOnTheAir);
-        popularRecycler.setLayoutManager(horizontalLayoutManagerForPopular);
-        topRatedRecycler.setLayoutManager(horizontalLayoutManagerForTopRated);
+        airingTodayRecycler.setLayoutManager(linearLayoutManagers.get(0));
+        onTheAirRecycler.setLayoutManager(linearLayoutManagers.get(1));
+        popularRecycler.setLayoutManager(linearLayoutManagers.get(2));
+        topRatedRecycler.setLayoutManager(linearLayoutManagers.get(3));
 
         linearLayout.addView(airingTodayTvCard);
         linearLayout.addView(onTheAirTvCard);
@@ -135,7 +138,7 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
         linearLayout.addView(topRatedTvCard);
 
 
-        return scrollView;
+        return swipeRefreshLayout;
     }
 
 
@@ -152,6 +155,12 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
                 .mainActivityComponent(mainActivityComponent)
                 .tvFragmentModule(new TvFragmentModule(this))
                 .build().inject(this);
+
+        airingTodayAdapter.setListType(ListType.AiringToday);
+        onTheAirAdapter.setListType(ListType.OnTheAir);
+        popularAdapter.setListType(ListType.Popular);
+        topRatedAdapter.setListType(ListType.TopRated);
+
         presenter.onCreate();
     }
 
@@ -161,12 +170,6 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
         presenter.onDestroy();
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.see_all_button) {
-            showToast("Feature NA");
-        }
-    }
 
     @Override
     public void showToast(String msg) {
@@ -174,52 +177,55 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View, 
     }
 
     @Override
-    public void onSucceedLoadingAiringTodayShowList() {
-        airingTodayRecycler.setAdapter(airingTodayAdapter);
-        airingTodayTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    public void onSucceedLoadingShowList(ListType listType) {
+        swipeRefreshLayout.setRefreshing(false);
+
+        switch (listType) {
+            case AiringToday:
+                airingTodayRecycler.setAdapter(airingTodayAdapter);
+                airingTodayTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                airingTodayTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            case OnTheAir:
+                onTheAirRecycler.setAdapter(onTheAirAdapter);
+                onTheAirTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                onTheAirTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            case Popular:
+                popularRecycler.setAdapter(popularAdapter);
+                popularTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                popularTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+                break;
+            default://top Rated
+                topRatedRecycler.setAdapter(topRatedAdapter);
+                topRatedTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                topRatedTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+
+                break;
+        }
     }
 
     @Override
-    public void onErrorLoadingAiringTodayShowList() {
-        airingTodayTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        airingTodayTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
+    public void onErrorLoadingShowList(ListType listType) {
+        swipeRefreshLayout.setRefreshing(false);
 
-    @Override
-    public void onSucceedLoadingOnTheAirShowList() {
-        onTheAirRecycler.setAdapter(onTheAirAdapter);
-        onTheAirTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void onErrorLoadingOnTheAirShowList() {
-        onTheAirTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        onTheAirTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void onSucceedLoadingPopularList() {
-        popularRecycler.setAdapter(popularAdapter);
-        popularTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingPopularList() {
-        popularTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        popularTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onSucceedLoadingTopRatedShowList() {
-        topRatedRecycler.setAdapter(topRatedAdapter);
-        topRatedTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onErrorLoadingTopRatedShowList() {
-        topRatedTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        topRatedTvCard.findViewById(R.id.progressBar).setVisibility(View.GONE);
+        switch (listType) {
+            case AiringToday:
+                airingTodayTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                airingTodayTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            case OnTheAir:
+                onTheAirTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                onTheAirTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            case Popular:
+                popularTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                popularTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+            default://top Rated
+                topRatedTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
+                topRatedTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+                break;
+        }
     }
 }

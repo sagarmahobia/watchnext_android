@@ -21,6 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 public class Presenter implements MoviesFragmentMvpContract.Presenter {
     private MoviesFragmentMvpContract.Model model;
     private MoviesFragmentMvpContract.View view;
+
     private List<Movie> inTheatersMovies;
     private List<Movie> topRatedMovies;
     private List<Movie> popularMovies;
@@ -51,9 +52,9 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.inTheatersMovies = movies;
-                    view.onSucceedLoadingInTheatersMovieList();
+                    view.onSucceedLoadingMovieList(ListType.InTheaters);
                 }, e -> {
-                    view.onErrorLoadingInTheatersMovieList();
+                    view.onErrorLoadingMovieList(ListType.InTheaters);
                 }));
 //upcoming
         Single<List<Movie>> singleUpcoming = Single.create(emitter -> {
@@ -68,9 +69,9 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.upcomingMovies = movies;
-                     view.onSucceedLoadingUpcomingMovieList();
+                    view.onSucceedLoadingMovieList(ListType.Upcoming);
                 }, e -> {
-                     view.onErrorLoadingUpcomingMovieList();
+                    view.onErrorLoadingMovieList(ListType.Upcoming);
                 }));
 //popular
         Single<List<Movie>> singlePopularMovies = Single.create(emitter -> {
@@ -85,9 +86,9 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.popularMovies = movies;
-                    view.onSucceedLoadingPopularMovieList();
+                    view.onSucceedLoadingMovieList(ListType.Popular);
                 }, e -> {
-                    view.onErrorLoadingPopularMovieList();
+                    view.onErrorLoadingMovieList(ListType.Popular);
                 }));
 //top rated
         Single<List<Movie>> singleTopRated = Single.create(emitter -> {
@@ -102,9 +103,9 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 subscribe(movies -> {
                     //todo handle null movies
                     this.topRatedMovies = movies;
-                     view.onSucceedLoadingTopRatedMovieList();
+                    view.onSucceedLoadingMovieList(ListType.TopRated);
                 }, e -> {
-                    view.onErrorLoadingTopRatedMovieList();
+                    view.onErrorLoadingMovieList(ListType.TopRated);
                 }));
 
 
@@ -115,80 +116,35 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
         disposables.dispose();
     }
 
-    //In Theater
+    private List<Movie> getMovieListByType(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                return inTheatersMovies;
+            case Upcoming:
+                return upcomingMovies;
+            case Popular:
+                return popularMovies;
+            default://top rated
+                return topRatedMovies;
+        }
+    }
+
     @Override
-    public void onBindInTheatersMovieCard(Card card, int position) {
-        Movie movie = inTheatersMovies.get(position);
+    public void onBindMovieCard(ListType listType, Card card, int position) {
+        Movie movie = getMovieListByType(listType).get(position);
         card.setTitle(movie.getTitle());
         card.setImage(movie.getPosterPath());
     }
 
     @Override
-    public void onInTheatersRecyclerItemClick(int position) {
+    public void onRecyclerItemClick(ListType listType, int position) {
+        String title = getMovieListByType(listType).get(position).getTitle();
+        view.showToast(title + " was clicked");
         //todo modify on click listener
-        view.showToast(inTheatersMovies.get(position).getTitle() + " was clicked");
-
     }
 
     @Override
-    public int getInTheatersCardsCount() {
-        return inTheatersMovies.size();
-    }
-
-    @Override
-    public void onBindUpcomingMovieCard(Card card, int position) {
-        Movie movie = upcomingMovies.get(position);
-        card.setTitle(movie.getTitle());
-        card.setImage(movie.getPosterPath());
-    }
-
-    @Override
-    public void onUpcomingRecyclerItemClick(int position) {
-        //todo modify on click listener
-        view.showToast(upcomingMovies.get(position).getTitle() + " was clicked");
-
-    }
-
-    @Override
-    public int getUpComingCardsCount() {
-        return upcomingMovies.size();
-    }
-
-    @Override
-    public void onBindPopularMovieCard(Card card, int position) {
-        Movie movie = popularMovies.get(position);
-        card.setTitle(movie.getTitle());
-        card.setImage(movie.getPosterPath());
-    }
-
-    @Override
-    public void onPopularRecyclerItemClick(int position) {
-        //todo modify on click listener
-        view.showToast(popularMovies.get(position).getTitle() + " was clicked");
-
-    }
-
-    @Override
-    public int getPopularCardsCount() {
-        return popularMovies.size();
-    }
-
-    @Override
-    public void onBindTopRatedMovieCard(Card card, int position) {
-        Movie movie = topRatedMovies.get(position);
-        card.setTitle(movie.getTitle());
-        card.setImage(movie.getPosterPath());
-    }
-
-    @Override
-    public void onTopRatedRecyclerItemClick(int position) {
-        //todo modify on click listener
-        view.showToast(topRatedMovies.get(position).getTitle() + " was clicked");
-
-    }
-
-    @Override
-    public int getTopRatedCardsCount() {
-        return topRatedMovies.size();
+    public int getCardsCount(ListType listType) {
+        return getMovieListByType(listType).size();
     }
 }

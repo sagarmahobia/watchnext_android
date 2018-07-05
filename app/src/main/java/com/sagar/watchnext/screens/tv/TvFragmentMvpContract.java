@@ -13,21 +13,9 @@ public class TvFragmentMvpContract {
     interface View {
         void showToast(String s);
 
-        void onSucceedLoadingAiringTodayShowList();
+        void onSucceedLoadingShowList(ListType listType);
 
-        void onErrorLoadingAiringTodayShowList();
-
-        void onSucceedLoadingOnTheAirShowList();
-
-        void onErrorLoadingOnTheAirShowList();
-
-        void onSucceedLoadingPopularList();
-
-        void onErrorLoadingPopularList();
-
-        void onSucceedLoadingTopRatedShowList();
-
-        void onErrorLoadingTopRatedShowList();
+        void onErrorLoadingShowList(ListType listType);
     }
 
     public interface Presenter {
@@ -35,34 +23,12 @@ public class TvFragmentMvpContract {
 
         void onDestroy();
 
-        //Airing Today
-        void onBindAiringTodayShowCard(Card card, int position);
+        //combined
+        void onBindCard(ListType listType, Card card, int position);
 
-        void onAiringTodayRecyclerItemClick(int position);
+        void onRecyclerItemClick(ListType listType, int position);
 
-        int getAiringTodayCardsCount();
-
-        //On The Air
-        void onBindOnTheAirShowCard(Card card, int position);
-
-        void onOnTheAirRecyclerItemClick(int position);
-
-        int getOnTheAirCardsCount();
-
-        //Popular
-        void onBindPopularShowCard(Card card, int position);
-
-        void onPopularRecyclerItemClick(int position);
-
-        int getPopularCardsCount();
-
-        //Top Rated
-
-        void onBindTopRatedShowCard(Card card, int position);
-
-        void onTopRatedRecyclerItemClick(int position);
-
-        int getTopRatedCardsCount();
+        int getCardsCount(ListType listType);
     }
 
     interface Model {
