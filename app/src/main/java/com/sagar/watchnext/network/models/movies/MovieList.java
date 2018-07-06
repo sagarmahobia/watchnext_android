@@ -1,11 +1,9 @@
 
 package com.sagar.watchnext.network.models.movies;
 
-import android.util.Log;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
 
 public class MovieList {
 

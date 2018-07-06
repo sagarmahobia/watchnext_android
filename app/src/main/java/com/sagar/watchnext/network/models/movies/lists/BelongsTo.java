@@ -30,7 +30,7 @@ public class BelongsTo {
     private String name;
 
     @SerializedName("poster_path")
-    private Object posterPath;
+    private String posterPath;
 
     public String getDescription() {
         return description;
@@ -60,7 +60,7 @@ public class BelongsTo {
         return name;
     }
 
-    public Object getPosterPath() {
+    public String getPosterPath() {
         return posterPath;
     }
 }

@@ -5,14 +5,13 @@ import com.sagar.watchnext.network.models.movies.credits.Credits;
 import com.sagar.watchnext.network.models.movies.images.Images;
 import com.sagar.watchnext.network.models.movies.lists.ListOfBelonging;
 import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
-import com.sagar.watchnext.network.models.movies.recommendations.Recommendations;
 import com.sagar.watchnext.network.models.movies.reviews.Reviews;
-import com.sagar.watchnext.network.models.movies.similars.Similars;
 import com.sagar.watchnext.network.models.movies.videos.Videos;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by SAGAR MAHOBIA on 01-Jul-18. at 12:17
@@ -32,6 +31,18 @@ public interface TmdbMovieRepo {
     @GET("movie/top_rated")
     Call<MovieList> getTopRatedMovies();
 
+    //Lists
+    @GET("movie/now_playing")
+    Call<MovieList> getInTheaterMovies(@Query("page") int page);
+
+    @GET("movie/upcoming")
+    Call<MovieList> getUpcomingMovies(@Query("page") int page);
+
+    @GET("movie/popular")
+    Call<MovieList> getPopularMovies(@Query("page") int page);
+
+    @GET("movie/top_rated")
+    Call<MovieList> getTopRatedMovies(@Query("page") int page);
 
 
     //per movie
@@ -44,19 +55,32 @@ public interface TmdbMovieRepo {
     @GET("movie/{movie_id}/images")
     Call<Images> getImages(@Path("movie_id") int movieId);
 
+    @GET("movie/{movie_id}/videos")
+    Call<Videos> getVideos(@Path("movie_id") int movieId);
+
     @GET("movie/{movie_id}/lists")
     Call<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/recommendations")
-    Call<Recommendations> getRecommendations(@Path("movie_id") int movieId);
+    Call<MovieList> getRecommendations(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/reviews")
     Call<Reviews> getReviews(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/similar")
-    Call<Similars> getSimilars(@Path("movie_id") int movieId);
+    Call<MovieList> getSimilars(@Path("movie_id") int movieId);
 
-    @GET("movie/{movie_id}/videos")
-    Call<Videos> getVideos(@Path("movie_id") int movieId);
+    @GET("movie/{movie_id}/lists")
+    Call<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId, @Query("page") int page);
+
+    @GET("movie/{movie_id}/recommendations")
+    Call<MovieList> getRecommendations(@Path("movie_id") int movieId, @Query("page") int page);
+
+    @GET("movie/{movie_id}/reviews")
+    Call<Reviews> getReviews(@Path("movie_id") int movieId, @Query("page") int page);
+
+    @GET("movie/{movie_id}/similar")
+    Call<MovieList> getSimilars(@Path("movie_id") int movieId, @Query("page") int page);
+
 
 }
