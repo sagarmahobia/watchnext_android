@@ -13,6 +13,13 @@ public class MovieDetail {
     @SerializedName("backdrop_path")
     private String backdropPath;
     //todo check data type
+/* "belongs_to_collection": {
+    "id": 344830,
+    "name": "Fifty Shades Collection",
+    "poster_path": "/oJrMaAhQlV5K9QFhulFehTn7JVn.jpg",
+    "backdrop_path": "/5OmblvyjPX4QRI77y9LPGttbHct.jpg"
+  }*/
+
     @SerializedName("belongs_to_collection")
     private Object belongsToCollection;
 
@@ -47,10 +54,10 @@ public class MovieDetail {
     private String posterPath;
 
     @SerializedName("production_companies")
-    private List<ProductionCompany> productionCompanies ;
+    private List<ProductionCompany> productionCompanies;
 
     @SerializedName("production_countries")
-    private List<ProductionCountry> productionCountries ;
+    private List<ProductionCountry> productionCountries;
 
     @SerializedName("release_date")
     private String releaseDate;
@@ -62,7 +69,7 @@ public class MovieDetail {
     private int runtime;
 
     @SerializedName("spoken_languages")
-    private List<SpokenLanguage> spokenLanguages  ;
+    private List<SpokenLanguage> spokenLanguages;
 
     @SerializedName("status")
     private String status;
