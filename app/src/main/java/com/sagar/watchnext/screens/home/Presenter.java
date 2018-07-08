@@ -112,8 +112,9 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                 view.startMovieDetailActivity(movieId);
                 break;
             default:
-                //todo modify on click listener
-                view.showToast(shows.get(position).getName() + " was clicked");
+                int tvId = shows.get(position).getId();
+                view.startTvDetailActivity(tvId);
+                break;
         }
     }
 

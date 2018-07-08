@@ -22,6 +22,8 @@ public interface HomeFragmentMvpContract {
 
         void startMovieDetailActivity(int movieId);
 
+        void startTvDetailActivity(int tv_id);
+
     }
 
     interface Presenter {

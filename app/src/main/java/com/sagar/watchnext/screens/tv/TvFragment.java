@@ -1,5 +1,6 @@
 package com.sagar.watchnext.screens.tv;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 import com.sagar.watchnext.screens.tv.Adapters.RecyclerAdapter;
+import com.sagar.watchnext.screens.tvdetailactivity.TvDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -227,5 +229,12 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View {
                 topRatedTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
                 break;
         }
+    }
+
+    @Override
+    public void startTvDetailActivity(int tv_id) {
+        Intent intent = new Intent(getContext(), TvDetailActivity.class);
+        intent.putExtra("tv_id",tv_id);
+        startActivity(intent);
     }
 }

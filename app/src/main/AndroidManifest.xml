@@ -27,7 +27,7 @@
         <activity
             android:name=".screens.moviedetailactivity.MovieDetailActivity"
             android:screenOrientation="portrait" />
-
+        <activity android:name=".screens.tvdetailactivity.TvDetailActivity" />
     </application>
 
 </manifest>

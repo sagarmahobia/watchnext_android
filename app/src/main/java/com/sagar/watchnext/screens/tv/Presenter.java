@@ -1,5 +1,7 @@
 package com.sagar.watchnext.screens.tv;
 
+import android.content.Intent;
+
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.tv.Show;
 
@@ -141,9 +143,10 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
 
     @Override
     public void onRecyclerItemClick(ListType listType, int position) {
-        //todo modify on click listener
-        String name = getListByType(listType).get(position).getName();
-        view.showToast(name + " was clicked");
+
+        int tvId = getListByType(listType).get(position).getId();
+        view.startTvDetailActivity(tvId);
+
     }
 
     @Override

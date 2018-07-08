@@ -25,6 +25,7 @@ import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 import com.sagar.watchnext.screens.home.adapters.RecyclerAdapter;
 import com.sagar.watchnext.screens.moviedetailactivity.MovieDetailActivity;
+import com.sagar.watchnext.screens.tvdetailactivity.TvDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -193,6 +194,14 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
 
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
         intent.putExtra("movie_id", movieId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void startTvDetailActivity(int tv_id) {
+
+        Intent intent = new Intent(getContext(), TvDetailActivity.class);
+        intent.putExtra("tv_id", tv_id);
         startActivity(intent);
     }
 }

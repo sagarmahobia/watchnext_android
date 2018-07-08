@@ -26,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class NetworkModule {
     private static final String TMDPEndPoint = "https://api.themoviedb.org/3/";
-    private static final String API_KEY = "2b3183f319e7b4fa4d6bbaa66289d5c1";//todo add key
+    private static final String API_KEY = "2b3183f319e7b4fa4d6bbaa66289d5c1";
 
     @Provides
     @ApplicationScope

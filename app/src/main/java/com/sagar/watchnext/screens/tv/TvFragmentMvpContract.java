@@ -16,6 +16,9 @@ public class TvFragmentMvpContract {
         void onSucceedLoadingShowList(ListType listType);
 
         void onErrorLoadingShowList(ListType listType);
+
+        void startTvDetailActivity(int tv_id);
+
     }
 
     public interface Presenter {
