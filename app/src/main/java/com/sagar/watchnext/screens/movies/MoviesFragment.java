@@ -1,5 +1,6 @@
 package com.sagar.watchnext.screens.movies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,13 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
+import com.sagar.watchnext.screens.moviedetailactivity.MovieDetailActivity;
 import com.sagar.watchnext.screens.movies.adapters.RecyclerAdapter;
 
 import java.util.ArrayList;
@@ -227,6 +228,13 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
                 topRatedMoviesCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
                 break;
         }
+    }
+
+    @Override
+    public void startMovieDetailActivity(int movieId) {
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        intent.putExtra("movie_id", movieId);
+        startActivity(intent);
     }
 
 }

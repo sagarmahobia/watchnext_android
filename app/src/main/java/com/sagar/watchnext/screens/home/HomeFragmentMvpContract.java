@@ -19,6 +19,9 @@ public interface HomeFragmentMvpContract {
         void onSucceedLoadingList(ListType listType);
 
         void onErrorLoadingList(ListType listType);
+
+        void startMovieDetailActivity(int movieId);
+
     }
 
     interface Presenter {

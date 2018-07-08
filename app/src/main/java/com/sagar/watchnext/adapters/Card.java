@@ -5,5 +5,6 @@ package com.sagar.watchnext.adapters;
  */
 public interface Card {
     void setTitle(String title);
-    void setImage(String url);
+
+    void setImage(String path);
 }

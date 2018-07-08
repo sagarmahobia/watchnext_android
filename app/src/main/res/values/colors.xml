@@ -7,7 +7,10 @@
     <color name="colorBackground">#0c0c0c</color>
     <color name="colorBackgroundCard">#191919</color>
     <color name="colorBackgroundCardLight">#262626</color>
+    <color name="colorBackgroundCardDetail">#333333</color>
 
+    <color name="white">#ffffff</color>
+    <color name="colorGrayText">#bdbdbd</color>
     <color name="colorNavDrawer">@color/colorBackgroundCardLight</color>
     <color name="colorNavHeader">@color/colorBackgroundCard</color>
     <color name="colorDrawable">#eeeeee</color>

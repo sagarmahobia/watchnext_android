@@ -1,8 +1,11 @@
 package com.sagar.watchnext.screens.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,6 +24,7 @@ import com.sagar.watchnext.R;
 import com.sagar.watchnext.screens.MainActivity;
 import com.sagar.watchnext.screens.MainActivityComponent;
 import com.sagar.watchnext.screens.home.adapters.RecyclerAdapter;
+import com.sagar.watchnext.screens.moviedetailactivity.MovieDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,5 +186,13 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                 onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
         }
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void startMovieDetailActivity(int movieId) {
+
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        intent.putExtra("movie_id", movieId);
+        startActivity(intent);
     }
 }

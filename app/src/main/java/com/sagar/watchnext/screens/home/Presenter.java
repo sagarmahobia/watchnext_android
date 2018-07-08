@@ -108,8 +108,8 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
     public void onRecyclerItemClick(ListType listType, int position) {
         switch (listType) {
             case InTheaters:
-                //todo modify on click listener
-                view.showToast(movies.get(position).getTitle() + " was clicked");
+                int movieId = movies.get(position).getId();
+                view.startMovieDetailActivity(movieId);
                 break;
             default:
                 //todo modify on click listener

@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.utils.ImageUrlUtil;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -29,8 +30,7 @@ public class CardViewHolder extends RecyclerView.ViewHolder implements Card {
     }
 
     @Override
-    public void setImage(String url) {
-        url = "https://image.tmdb.org/t/p/w500/" + url;
-        picasso.load(url).into((ImageView) view.findViewById(R.id.imagePoster));
+    public void setImage(String path) {
+        picasso.load(ImageUrlUtil.getPosterImageUrl(path)).into((ImageView) view.findViewById(R.id.imagePoster));
     }
 }

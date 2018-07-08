@@ -3,6 +3,7 @@ package com.sagar.watchnext;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.sagar.watchnext.utils.PixelDensityUtil;
 import com.squareup.picasso.Picasso;
 
 import dagger.Component;
@@ -24,4 +25,6 @@ public interface WatchNextApplicationComponent {
     TmdbTvRepo provideTmdbTvRepo();
 
     Picasso providesPicasso();
+
+    PixelDensityUtil providePixelDensityUtil();
 }

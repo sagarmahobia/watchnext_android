@@ -138,9 +138,8 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
 
     @Override
     public void onRecyclerItemClick(ListType listType, int position) {
-        String title = getMovieListByType(listType).get(position).getTitle();
-        view.showToast(title + " was clicked");
-        //todo modify on click listener
+        int movieId = getMovieListByType(listType).get(position).getId();
+        view.startMovieDetailActivity(movieId);
     }
 
     @Override

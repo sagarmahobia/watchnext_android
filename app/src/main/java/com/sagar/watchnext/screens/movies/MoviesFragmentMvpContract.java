@@ -17,6 +17,8 @@ public interface MoviesFragmentMvpContract {
         void onSucceedLoadingMovieList(ListType listType);
 
         void onErrorLoadingMovieList(ListType listType);
+
+        void startMovieDetailActivity(int movieId);
     }
 
     interface Presenter {
