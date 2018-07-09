@@ -3,13 +3,13 @@ package com.sagar.watchnext.screens.home;
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.models.tv.Show;
+import com.sagar.watchnext.network.repo.TmdbMovieRepo;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -28,46 +28,38 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
 
     private CompositeDisposable disposables;
 
+    private TmdbMovieRepo movieRepo;
+    private TmdbTvRepo tvRepo;
+
     @Inject
-    public Presenter(HomeFragmentMvpContract.View view, HomeFragmentMvpContract.Model model) {
+    public Presenter(HomeFragmentMvpContract.View view, HomeFragmentMvpContract.Model model, TmdbMovieRepo movieRepo, TmdbTvRepo tvRepo) {
         this.view = view;
         this.model = model;
+        this.movieRepo = movieRepo;
+        this.tvRepo = tvRepo;
         disposables = new CompositeDisposable();
     }
 
     @Override
     public void onCreate() {
 
-        Single<List<Movie>> singleMovie = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getInTheaterMovies());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singleMovie.subscribeOn(Schedulers.io()).
+
+        disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
                     //todo handle null movies
-                    this.movies = movies;
+                    this.movies = movies.getMovies();
                     view.onSucceedLoadingList(ListType.InTheaters);
                 }, e -> {
                     view.onErrorLoadingList(ListType.InTheaters);
                 }));
 
 
-        Single<List<Show>> singleTv = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getOnTheAirTv());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singleTv.subscribeOn(Schedulers.io())
+        disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shows -> {
                     //todo handle null movies
-                    this.shows = shows;
+                    this.shows = shows.getShows();
                     view.onSucceedLoadingList(ListType.OnTv);
                 }, e -> {
                     view.onErrorLoadingList(ListType.OnTv);

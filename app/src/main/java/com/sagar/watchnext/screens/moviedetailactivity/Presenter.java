@@ -1,15 +1,13 @@
 package com.sagar.watchnext.screens.moviedetailactivity;
 
 import com.sagar.watchnext.network.models.movies.Movie;
-import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
 import com.sagar.watchnext.network.models.movies.videos.Video;
+import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -28,25 +26,20 @@ public class Presenter implements MovieDetailActivityMvpContract.Presenter {
     private List<Movie> similars;
     private List<Video> videos;
 
+    private TmdbMovieRepo movieRepo;
 
     @Inject
-    public Presenter(MovieDetailActivityMvpContract.View view, MovieDetailActivityMvpContract.Model model) {
+    public Presenter(MovieDetailActivityMvpContract.View view, MovieDetailActivityMvpContract.Model model, TmdbMovieRepo movieRepo) {
         this.view = view;
         this.model = model;
+        this.movieRepo = movieRepo;
         disposable = new CompositeDisposable();
     }
 
     @Override
     public void onCreate(int movieId) {
-        Single<MovieDetail> movieDetailSingle = Single.create(e -> {
-            try {
-                e.onSuccess(model.getMovieDetail(movieId));
-            } catch (IOException error) {
-                e.onError(error);
-            }
-        });
 
-        disposable.add(movieDetailSingle.
+        disposable.add(movieRepo.getMovieDetail(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movieDetail -> {
@@ -55,58 +48,33 @@ public class Presenter implements MovieDetailActivityMvpContract.Presenter {
                     view.onErrorLoadingMovieDetail();
                 }));
 
-        Single<List<Movie>> recommendationSingle = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getRecommendations(movieId));
-            } catch (IOException error) {
-                emitter.onError(error);
-            }
-        });
-
-        disposable.add(recommendationSingle.
+        disposable.add(movieRepo.getRecommendations(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(recommendations -> {
-                    this.recommendations = recommendations;
+                    this.recommendations = recommendations.getMovies();
                     //todo notify view
                 }, error -> {
                     //todo notify view
                 })
         );
 
-
-        Single<List<Movie>> similarSingle = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getSimilars(movieId));
-            } catch (IOException error) {
-                emitter.onError(error);
-            }
-        });
-
-        disposable.add(similarSingle.
+        disposable.add(movieRepo.getSimilars(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(similars -> {
-                    this.similars = similars;
+                    this.similars = similars.getMovies();
                     //todo notify view
                 }, error -> {
                     //todo notify view
                 })
         );
 
-        Single<List<Video>> videosSingle = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getVideos(movieId));
-            } catch (IOException error) {
-                emitter.onError(error);
-            }
-        });
-
-        disposable.add(videosSingle.
+        disposable.add(movieRepo.getVideos(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(videos -> {
-                    this.videos = videos;
+                    this.videos = videos.getVideos();
                     //todo notify view
                 }, error -> {
                     //todo notify view

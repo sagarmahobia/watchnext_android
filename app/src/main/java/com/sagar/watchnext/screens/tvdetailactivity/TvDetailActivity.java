@@ -288,7 +288,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
     public void onErrorLoadingMovieDetail() {
         scrollView.setVisibility(View.INVISIBLE);
         //todo modify error handling
-        showToast("Couldn't load movie detail.");
+        showToast("Couldn't load show detail.");
         this.finish();
     }
 

@@ -6,7 +6,7 @@ import com.sagar.watchnext.network.models.people.images.Images;
 import com.sagar.watchnext.network.models.people.moviecredits.MovieCredits;
 import com.sagar.watchnext.network.models.people.tvcredits.TvCredits;
 
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
@@ -15,19 +15,19 @@ import retrofit2.http.Path;
  */
 public interface TmdbPeopleRepo {
     @GET("person/popular")
-    Call<Persons> getPopularPeople();
+    Observable<Persons> getPopularPeople();
 
     @GET("person/{person_id}")
-    Call<Detail> getDetail(@Path("person_id") int personId);
+    Observable<Detail> getDetail(@Path("person_id") int personId);
 
     @GET("person/{person_id}/images")
-    Call<Images> getImages(@Path("person_id") int personId);
+    Observable<Images> getImages(@Path("person_id") int personId);
 
     @GET("person/{person_id}/movie_credits")
-    Call<MovieCredits> getMovieCredits(@Path("person_id") int personId);
+    Observable<MovieCredits> getMovieCredits(@Path("person_id") int personId);
 
     @GET("person/{person_id}/tv_credits")
-    Call<TvCredits> getTvCredits(@Path("person_id") int personId);
+    Observable<TvCredits> getTvCredits(@Path("person_id") int personId);
 
 
 }

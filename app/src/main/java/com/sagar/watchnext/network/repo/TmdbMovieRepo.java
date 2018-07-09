@@ -8,7 +8,7 @@ import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
 import com.sagar.watchnext.network.models.movies.reviews.Reviews;
 import com.sagar.watchnext.network.models.movies.videos.Videos;
 
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -20,67 +20,67 @@ public interface TmdbMovieRepo {
 
     //Lists
     @GET("movie/now_playing")
-    Call<MovieList> getInTheaterMovies();
+    Observable<MovieList> getInTheaterMovies();
 
     @GET("movie/upcoming")
-    Call<MovieList> getUpcomingMovies();
+    Observable<MovieList> getUpcomingMovies();
 
     @GET("movie/popular")
-    Call<MovieList> getPopularMovies();
+    Observable<MovieList> getPopularMovies();
 
     @GET("movie/top_rated")
-    Call<MovieList> getTopRatedMovies();
+    Observable<MovieList> getTopRatedMovies();
 
-    //Lists
+    //Lists with page id
     @GET("movie/now_playing")
-    Call<MovieList> getInTheaterMovies(@Query("page") int page);
+    Observable<MovieList> getInTheaterMovies(@Query("page") int page);
 
     @GET("movie/upcoming")
-    Call<MovieList> getUpcomingMovies(@Query("page") int page);
+    Observable<MovieList> getUpcomingMovies(@Query("page") int page);
 
     @GET("movie/popular")
-    Call<MovieList> getPopularMovies(@Query("page") int page);
+    Observable<MovieList> getPopularMovies(@Query("page") int page);
 
     @GET("movie/top_rated")
-    Call<MovieList> getTopRatedMovies(@Query("page") int page);
+    Observable<MovieList> getTopRatedMovies(@Query("page") int page);
 
 
     //per movie
     @GET("movie/{movie_id}")
-    Call<MovieDetail> getMovieDetail(@Path("movie_id") int movieId);
+    Observable<MovieDetail> getMovieDetail(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/credits")
-    Call<Credits> getCredits(@Path("movie_id") int movieId);
+    Observable<Credits> getCredits(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/images")
-    Call<Images> getImages(@Path("movie_id") int movieId);
+    Observable<Images> getImages(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/videos")
-    Call<Videos> getVideos(@Path("movie_id") int movieId);
+    Observable<Videos> getVideos(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/lists")
-    Call<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId);
+    Observable<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/recommendations")
-    Call<MovieList> getRecommendations(@Path("movie_id") int movieId);
+    Observable<MovieList> getRecommendations(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/reviews")
-    Call<Reviews> getReviews(@Path("movie_id") int movieId);
+    Observable<Reviews> getReviews(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/similar")
-    Call<MovieList> getSimilars(@Path("movie_id") int movieId);
+    Observable<MovieList> getSimilars(@Path("movie_id") int movieId);
 
     @GET("movie/{movie_id}/lists")
-    Call<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId, @Query("page") int page);
+    Observable<ListOfBelonging> getListOfBelonging(@Path("movie_id") int movieId, @Query("page") int page);
 
     @GET("movie/{movie_id}/recommendations")
-    Call<MovieList> getRecommendations(@Path("movie_id") int movieId, @Query("page") int page);
+    Observable<MovieList> getRecommendations(@Path("movie_id") int movieId, @Query("page") int page);
 
     @GET("movie/{movie_id}/reviews")
-    Call<Reviews> getReviews(@Path("movie_id") int movieId, @Query("page") int page);
+    Observable<Reviews> getReviews(@Path("movie_id") int movieId, @Query("page") int page);
 
     @GET("movie/{movie_id}/similar")
-    Call<MovieList> getSimilars(@Path("movie_id") int movieId, @Query("page") int page);
+    Observable<MovieList> getSimilars(@Path("movie_id") int movieId, @Query("page") int page);
 
 
 }

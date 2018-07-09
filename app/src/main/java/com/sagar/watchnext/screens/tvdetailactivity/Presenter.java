@@ -1,15 +1,9 @@
 package com.sagar.watchnext.screens.tvdetailactivity;
 
-import com.sagar.watchnext.network.models.people.detail.Detail;
-import com.sagar.watchnext.network.models.tv.details.Details;
-
-import java.io.IOException;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -24,23 +18,20 @@ public class Presenter implements TvDetailActivityMvpContract.Presenter {
     private TvDetailActivityMvpContract.View view;
     private CompositeDisposable disposable;
 
+    private TmdbTvRepo tvRepo;
+
     @Inject
-    public Presenter(TvDetailActivityMvpContract.Model model, TvDetailActivityMvpContract.View view) {
+    public Presenter(TvDetailActivityMvpContract.Model model, TvDetailActivityMvpContract.View view, TmdbTvRepo tvRepo) {
         this.model = model;
         this.view = view;
+        this.tvRepo = tvRepo;
         disposable = new CompositeDisposable();
     }
 
     @Override
     public void onCreate(int tvId) {
-        Single<Details> detailsSingle = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getTvDetail(tvId));
-            } catch (IOException error) {
-                emitter.onError(error);
-            }
-        });
-        disposable.add(detailsSingle.
+
+        disposable.add(tvRepo.getDetails(tvId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(details -> {

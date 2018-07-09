@@ -1,16 +1,13 @@
 package com.sagar.watchnext.screens.tv;
 
-import android.content.Intent;
-
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.tv.Show;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -29,46 +26,36 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
     private List<Show> popularShows;
     private List<Show> topRatedShows;
 
+    private TmdbTvRepo tvRepo;
+
     @Inject
-    public Presenter(TvFragmentMvpContract.Model model, TvFragmentMvpContract.View view) {
+    public Presenter(TvFragmentMvpContract.Model model, TvFragmentMvpContract.View view, TmdbTvRepo tvRepo) {
         this.model = model;
         this.view = view;
+        this.tvRepo = tvRepo;
         disposables = new CompositeDisposable();
     }
 
     @Override
     public void onCreate() {
+
         //airingToday
-        Single<List<Show>> singleAiringTodayShow = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getAiringToday());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singleAiringTodayShow.subscribeOn(Schedulers.io()).
+        disposables.add(tvRepo.getAiringToday().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
-                subscribe(movies -> {
+                subscribe(shows -> {
                     //todo handle null movies
-                    this.airingTodayShows = movies;
+                    this.airingTodayShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.AiringToday);
                 }, e -> {
                     view.onErrorLoadingShowList(ListType.AiringToday);
                 }));
 
         //on the air
-        Single<List<Show>> singleOnTheAirShow = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getOnTheAir());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singleOnTheAirShow.subscribeOn(Schedulers.io()).
+        disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
-                subscribe(movies -> {
+                subscribe(shows -> {
                     //todo handle null movies
-                    this.onTheAirShows = movies;
+                    this.onTheAirShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.OnTheAir);
 
                 }, e -> {
@@ -76,38 +63,24 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 }));
 
         //popular
-        Single<List<Show>> singlePopularShow = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getPopular());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singlePopularShow.subscribeOn(Schedulers.io()).
+        disposables.add(tvRepo.getPopular().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
-                subscribe(movies -> {
+                subscribe(shows -> {
                     //todo handle null movies
-                    this.popularShows = movies;
+                    this.popularShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.Popular);
 
                 }, e -> {
                     view.onErrorLoadingShowList(ListType.Popular);
 
-                }));  //popular
+                }));
 
-//top rated
-        Single<List<Show>> singleTopRatedShow = Single.create(emitter -> {
-            try {
-                emitter.onSuccess(model.getTopRated());
-            } catch (IOException e) {
-                emitter.onError(e);
-            }
-        });
-        disposables.add(singleTopRatedShow.subscribeOn(Schedulers.io()).
+        //top rated
+        disposables.add(tvRepo.getTopRated().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
-                subscribe(movies -> {
+                subscribe(shows -> {
                     //todo handle null movies
-                    this.topRatedShows = movies;
+                    this.topRatedShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.TopRated);
                 }, e -> {
                     view.onErrorLoadingShowList(ListType.TopRated);

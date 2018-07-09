@@ -1,11 +1,6 @@
 package com.sagar.watchnext.screens.home;
 
-import com.sagar.watchnext.network.models.movies.Movie;
-import com.sagar.watchnext.network.models.tv.Show;
 import com.sagar.watchnext.adapters.Card;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:09
@@ -44,11 +39,6 @@ public interface HomeFragmentMvpContract {
     }
 
     interface Model {
-        //movie
-        List<Movie> getInTheaterMovies() throws IOException;
-
-        //tv
-        List<Show> getOnTheAirTv() throws IOException;
 
     }
 }

@@ -1,9 +1,8 @@
 package com.sagar.watchnext;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
@@ -73,6 +72,7 @@ public class NetworkModule {
         return new Retrofit
                 .Builder()
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(TMDPEndPoint)
                 .client(client)
                 .build();
