@@ -1,9 +1,5 @@
 package com.sagar.watchnext.utils;
 
-import com.sagar.watchnext.ApplicationScope;
-
-import javax.inject.Inject;
-
 /**
  * Created by SAGAR MAHOBIA on 07-Jul-18. at 22:23
  */

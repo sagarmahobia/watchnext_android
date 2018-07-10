@@ -13,18 +13,12 @@ import javax.inject.Inject;
 @ApplicationScope
 public class PixelDensityUtil {
 
-    private Context context;
     private int pxWidth;
-    private int pxHeight;
-    private float density;
-
 
     @Inject
     PixelDensityUtil(Context context) {
-        this.context = context;
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         pxWidth = (displayMetrics.widthPixels);
-        pxHeight = (displayMetrics.heightPixels);
     }
 
     public int getBackDropImageHeight() {

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackgroundCard"
-    tools:context=".screens.tvdetailactivity.TvDetailActivity">
+    tools:context=".activities.tvdetail.TvDetailActivity">
 
     <ScrollView
         android:id="@+id/content_scroll_view"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackgroundCard"
-    tools:context=".screens.moviedetailactivity.MovieDetailActivity">
+    tools:context=".activities.moviedetail.MovieDetailActivity">
 
     <ScrollView
         android:id="@+id/content_scroll_view"
