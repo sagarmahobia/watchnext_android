@@ -15,6 +15,9 @@ public interface MoviesFragmentMvpContract {
         void onErrorLoadingMovieList(ListType listType);
 
         void startMovieDetailActivity(int movieId);
+
+        void notifyAdaptersNewData(ListType listType);
+
     }
 
     interface Presenter {
@@ -23,13 +26,14 @@ public interface MoviesFragmentMvpContract {
 
         void onDestroy();
 
-        //combined
+        //adapter calls
         void onBindMovieCard(ListType listType, Card card, int position);
 
         void onRecyclerItemClick(ListType listType, int position);
 
         int getCardsCount(ListType listType);
 
+        void loadMore(ListType listType, int pageToLoad);
 
     }
 

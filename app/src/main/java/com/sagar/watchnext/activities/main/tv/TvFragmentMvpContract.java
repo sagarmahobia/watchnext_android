@@ -15,6 +15,8 @@ public class TvFragmentMvpContract {
 
         void startTvDetailActivity(int tv_id);
 
+        void notifyAdaptersNewData(ListType listType);
+
     }
 
     public interface Presenter {
@@ -22,12 +24,14 @@ public class TvFragmentMvpContract {
 
         void onDestroy();
 
-        //combined
+        //adapter calls
         void onBindCard(ListType listType, Card card, int position);
 
         void onRecyclerItemClick(ListType listType, int position);
 
         int getCardsCount(ListType listType);
+
+        void loadMore(ListType listType, int pageToLoad);
     }
 
     interface Model {

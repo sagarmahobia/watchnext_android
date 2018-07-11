@@ -1,21 +1,23 @@
 package com.sagar.watchnext.activities.main.tv;
 
+import com.sagar.watchnext.ContentType;
+
 /**
  * Created by SAGAR MAHOBIA on 05-Jul-18. at 23:25
  */
 public enum ListType {
-    AiringToday(0),
-    OnTheAir(1),
-    Popular(2),
-    TopRated(3);
+    AiringToday(ContentType.TV_SHOW),
+    OnTheAir(ContentType.TV_SHOW),
+    Popular(ContentType.TV_SHOW),
+    TopRated(ContentType.TV_SHOW);
 
-    private int index;
+    private ContentType contentType;
 
-    ListType(int index) {
-        this.index = index;
+    ListType(ContentType contentType) {
+        this.contentType = contentType;
     }
 
-    public int getIndex() {
-        return index;
+    public ContentType getContentType() {
+        return contentType;
     }
 }

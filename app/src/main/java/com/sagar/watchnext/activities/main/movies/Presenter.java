@@ -45,7 +45,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
         disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
-                    //todo handle null movies
                     this.inTheatersMovies = movies.getMovies();
                     view.onSucceedLoadingMovieList(ListType.InTheaters);
                 }, e -> {
@@ -56,7 +55,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
         disposables.add(movieRepo.getUpcomingMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
-                    //todo handle null movies
                     this.upcomingMovies = movies.getMovies();
                     view.onSucceedLoadingMovieList(ListType.Upcoming);
                 }, e -> {
@@ -67,7 +65,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
         disposables.add(movieRepo.getPopularMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
-                    //todo handle null movies
                     this.popularMovies = movies.getMovies();
                     view.onSucceedLoadingMovieList(ListType.Popular);
                 }, e -> {
@@ -78,7 +75,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
         disposables.add(movieRepo.getTopRatedMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
-                    //todo handle null movies
                     this.topRatedMovies = movies.getMovies();
                     view.onSucceedLoadingMovieList(ListType.TopRated);
                 }, e -> {
@@ -122,5 +118,57 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
     @Override
     public int getCardsCount(ListType listType) {
         return getMovieListByType(listType).size();
+    }
+
+    @Override
+    public void loadMore(ListType listType, int pageToLoad) {
+
+        switch (listType) {
+            case InTheaters:
+                disposables.add(movieRepo.getInTheaterMovies(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(movies -> {
+                            this.inTheatersMovies.addAll(movies.getMovies());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+            case Upcoming:
+                disposables.add(movieRepo.getUpcomingMovies(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(movies -> {
+                            this.upcomingMovies.addAll(movies.getMovies());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+            case Popular:
+                disposables.add(movieRepo.getPopularMovies(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(movies -> {
+                            this.popularMovies.addAll(movies.getMovies());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+            default://top rated
+                disposables.add(movieRepo.getTopRatedMovies(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(movies -> {
+                            this.topRatedMovies.addAll(movies.getMovies());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+        }
+
     }
 }

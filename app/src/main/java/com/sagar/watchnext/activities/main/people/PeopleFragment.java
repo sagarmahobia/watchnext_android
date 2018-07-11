@@ -75,7 +75,7 @@ public class PeopleFragment extends Fragment implements PeopleFragmentMvpContrac
                 linearLayout, false);
         ((TextView) popularPeople.findViewById(R.id.card_header_text)).setText("Popular");
 
-        popularPeople.findViewById(R.id.see_all_button).setOnClickListener(this);
+//        popularPeople.findViewById(R.id.see_all_button).setOnClickListener(this);
 
         linearLayout.addView(popularPeople);
 
@@ -98,8 +98,8 @@ public class PeopleFragment extends Fragment implements PeopleFragmentMvpContrac
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.see_all_button) {
-            Toast.makeText(getContext(), "stub . to be implemented", Toast.LENGTH_SHORT).show();
-        }
+//        if (view.getId() == R.id.see_all_button) {
+//            Toast.makeText(getContext(), "stub . to be implemented", Toast.LENGTH_SHORT).show();
+//        }
     }
 }

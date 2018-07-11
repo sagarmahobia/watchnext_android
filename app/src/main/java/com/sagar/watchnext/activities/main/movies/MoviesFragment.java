@@ -22,6 +22,7 @@ import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.main.MainActivityComponent;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.main.movies.adapters.RecyclerAdapter;
+import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +74,6 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString("");
-//        }
-
     }
 
 
@@ -87,8 +84,7 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
 
         swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
         LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate());
+
 
         inTheatersMoviesCard = (RelativeLayout) inflater.inflate(
                 R.layout.card_horizontal_recycler,
@@ -112,11 +108,6 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
         ((TextView) popularMoviesCard.findViewById(R.id.card_header_text)).setText("Popular");
         ((TextView) topRatedMoviesCard.findViewById(R.id.card_header_text)).setText("Top Rated");
 
-        inTheatersMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-        upcomingMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-        popularMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-        topRatedMoviesCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-
 
         recyclerViewInTheaters = inTheatersMoviesCard.findViewById(R.id.horizontal_list_recycler);
         recyclerViewUpcoming = upcomingMoviesCard.findViewById(R.id.horizontal_list_recycler);
@@ -133,12 +124,68 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
         recyclerViewPopular.setLayoutManager(linearLayoutManagers.get(2));
         recyclerViewTopRated.setLayoutManager(linearLayoutManagers.get(3));
 
+
+        EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewInTheaters.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        inTheatersMoviesCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                        presenter.loadMore(ListType.InTheaters, pageToLoad);
+                    }
+                };
+
+
+        EndlessRecyclerViewScrollListener scrollListenerForUpcoming =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewUpcoming.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        upcomingMoviesCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                        presenter.loadMore(ListType.Upcoming, pageToLoad);
+
+                    }
+                };
+
+        EndlessRecyclerViewScrollListener scrollListenerForPopular =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewPopular.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        popularMoviesCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                        presenter.loadMore(ListType.Popular, pageToLoad);
+
+                    }
+                };
+
+        EndlessRecyclerViewScrollListener scrollListenerForTopRated =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewTopRated.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        topRatedMoviesCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                        presenter.loadMore(ListType.TopRated, pageToLoad);
+
+                    }
+                };
+
+        recyclerViewInTheaters.addOnScrollListener(scrollListenerForInTheaters);
+        recyclerViewUpcoming.addOnScrollListener(scrollListenerForUpcoming);
+        recyclerViewPopular.addOnScrollListener(scrollListenerForPopular);
+        recyclerViewTopRated.addOnScrollListener(scrollListenerForTopRated);
+
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            presenter.onCreate();
+            scrollListenerForInTheaters.resetState();
+            scrollListenerForUpcoming.resetState();
+            scrollListenerForPopular.resetState();
+            scrollListenerForTopRated.resetState();
+        });
+
+
         linearLayout.addView(inTheatersMoviesCard);
         linearLayout.addView(upcomingMoviesCard);
         linearLayout.addView(popularMoviesCard);
         linearLayout.addView(topRatedMoviesCard);
 
-
+        swipeRefreshLayout.setRefreshing(true);
         return swipeRefreshLayout;
     }
 
@@ -235,6 +282,28 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
         intent.putExtra("movie_id", movieId);
         startActivity(intent);
+    }
+
+    @Override
+    public void notifyAdaptersNewData(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                inTheatersMoviesAdapter.notifyDataSetChanged();
+                inTheatersMoviesCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+            case Upcoming:
+                upcomingMoviesAdapter.notifyDataSetChanged();
+                upcomingMoviesCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+            case Popular:
+                popularMoviesAdapter.notifyDataSetChanged();
+                popularMoviesCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+            case TopRated:
+                topRatedMoviesAdapter.notifyDataSetChanged();
+                topRatedMoviesCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+        }
     }
 
 }

@@ -47,7 +47,7 @@ public class Presenter implements MovieDetailActivityMvpContract.Presenter {
                 }, error -> {
                     view.onErrorLoadingMovieDetail();
                 }));
-
+ /*
         disposable.add(movieRepo.getRecommendations(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
@@ -80,6 +80,8 @@ public class Presenter implements MovieDetailActivityMvpContract.Presenter {
                     //todo notify view
                 })
         );
+
+ */
     }
 
     @Override

@@ -47,7 +47,6 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
         disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
-                    //todo handle null movies
                     this.movies = movies.getMovies();
                     view.onSucceedLoadingList(ListType.InTheaters);
                 }, e -> {
@@ -58,13 +57,42 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
         disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shows -> {
-                    //todo handle null movies
                     this.shows = shows.getShows();
                     view.onSucceedLoadingList(ListType.OnTv);
                 }, e -> {
                     view.onErrorLoadingList(ListType.OnTv);
                 }));
 
+    }
+
+    @Override
+    public void loadMore(ListType listType, int pageToLoad) {
+        switch (listType) {
+            case InTheaters:
+                disposables.add(movieRepo.getInTheaterMovies(pageToLoad).
+                        subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(movieList -> {
+                            this.movies.addAll(movieList.getMovies());
+                            view.notifyAdaptersNewData(listType);
+                        }, error -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+            case OnTv:
+                disposables.add(tvRepo.getOnTheAir(pageToLoad).
+                        subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(tvList -> {
+                            this.shows.addAll(tvList.getShows());
+                            view.notifyAdaptersNewData(listType);
+                        }, error -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+        }
     }
 
 
@@ -83,8 +111,8 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
 
     @Override
     public void onBindCard(ListType listType, Card card, int position) {
-        switch (listType) {
-            case InTheaters:
+        switch (listType.getContentType()) {
+            case MOVIE:
                 Movie movie = movies.get(position);
                 card.setTitle(movie.getTitle());
                 card.setImage(movie.getPosterPath());
@@ -98,8 +126,8 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
 
     @Override
     public void onRecyclerItemClick(ListType listType, int position) {
-        switch (listType) {
-            case InTheaters:
+        switch (listType.getContentType()) {
+            case MOVIE:
                 int movieId = movies.get(position).getId();
                 view.startMovieDetailActivity(movieId);
                 break;

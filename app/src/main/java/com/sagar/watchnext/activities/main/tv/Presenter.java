@@ -43,7 +43,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
         disposables.add(tvRepo.getAiringToday().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
-                    //todo handle null movies
                     this.airingTodayShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.AiringToday);
                 }, e -> {
@@ -54,7 +53,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
         disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
-                    //todo handle null movies
                     this.onTheAirShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.OnTheAir);
 
@@ -66,7 +64,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
         disposables.add(tvRepo.getPopular().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
-                    //todo handle null movies
                     this.popularShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.Popular);
 
@@ -79,7 +76,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
         disposables.add(tvRepo.getTopRated().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
-                    //todo handle null movies
                     this.topRatedShows = shows.getShows();
                     view.onSucceedLoadingShowList(ListType.TopRated);
                 }, e -> {
@@ -126,5 +122,59 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
     public int getCardsCount(ListType listType) {
         return getListByType(listType).size();
 
+    }
+
+    @Override
+    public void loadMore(ListType listType, int pageToLoad) {
+        switch (listType) {
+            case AiringToday:
+                disposables.add(tvRepo.getAiringToday(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(shows -> {
+                            this.airingTodayShows.addAll(shows.getShows());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");   //todo handle error
+                        }));
+
+                break;
+            case OnTheAir:
+                disposables.add(tvRepo.getOnTheAir(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(shows -> {
+                            this.onTheAirShows.addAll(shows.getShows());
+                            view.notifyAdaptersNewData(listType);
+
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+
+                break;
+            case Popular:
+                disposables.add(tvRepo.getPopular(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(shows -> {
+                            this.popularShows.addAll(shows.getShows());
+                            view.notifyAdaptersNewData(listType);
+
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+            case TopRated:
+                disposables.add(tvRepo.getTopRated(pageToLoad).subscribeOn(Schedulers.io()).
+                        observeOn(AndroidSchedulers.mainThread()).
+                        subscribe(shows -> {
+                            this.topRatedShows.addAll(shows.getShows());
+                            view.notifyAdaptersNewData(listType);
+                        }, e -> {
+                            //todo modify error
+                            view.showToast("Something went wrong");
+                        }));
+                break;
+        }
     }
 }

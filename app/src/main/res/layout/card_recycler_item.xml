@@ -26,6 +26,8 @@
                 app:srcCompat="@drawable/ic_error_outline_black_24dp" />
 
             <TextView
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:id="@+id/title"
                 android:layout_width="125dp"
                 android:layout_height="55dp"

@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.sagar.watchnext.activities.main.MainActivityComponent;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.main.home.adapters.RecyclerAdapter;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
+import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +78,7 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
 
         swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
         LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate());
+
 
         inTheatersCard = (RelativeLayout) inflater.inflate(
                 R.layout.card_horizontal_recycler,
@@ -92,11 +91,6 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
         ((TextView) inTheatersCard.findViewById(R.id.card_header_text)).setText("In Theaters");
         ((TextView) onTvCard.findViewById(R.id.card_header_text)).setText("On TV");
 
-        //todo modify on click listener
-        inTheatersCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-
-        onTvCard.findViewById(R.id.see_all_button).setOnClickListener(v -> showToast("Feature N/A"));
-
         recyclerViewOnTv = onTvCard.findViewById(R.id.horizontal_list_recycler);
         recyclerViewInTheaters = inTheatersCard.findViewById(R.id.horizontal_list_recycler);
 
@@ -108,12 +102,39 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
         recyclerViewOnTv.setLayoutManager(linearLayoutManagers.get(0));
         recyclerViewInTheaters.setLayoutManager(linearLayoutManagers.get(1));
 
+        EndlessRecyclerViewScrollListener scrollListenerForOnTv =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewOnTv.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        presenter.loadMore(ListType.OnTv, pageToLoad);
+                        onTvCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                    }
+                };
+
+        EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewInTheaters.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        presenter.loadMore(ListType.InTheaters, pageToLoad);
+                        inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+
+                    }
+                };
+
+        recyclerViewOnTv.addOnScrollListener(scrollListenerForOnTv);
+        recyclerViewInTheaters.addOnScrollListener(scrollListenerForInTheaters);
+
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            presenter.onCreate();
+            scrollListenerForOnTv.resetState();
+            scrollListenerForInTheaters.resetState();
+        });
 
         linearLayout.addView(inTheatersCard);
         linearLayout.addView(onTvCard);
 
-        Log.d("Lifecycle", "On create view called");
-
+        swipeRefreshLayout.setRefreshing(true);
         return swipeRefreshLayout;
     }
 
@@ -143,7 +164,6 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
     public void onDestroyView() {
         super.onDestroyView();
         presenter.onDestroy();
-        Log.d("Lifecycle", "On destroy view called");
     }
 
 
@@ -177,7 +197,6 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
             case InTheaters:
                 inTheatersCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
                 inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-
                 break;
             default:
                 onTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
@@ -200,5 +219,19 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
         Intent intent = new Intent(getContext(), TvDetailActivity.class);
         intent.putExtra("tv_id", tv_id);
         startActivity(intent);
+    }
+
+    @Override
+    public void notifyAdaptersNewData(ListType listType) {
+        switch (listType) {
+            case InTheaters:
+                inTheatersRecyclerAdapter.notifyDataSetChanged();
+                inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+            case OnTv:
+                onTvRecyclerAdapter.notifyDataSetChanged();
+                onTvCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                break;
+        }
     }
 }

@@ -1,20 +1,22 @@
 package com.sagar.watchnext.activities.main.home;
 
 
+import com.sagar.watchnext.ContentType;
+
 /**
  * Created by SAGAR MAHOBIA on 05-Jul-18. at 21:30
  */
 public enum ListType {
-    InTheaters(0),
-    OnTv(1);
+    InTheaters(ContentType.MOVIE),
+    OnTv(ContentType.TV_SHOW);
 
-    private int index;
+    private ContentType contentType;
 
-    ListType(int index) {
-        this.index = index;
+    ListType(ContentType contentType) {
+        this.contentType = contentType;
     }
 
-    int getIndex() {
-        return this.index;
+    public ContentType getContentType() {
+        return contentType;
     }
 }
