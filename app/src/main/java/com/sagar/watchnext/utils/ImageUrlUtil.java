@@ -6,11 +6,11 @@ package com.sagar.watchnext.utils;
 public class ImageUrlUtil {
 
     public static String getBackdropImageUrl(String backdropPath) {
-        return "https://image.tmdb.org/t/p/w1280" + backdropPath;
+        return "https://image.tmdb.org/t/p/w780" + backdropPath;
     }
 
     public static String getPosterImageUrl(String posterPath) {
-        return "https://image.tmdb.org/t/p/w500" + posterPath;
+        return "https://image.tmdb.org/t/p/w342" + posterPath;
     }
 
 }

@@ -13,6 +13,8 @@
     <color name="colorGrayText">#bdbdbd</color>
     <color name="colorNavDrawer">@color/colorBackgroundCardLight</color>
     <color name="colorNavHeader">@color/colorBackgroundCard</color>
-    <color name="colorDrawable">#eeeeee</color>
+    <color name="colorLightText">#eeeeee</color>
+    <color name="colorNavDrawable">#eeeeee</color>
+    <color name="colorDarkDrawable">#404040</color>
     <color name="rippleColor">#649e9e9e</color>
 </resources>

@@ -29,7 +29,5 @@ public abstract class BaseRecyclerAdapter extends RecyclerView.Adapter<CardViewH
         return new CardViewHolder(view, picasso);
     }
 
-//
-
 
 }

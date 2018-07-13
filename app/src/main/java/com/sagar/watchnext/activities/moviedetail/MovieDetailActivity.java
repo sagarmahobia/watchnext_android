@@ -24,6 +24,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -165,21 +166,31 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         getSupportActionBar().setTitle(movieDetail.getTitle());
         scrollView.setVisibility(View.VISIBLE);
 
-        picasso.load(ImageUrlUtil.getBackdropImageUrl(movieDetail.getBackdropPath())).into(backDropImage);
-        picasso.load(ImageUrlUtil.getPosterImageUrl(movieDetail.getPosterPath())).into(posterImage);
+        picasso.load(ImageUrlUtil.getBackdropImageUrl(movieDetail.getBackdropPath()))
+                .error(R.drawable.ic_broken_image)
+                .placeholder(R.drawable.ic_image)
+                .into(backDropImage);
+        picasso.load(ImageUrlUtil.getPosterImageUrl(movieDetail.getPosterPath()))
+                .error(R.drawable.ic_broken_image)
+                .placeholder(R.drawable.ic_image)
+                .into(posterImage);
 
         movieTitle.setText(movieDetail.getTitle());
-        movieYear.setText(movieDetail.getReleaseDate().substring(0, 4));
 
+        String releaseDate = movieDetail.getReleaseDate();
+        if (releaseDate != null && releaseDate.length() > 4) {
+            movieYear.setText(releaseDate.substring(0, 4));
+        }
         int t = movieDetail.getRuntime();
         int hours = t / 60; //since both are ints, you get an int
         int minutes = t % 60;
 
-        if (hours == 0) {
+        if (hours == 0 && minutes == 0) {
+            movieRuntime.setText("");
+        } else if (hours == 0) {
             movieRuntime.setText(String.format("%02dm", minutes));
         } else if (minutes == 0) {
             movieRuntime.setText(String.format("%02dh", hours));
-
         } else {
             movieRuntime.setText(String.format("%02dh %02dm", hours, minutes));
         }
@@ -222,7 +233,6 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
             statusText.setText(status);
         }
 
-        String releaseDate = movieDetail.getReleaseDate();
         if (releaseDate != null) {
             releaseDateText.setText(releaseDate);
         }

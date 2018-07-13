@@ -12,7 +12,6 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -137,7 +136,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
             return;
         }
         swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(tv_id));//todo change
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(tv_id));
 
         presenter.onCreate(tv_id);
     }
@@ -165,21 +164,31 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
         getSupportActionBar().setTitle(tvDetails.getName());
         scrollView.setVisibility(View.VISIBLE);
 
-        picasso.load(ImageUrlUtil.getBackdropImageUrl(tvDetails.getBackdropPath())).into(backDropImage);
-        picasso.load(ImageUrlUtil.getPosterImageUrl(tvDetails.getPosterPath())).into(posterImage);
+        picasso.load(ImageUrlUtil.getBackdropImageUrl(tvDetails.getBackdropPath()))
+                .error(R.drawable.ic_broken_image)
+                .placeholder(R.drawable.ic_image)
+                .into(backDropImage);
+        picasso.load(ImageUrlUtil.getPosterImageUrl(tvDetails.getPosterPath()))
+                .error(R.drawable.ic_broken_image)
+                .placeholder(R.drawable.ic_image)
+                .into(posterImage);
 
         title.setText(tvDetails.getName());
-        year.setText(tvDetails.getFirstAirDate().substring(0, 4));
+        String firstAirDate = tvDetails.getFirstAirDate();
+        if (firstAirDate != null && firstAirDate.length() >= 4) {
+            year.setText(firstAirDate.substring(0, 4));
+        }
 
         int t = tvDetails.getEpisodeRunTimeList().get(0);
         int hours = t / 60; //since both are ints, you get an int
         int minutes = t % 60;
 
-        if (hours == 0) {
+        if (hours == 0 && minutes == 0) {
+            runtime.setText("");
+        } else if (hours == 0) {
             runtime.setText(String.format("%02dm", minutes));
         } else if (minutes == 0) {
             runtime.setText(String.format("%02dh", hours));
-
         } else {
             runtime.setText(String.format("%02dh %02dm", hours, minutes));
         }
@@ -226,7 +235,6 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
             showStatusText.setText(showStatus);
         }
 
-        String firstAirDate = tvDetails.getFirstAirDate();
         if (firstAirDate != null) {
             firstAirDateText.setText(firstAirDate);
         }
@@ -270,7 +278,6 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("SPAN", "clicked");
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(homepage));
                     startActivity(i);

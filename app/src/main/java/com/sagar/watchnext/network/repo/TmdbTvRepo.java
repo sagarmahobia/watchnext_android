@@ -40,6 +40,12 @@ public interface TmdbTvRepo {
     @GET("tv/airing_today")
     Observable<Shows> getAiringToday(@Query("page") int page);
 
+    @GET("search/tv")
+    Observable<Shows> searchByQuery(@Query("query") String query);
+
+    @GET("search/tv")
+    Observable<Shows> searchByQuery(@Query("query") String query, @Query("page") int page);
+
     @GET("tv/{tv_id}")
     Observable<Details> getDetails(@Path("tv_id") int tvId);
 

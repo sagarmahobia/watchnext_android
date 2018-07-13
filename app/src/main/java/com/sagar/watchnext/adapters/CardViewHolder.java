@@ -31,6 +31,9 @@ public class CardViewHolder extends RecyclerView.ViewHolder implements Card {
 
     @Override
     public void setImage(String path) {
-        picasso.load(ImageUrlUtil.getPosterImageUrl(path)).into((ImageView) view.findViewById(R.id.imagePoster));
+        picasso.load(ImageUrlUtil.getPosterImageUrl(path)).
+                error(R.drawable.ic_broken_image).
+                placeholder(R.drawable.ic_image).
+                into((ImageView) view.findViewById(R.id.imagePoster));
     }
 }

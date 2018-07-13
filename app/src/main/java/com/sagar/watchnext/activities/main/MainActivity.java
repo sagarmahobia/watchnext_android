@@ -1,5 +1,6 @@
 package com.sagar.watchnext.activities.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,12 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.activities.main.home.HomeFragment;
 import com.sagar.watchnext.activities.main.movies.MoviesFragment;
 import com.sagar.watchnext.activities.main.tv.TvFragment;
+import com.sagar.watchnext.activities.search.SearchActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -74,15 +77,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//
-//        }
+        int id = item.getItemId();
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
+        } else if (R.id.action_about == id) {
+            Toast.makeText(this, "Feature N/A", Toast.LENGTH_SHORT).show();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -103,10 +105,6 @@ public class MainActivity extends AppCompatActivity
             fragment = TvFragment.newInstance();
 
         }
-//        else if (id == R.id.people) {
-//            fragment = PeopleFragment.newInstance();
-//        }
-
         if (fragment != null) {
             transactFragment(fragment);
         }
