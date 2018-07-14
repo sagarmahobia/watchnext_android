@@ -1,5 +1,6 @@
 package com.sagar.watchnext.network.repo;
 
+import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.models.movies.MovieList;
 import com.sagar.watchnext.network.models.movies.credits.Credits;
 import com.sagar.watchnext.network.models.movies.images.Images;
@@ -44,6 +45,12 @@ public interface TmdbMovieRepo {
     @GET("movie/top_rated")
     Observable<MovieList> getTopRatedMovies(@Query("page") int page);
 
+
+    @GET("search/movie")
+    Observable<MovieList> searchByQuery(@Query("query") String query);
+
+    @GET("search/movie")
+    Observable<MovieList> searchByQuery(@Query("query") String query, @Query("page") int page);
 
     //per movie
     @GET("movie/{movie_id}")

@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.search;
 
 import com.sagar.watchnext.WatchNextApplicationComponent;
+import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
 import com.squareup.picasso.Picasso;
 
@@ -16,6 +17,8 @@ public interface SearchActivityComponent {
     Picasso getPicasso();
 
     TmdbTvRepo getTmdbTvRepo();
+
+    TmdbMovieRepo getTmdbMovieRepo();
 
     void injectSearchActivity(SearchActivity searchActivity);
 }
