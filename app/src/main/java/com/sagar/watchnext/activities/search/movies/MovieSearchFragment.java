@@ -145,7 +145,7 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
     public void startMovieDetailActivity(int movieId) {
 
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        intent.putExtra("movie_detail", movieId);
+        intent.putExtra("movie_id", movieId);
         startActivity(intent);
     }
 
