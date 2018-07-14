@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/colorBackgroundCard"
-    app:cardCornerRadius="3dp"
+    app:cardCornerRadius="5dp"
+    app:contentPaddingLeft="4dp"
+    app:contentPaddingRight="4dp"
     app:contentPaddingTop="8dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
@@ -14,7 +16,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBackgroundCardLight">
+        android:background="@color/colorBackgroundCardDetail">
 
         <ImageView
             android:id="@+id/poster_image"
