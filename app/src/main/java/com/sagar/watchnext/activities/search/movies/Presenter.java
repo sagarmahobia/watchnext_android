@@ -67,7 +67,9 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(movieList -> {
                                                 if (movieList.getMovies().size() < 1) {
-                                                    view.showToast("No Match Found");
+                                                    view.showNoMatchMessage();
+                                                } else {
+                                                    view.hideErrorMessage();
                                                 }
                                                 searchResult = movieList.getMovies();
                                                 view.hideProgress();

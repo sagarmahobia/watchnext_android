@@ -75,9 +75,6 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                         subscribe(movieList -> {
                             this.movies.addAll(movieList.getMovies());
                             view.notifyAdaptersNewData(listType);
-                        }, error -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
             case OnTv:
@@ -87,9 +84,6 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                         subscribe(tvList -> {
                             this.shows.addAll(tvList.getShows());
                             view.notifyAdaptersNewData(listType);
-                        }, error -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
         }

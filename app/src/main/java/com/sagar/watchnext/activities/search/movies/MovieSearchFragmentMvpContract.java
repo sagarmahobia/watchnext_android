@@ -22,6 +22,12 @@ public interface MovieSearchFragmentMvpContract {
         void showProgress();
 
         void hideProgress();
+
+        void hideErrorMessage();
+
+        void showErrorMessage();
+
+        void showNoMatchMessage();
     }
 
     interface Presenter {

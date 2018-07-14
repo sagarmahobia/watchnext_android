@@ -130,9 +130,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                         subscribe(movies -> {
                             this.inTheatersMovies.addAll(movies.getMovies());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
             case Upcoming:
@@ -141,9 +138,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                         subscribe(movies -> {
                             this.upcomingMovies.addAll(movies.getMovies());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
             case Popular:
@@ -152,9 +146,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                         subscribe(movies -> {
                             this.popularMovies.addAll(movies.getMovies());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
             default://top rated
@@ -163,9 +154,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                         subscribe(movies -> {
                             this.topRatedMovies.addAll(movies.getMovies());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
         }

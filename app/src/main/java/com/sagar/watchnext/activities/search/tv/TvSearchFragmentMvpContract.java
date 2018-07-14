@@ -22,6 +22,11 @@ public interface TvSearchFragmentMvpContract {
 
         void hideProgress();
 
+        void hideErrorMessage();
+
+        void showErrorMessage();
+
+        void showNoMatchMessage();
     }
 
     interface Model {

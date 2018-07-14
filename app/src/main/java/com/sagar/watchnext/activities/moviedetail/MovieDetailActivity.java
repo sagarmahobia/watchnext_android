@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.constraint.Group;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,9 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     //butter knife
     @BindView(R.id.content_scroll_view)
     ScrollView scrollView;
+
+    @BindView(R.id.error_message_text_and_image)
+    Group errorMessageGroup;
 
     @BindView(R.id.backdrop_image)
     ImageView backDropImage;
@@ -163,6 +167,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     @Override
     public void onSucceedLoadingMovieDetail(MovieDetail movieDetail) {
         swipeRefreshLayout.setRefreshing(false);
+        errorMessageGroup.setVisibility(View.GONE);
         getSupportActionBar().setTitle(movieDetail.getTitle());
         scrollView.setVisibility(View.VISIBLE);
 
@@ -287,9 +292,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     @Override
     public void onErrorLoadingMovieDetail() {
         scrollView.setVisibility(View.INVISIBLE);
-        //todo modify error handling
-        showToast("Couldn't load movie detail.");
-        this.finish();
+        swipeRefreshLayout.setRefreshing(false);
+        errorMessageGroup.setVisibility(View.VISIBLE);
     }
 
     @Override

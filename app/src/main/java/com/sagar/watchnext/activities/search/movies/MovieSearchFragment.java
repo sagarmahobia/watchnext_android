@@ -1,11 +1,11 @@
 package com.sagar.watchnext.activities.search.movies;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.Group;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sagar.watchnext.R;
@@ -44,6 +46,15 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.error_icon_image_view)
+    ImageView errorIcon;
+
+    @BindView(R.id.error_message_text)
+    TextView errorMessageTextView;
+
+    @BindView(R.id.error_message_text_and_image)
+    Group errorMessage;
 
     private String query = "";
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
@@ -124,11 +135,8 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
 
     @Override
     public void onErrorLoadingShowList() {
-        showToast("Couldn't load content.");
-        Activity activity = getActivity();
-        if (null != activity) {
-            activity.finish();
-        }
+        showErrorMessage();
+        hideProgress();
     }
 
     @Override
@@ -158,4 +166,24 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
     public void hideProgress() {
         swipeRefreshLayout.setRefreshing(false);
     }
+
+    @Override
+    public void hideErrorMessage() {
+        errorMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showErrorMessage() {
+        errorMessage.setVisibility(View.VISIBLE);
+        errorIcon.setImageResource(R.drawable.ic_error_outline);
+        errorMessageTextView.setText("Something went wrong");
+    }
+
+    @Override
+    public void showNoMatchMessage() {
+        errorMessage.setVisibility(View.VISIBLE);
+        errorIcon.setImageResource(R.drawable.ic_sad_emoticon);
+        errorMessageTextView.setText("No matches were found");
+    }
+
 }

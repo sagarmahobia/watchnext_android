@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.Group;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +57,9 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
 
     @BindView(R.id.content_scroll_view)
     ScrollView scrollView;
+
+    @BindView(R.id.error_message_text_and_image)
+    Group errorMessage;
 
     @BindView(R.id.backdrop_image)
     ImageView backDropImage;
@@ -131,7 +135,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
         int tv_id = intent.getIntExtra("tv_id", -1);
 
         if (tv_id == -1) {
-            //todo handle error in getting movie_id
+            //todo handle error in getting tv_id
             this.finish();
             return;
         }
@@ -161,6 +165,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
     @Override
     public void onSucceedLoadingTvDetail(Details tvDetails) {
         swipeRefreshLayout.setRefreshing(false);
+        errorMessage.setVisibility(View.GONE);
         getSupportActionBar().setTitle(tvDetails.getName());
         scrollView.setVisibility(View.VISIBLE);
 
@@ -294,9 +299,8 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
     @Override
     public void onErrorLoadingMovieDetail() {
         scrollView.setVisibility(View.INVISIBLE);
-        //todo modify error handling
-        showToast("Couldn't load show detail.");
-        this.finish();
+        errorMessage.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

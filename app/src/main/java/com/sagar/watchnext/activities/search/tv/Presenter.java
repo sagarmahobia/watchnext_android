@@ -63,10 +63,12 @@ public class Presenter implements TvSearchFragmentMvpContract.Presenter {
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(shows -> {
                                                 if (shows.getShows().size() < 1) {
-                                                    view.showToast("No Match Found");
+                                                    view.showNoMatchMessage();
+                                                } else {
+                                                    view.hideErrorMessage();
                                                 }
-                                                searchResult = shows.getShows();
                                                 view.hideProgress();
+                                                searchResult = shows.getShows();
                                                 view.notifyAdapter();
                                             },
                                             error -> {

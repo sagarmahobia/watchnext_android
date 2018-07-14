@@ -133,9 +133,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                         subscribe(shows -> {
                             this.airingTodayShows.addAll(shows.getShows());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");   //todo handle error
                         }));
 
                 break;
@@ -146,9 +143,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                             this.onTheAirShows.addAll(shows.getShows());
                             view.notifyAdaptersNewData(listType);
 
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
 
                 break;
@@ -159,9 +153,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                             this.popularShows.addAll(shows.getShows());
                             view.notifyAdaptersNewData(listType);
 
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
             case TopRated:
@@ -170,9 +161,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                         subscribe(shows -> {
                             this.topRatedShows.addAll(shows.getShows());
                             view.notifyAdaptersNewData(listType);
-                        }, e -> {
-                            //todo modify error
-                            view.showToast("Something went wrong");
                         }));
                 break;
         }
