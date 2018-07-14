@@ -11,7 +11,7 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackgroundCard"
+        android:background="@color/colorBackgroundCardLight"
         tools:context=".activities.tvdetail.TvDetailActivity">
 
         <ScrollView
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/card_detail_header"
-                    app:cardBackgroundColor="@color/colorBackgroundCardDetail"
+                    app:cardBackgroundColor="@color/colorBackgroundCard"
                     app:contentPadding="5dp"
                     app:contentPaddingBottom="10dp"
                     app:contentPaddingTop="15dp">
