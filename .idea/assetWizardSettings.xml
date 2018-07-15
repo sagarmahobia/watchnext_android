@@ -35,6 +35,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
+                                                <entry key="fontFamily" value="Microsoft Tai Le" />
                                                 <entry key="text" value="WN" />
                                               </map>
                                             </option>
@@ -46,12 +47,12 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="323232" />
+                                      <entry key="backgroundColor" value="262626" />
                                       <entry key="foregroundAssetType" value="TEXT" />
-                                      <entry key="legacyIconShape" value="NONE" />
+                                      <entry key="legacyIconShape" value="CIRCLE" />
                                       <entry key="previewDensity" value="XXXHIGH" />
                                       <entry key="showGrid" value="true" />
-                                      <entry key="webIconShape" value="NONE" />
+                                      <entry key="webIconShape" value="CIRCLE" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -90,6 +91,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="ffffff" />
+                                                <entry key="paddingPercent" value="35" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -101,6 +103,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
+                                                <entry key="fontFamily" value="Microsoft JhengHei UI" />
                                                 <entry key="text" value="WN" />
                                               </map>
                                             </option>
@@ -112,14 +115,19 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="TEXT" />
-                                      <entry key="backgroundColor" value="000000" />
-                                      <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="E:\Projects\AndroidGitNew\WatchNext\app\src\main\res\mipmap-xxxhdpi\ic_launcher_foreground.png" />
+                                      <entry key="backgroundColor" value="262626" />
+                                      <entry key="cropped" value="true" />
+                                      <entry key="imageAsset" value="C:\Users\SAGAR MAHOBIA\Desktop\Untitled-1.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
                               </value>
                             </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>
