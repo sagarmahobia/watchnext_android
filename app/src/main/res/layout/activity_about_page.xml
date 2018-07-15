@@ -9,84 +9,78 @@
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:showIn="@layout/activity_about_page">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="25dp" />
+            android:layout_height="500dp">
 
             <ImageView
                 android:id="@+id/about_logo_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                android:contentDescription="WatchNext Logo" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="WatchNext"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Discover Movies &amp; TV"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-            <View
                 android:layout_width="match_parent"
-                android:layout_height="30dp" />
+                android:layout_height="175dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:contentDescription="WatchNext Logo"
+                android:padding="10dp" />
+
 
             <TextView
+                android:id="@+id/credits_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/about_logo_image"
+                android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:text="Credits"
-
-                android:textColor="@color/white" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="15dp" />
+                android:textColor="@color/colorGrayText"
+                android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/tmdb_image_license_text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white" />
+                android:layout_below="@id/credits_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorGrayText"
+                android:textSize="14dp" />
 
             <TextView
-                android:id="@+id/projectLinkZxing"
-                android:layout_width="match_parent"
+                android:id="@+id/tmdb_disclaimer_text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white" />
+                android:layout_below="@id/tmdb_image_license_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorGrayText"
+                android:textSize="14dp" />
+
 
             <TextView
-
-                android:layout_width="match_parent"
+                android:id="@+id/copyright_text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="25dp" />
-
-        </LinearLayout>
+                android:layout_below="@id/tmdb_disclaimer_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="&#169; 2018 Sagar Mahobia"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+        </RelativeLayout>
 
     </ScrollView>
 

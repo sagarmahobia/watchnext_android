@@ -16,18 +16,18 @@
             android:icon="@drawable/ic_live_tv_blackdp"
             android:title="TV Shows" />
         <!--<item-->
-            <!--android:id="@+id/people"-->
-            <!--android:icon="@drawable/ic_people_black"-->
-            <!--android:title="People" />-->
+        <!--android:id="@+id/people"-->
+        <!--android:icon="@drawable/ic_people_black"-->
+        <!--android:title="People" />-->
     </group>
-    <!--<group-->
-    <!--android:id="@+id/others"-->
-    <!--android:checkableBehavior="none">-->
-    <!--<item-->
-    <!--android:id="@+id/nav_share"-->
-    <!--android:icon="@drawable/ic_menu_share"-->
-    <!--android:title="Share" />-->
-    <!--</group>-->
+    <group
+        android:id="@+id/others"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_share"
+            android:title="Share" />
+    </group>
 
 
 </menu>

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.WatchNextApplication;
+import com.sagar.watchnext.activities.about.AboutPageActivity;
 import com.sagar.watchnext.activities.main.home.HomeFragment;
 import com.sagar.watchnext.activities.main.movies.MoviesFragment;
 import com.sagar.watchnext.activities.main.tv.TvFragment;
@@ -83,7 +84,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
         } else if (R.id.action_about == id) {
-            Toast.makeText(this, "Feature N/A", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AboutPageActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -104,6 +106,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.tv) {
             fragment = TvFragment.newInstance();
 
+        } else if (id == R.id.nav_share) {
+            String shareBody = "WatchNext - Discover Movies & TV. \n" +
+                    "https://play.google.com/store/apps/details?id=com.sagar.watchnext";
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            this.startActivity(Intent.createChooser(sharingIntent, "Share via"));
         }
         if (fragment != null) {
             transactFragment(fragment);
