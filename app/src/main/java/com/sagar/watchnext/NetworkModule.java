@@ -61,7 +61,7 @@ public class NetworkModule {
 
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(httpLoggingInterceptor)//todo remove
                 .build();
     }
 
@@ -85,8 +85,8 @@ public class NetworkModule {
         Picasso picasso = new Picasso.Builder(context)
                 .downloader(new OkHttp3Downloader(context, Integer.MAX_VALUE))
                 .build();
-        picasso.setIndicatorsEnabled(true);
-        picasso.setLoggingEnabled(true);
+        picasso.setIndicatorsEnabled(true);//todo remove
+        picasso.setLoggingEnabled(true);//todo remove
         return picasso;
     }
 
