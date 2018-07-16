@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackgroundCardLight"
+        tools:context=".activities.tvdetail.TvDetailActivity">
+
+        <ScrollView
+            android:id="@+id/content_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_detail_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/colorBackgroundCardLight">
+
+                    <include layout="@layout/card_content_header" />
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/card_detail_header"
+                    app:cardBackgroundColor="@color/colorBackgroundCard"
+                    app:contentPadding="5dp"
+                    app:contentPaddingBottom="10dp"
+                    app:contentPaddingTop="15dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/overview_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="10dp"
+                            android:text="Overview"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/overview_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/overview_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/original_name_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/overview_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Original Title"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/original_name_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/original_name_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/original_language_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/original_name_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Original Language"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/original_language_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/original_language_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/show_type_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/original_language_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Show Type"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/show_type_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/show_type_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/show_status_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/show_type_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Show Status"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/show_status_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/show_status_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/first_air_date_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/show_status_text"
+                            android:layout_marginTop="10dp"
+                            android:text="First Air Date"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/first_air_date_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/first_air_date_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/last_air_date_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/first_air_date_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Last Air Date"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/last_air_date_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/last_air_date_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/networks_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/last_air_date_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Networks"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/networks_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/networks_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/production_companies_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/networks_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Production Companies"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/production_companies_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/production_companies_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/homepage_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/production_companies_text"
+                            android:layout_marginTop="10dp"
+                            android:text="Homepage"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/homepage_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@+id/overview_title"
+                            android:layout_alignStart="@+id/overview_title"
+                            android:layout_below="@+id/homepage_title"
+                            android:text="N/A"
+                            android:textColor="@color/colorGrayText"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+            </RelativeLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ImageView
+        android:id="@+id/error_icon_image_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="200dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_error_outline"
+        app:layout_constraintBottom_toTopOf="@+id/error_message_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/error_message_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:padding="8dp"
+        android:text="Something went wrong"
+        android:textColor="@color/colorGrayText"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/error_icon_image_view" />
+
+    <android.support.constraint.Group
+        android:id="@+id/error_message_text_and_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="error_message_text,error_icon_image_view" />
+
+</android.support.constraint.ConstraintLayout>
