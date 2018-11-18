@@ -11,4 +11,6 @@ import dagger.Component;
 @Component(modules = TvFragmentModule.class, dependencies = MainActivityComponent.class)
 public interface TvFragmentComponent {
     void inject(TvFragment tvFragment);
+
+    void inject(Presenter presenter);
 }

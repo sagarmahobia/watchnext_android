@@ -32,11 +32,11 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieSearchFragment extends Fragment implements ActivityStateObserver, MovieSearchFragmentMvpContract.View {
+public class MovieSearchFragment extends Fragment implements ActivityStateObserver, Contract.View {
 
 
     @Inject
-    MovieSearchFragmentMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
     @Inject
     RecyclerAdapter adapter;
@@ -111,14 +111,9 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
         }
 
 
-        recyclerView.setAdapter(adapter);
-        presenter.onCreate();
-    }
+        getLifecycle().addObserver(presenter);
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

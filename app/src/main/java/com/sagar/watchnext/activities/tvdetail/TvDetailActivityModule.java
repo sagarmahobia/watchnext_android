@@ -24,21 +24,16 @@ public class TvDetailActivityModule {
 
     @Provides
     @TvDetailActivityScope
-    TvDetailActivityMvpContract.View provideView(TvDetailActivity tvDetailActivity) {
+    Contract.View provideView(TvDetailActivity tvDetailActivity) {
         return tvDetailActivity;
     }
 
 
     @Provides
     @TvDetailActivityScope
-    TvDetailActivityMvpContract.Presenter providePresenter(Presenter presenter) {
+    Contract.Presenter providePresenter(Presenter presenter) {
         return presenter;
     }
 
-    @Provides
-    @TvDetailActivityScope
-    TvDetailActivityMvpContract.Model provideModel(Model model) {
-        return model;
-    }
 
 }

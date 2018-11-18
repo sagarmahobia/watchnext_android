@@ -1,5 +1,8 @@
 package com.sagar.watchnext.activities.search.movies;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.search.SearchCard;
 import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
@@ -21,16 +24,15 @@ import io.reactivex.subjects.Subject;
  */
 
 @MovieSearchFragmentScope
-public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
+public class Presenter implements Contract.Presenter {
 
-    private MovieSearchFragmentMvpContract.View view;
+    @Inject
+    Contract.View view;
 
-    private MovieSearchFragmentMvpContract.Model model;
-
+    @Inject
+    TmdbMovieRepo movieRepo;
 
     private CompositeDisposable disposable;
-
-    private TmdbMovieRepo movieRepo;
 
     private List<Movie> searchResult;
     private String forQuery;
@@ -39,18 +41,15 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
 
 
     @Inject
-    public Presenter(MovieSearchFragmentMvpContract.View view, MovieSearchFragmentMvpContract.Model model, TmdbMovieRepo movieRepo) {
-        this.view = view;
-        this.model = model;
-
-        this.movieRepo = movieRepo;
-        disposable = new CompositeDisposable();
-        throttle = PublishSubject.create();
+    public Presenter(MovieSearchFragmentComponent component) {
+        component.inject(this);
     }
 
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
+        disposable = new CompositeDisposable();
+        throttle = PublishSubject.create();
         disposable.add(throttle.filter(q -> q.length() > 0)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,16 +74,14 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
                                                 view.hideProgress();
                                                 view.notifyAdapter();
                                             },
-                                            error -> {
-                                                view.onErrorLoadingShowList();
-                                            })
+                                            error -> view.onErrorLoadingShowList())
                     );
 
                 })
         );
     }
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         disposable.dispose();
     }

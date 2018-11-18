@@ -12,4 +12,6 @@ import dagger.Component;
 @TvSearchFragmentScope
 public interface TvSearchFragmentComponent {
     void inject(TvSearchFragment tvSearchFragment);
+
+    void inject(Presenter presenter);
 }

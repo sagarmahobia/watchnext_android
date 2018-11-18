@@ -19,8 +19,8 @@ import android.widget.Toast;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.main.MainActivityComponent;
-import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.main.home.adapters.RecyclerAdapter;
+import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 
@@ -30,7 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 
-public class HomeFragment extends Fragment implements HomeFragmentMvpContract.View {
+public class HomeFragment extends Fragment implements Contract.View {
 
     private RecyclerView recyclerViewOnTv;
     private RecyclerView recyclerViewInTheaters;
@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
     RecyclerAdapter inTheatersRecyclerAdapter;
 
     @Inject
-    HomeFragmentMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
 
     public HomeFragment() {
@@ -126,7 +126,7 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.onCreate();
+            presenter.load();
             scrollListenerForOnTv.resetState();
             scrollListenerForInTheaters.resetState();
         });
@@ -154,18 +154,11 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                 .homeFragmentModule(new HomeFragmentModule(this))
                 .build().inject(this);
 
+        getLifecycle().addObserver(presenter);
+
         onTvRecyclerAdapter.setListType(ListType.OnTv);
         inTheatersRecyclerAdapter.setListType(ListType.InTheaters);
-
-        presenter.onCreate();
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        presenter.onDestroy();
-    }
-
 
     @Override
     public void showToast(String msg) {

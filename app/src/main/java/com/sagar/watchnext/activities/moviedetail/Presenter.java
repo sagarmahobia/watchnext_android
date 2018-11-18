@@ -1,5 +1,8 @@
 package com.sagar.watchnext.activities.moviedetail;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.models.movies.videos.Video;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
@@ -16,29 +19,34 @@ import io.reactivex.schedulers.Schedulers;
  * Created by SAGAR MAHOBIA on 06-Jul-18. at 16:23
  */
 @MovieDetailActivityScope
-public class Presenter implements MovieDetailActivityMvpContract.Presenter {
+public class Presenter implements Contract.Presenter {
 
-    private MovieDetailActivityMvpContract.View view;
-    private MovieDetailActivityMvpContract.Model model;
-    private CompositeDisposable disposable;
+    @Inject
+    Contract.View view;
+
+    @Inject
+    TmdbMovieRepo movieRepo;
 
     private List<Movie> recommendations;
     private List<Movie> similars;
     private List<Video> videos;
 
-    private TmdbMovieRepo movieRepo;
+    private CompositeDisposable disposable;
 
     @Inject
-    public Presenter(MovieDetailActivityMvpContract.View view, MovieDetailActivityMvpContract.Model model, TmdbMovieRepo movieRepo) {
-        this.view = view;
-        this.model = model;
-        this.movieRepo = movieRepo;
+    public Presenter(MovieDetailActivityComponent component) {
+        component.inject(this);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
         disposable = new CompositeDisposable();
+        load();
     }
 
     @Override
-    public void onCreate(int movieId) {
-
+    public void load() {
+        int movieId = view.getMovieId();
         disposable.add(movieRepo.getMovieDetail(movieId).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
@@ -84,7 +92,7 @@ public class Presenter implements MovieDetailActivityMvpContract.Presenter {
  */
     }
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         disposable.dispose();
     }

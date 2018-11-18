@@ -22,22 +22,14 @@ public class MovieDetailActivityModule {
 
     @MovieDetailActivityScope
     @Provides
-    MovieDetailActivityMvpContract.View getView(MovieDetailActivity movieDetailActivity) {
+    Contract.View getView(MovieDetailActivity movieDetailActivity) {
         return movieDetailActivity;
     }
 
     @MovieDetailActivityScope
     @Provides
-    MovieDetailActivityMvpContract.Model getModel(Model model) {
-        return model;
-    }
-
-    @MovieDetailActivityScope
-    @Provides
-    MovieDetailActivityMvpContract.Presenter getPresenter(Presenter presenter) {
+    Contract.Presenter getPresenter(Presenter presenter) {
         return presenter;
     }
-
-
 }
 

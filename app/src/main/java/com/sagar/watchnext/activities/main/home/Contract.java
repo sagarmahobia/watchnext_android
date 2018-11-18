@@ -1,13 +1,13 @@
 package com.sagar.watchnext.activities.main.home;
 
-import com.sagar.watchnext.adapters.Card;
+import android.arch.lifecycle.LifecycleObserver;
 
-import java.util.List;
+import com.sagar.watchnext.adapters.Card;
 
 /**
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:09
  */
-public interface HomeFragmentMvpContract {
+public interface Contract {
     interface View {
         void showToast(String msg);
 
@@ -22,13 +22,11 @@ public interface HomeFragmentMvpContract {
         void notifyAdaptersNewData(ListType listType);
     }
 
-    interface Presenter {
+    interface Presenter extends LifecycleObserver {
         //life cycle callback
-        void onCreate();
+        void load();
 
         void loadMore(ListType listType, int pageToLoad);
-
-        void onDestroy();
 
         //adapter calls
         int getCardsCount(ListType listType);
@@ -39,7 +37,4 @@ public interface HomeFragmentMvpContract {
 
     }
 
-    interface Model {
-
-    }
 }

@@ -39,11 +39,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TvDetailActivity extends AppCompatActivity implements TvDetailActivityMvpContract.View {
+public class TvDetailActivity extends AppCompatActivity implements Contract.View {
 
 
     @Inject
-    TvDetailActivityMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
     @Inject
     Picasso picasso;
@@ -108,6 +108,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
 
     @BindView(R.id.homepage_text)
     TextView homepageText;
+    private int tv_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
                 watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
                 tvDetailActivityModule(new TvDetailActivityModule(this)).
                 build().
-                injectTvDetailActivity(this);
+                inject(this);
 
         ButterKnife.bind(this);
 
@@ -132,7 +133,7 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
         backDropImage.setLayoutParams(lp);
 
         Intent intent = getIntent();
-        int tv_id = intent.getIntExtra("tv_id", -1);
+        tv_id = intent.getIntExtra("tv_id", -1);
 
         if (tv_id == -1) {
             //todo handle error in getting tv_id
@@ -140,9 +141,9 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
             return;
         }
         swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(tv_id));
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.load());
 
-        presenter.onCreate(tv_id);
+        getLifecycle().addObserver(presenter);
     }
 
     @Override
@@ -156,9 +157,8 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
     }
 
     @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
+    public int getTvId() {
+        return tv_id;
     }
 
     @SuppressLint("DefaultLocale")

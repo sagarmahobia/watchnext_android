@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,8 @@ import android.widget.Toast;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.main.MainActivityComponent;
-import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.main.movies.adapters.RecyclerAdapter;
+import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 
-public class MoviesFragment extends Fragment implements MoviesFragmentMvpContract.View {
+public class MoviesFragment extends Fragment implements Contract.View {
 
     private RelativeLayout inTheatersMoviesCard;
     private RelativeLayout upcomingMoviesCard;
@@ -57,7 +56,7 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
     RecyclerAdapter upcomingMoviesAdapter;
 
     @Inject
-    MoviesFragmentMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
     public MoviesFragment() {
         // Required empty public constructor
@@ -172,7 +171,7 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.onCreate();
+            presenter.load();
             scrollListenerForInTheaters.resetState();
             scrollListenerForUpcoming.resetState();
             scrollListenerForPopular.resetState();
@@ -205,20 +204,13 @@ public class MoviesFragment extends Fragment implements MoviesFragmentMvpContrac
                 .moviesFragmentModule(new MoviesFragmentModule(this))
                 .build().inject(this);
 
+        getLifecycle().addObserver(presenter);
+
         inTheatersMoviesAdapter.setListType(ListType.InTheaters);
         upcomingMoviesAdapter.setListType(ListType.Upcoming);
         popularMoviesAdapter.setListType(ListType.Popular);
         topRatedMoviesAdapter.setListType(ListType.TopRated);
 
-        presenter.onCreate();
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        presenter.onDestroy();
-        Log.d("Lifecycle", "On destroy view called");
     }
 
     @Override

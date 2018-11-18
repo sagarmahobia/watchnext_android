@@ -2,10 +2,10 @@ package com.sagar.watchnext.activities.main.tv.adapters;
 
 import android.support.annotation.NonNull;
 
+import com.sagar.watchnext.activities.main.tv.Contract;
+import com.sagar.watchnext.activities.main.tv.ListType;
 import com.sagar.watchnext.adapters.BaseRecyclerAdapter;
 import com.sagar.watchnext.adapters.CardViewHolder;
-import com.sagar.watchnext.activities.main.tv.ListType;
-import com.sagar.watchnext.activities.main.tv.TvFragmentMvpContract;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -15,11 +15,11 @@ import javax.inject.Inject;
  */
 public class RecyclerAdapter extends BaseRecyclerAdapter {
 
-    private TvFragmentMvpContract.Presenter presenter;
+    private Contract.Presenter presenter;
     private ListType listType;
 
     @Inject
-    RecyclerAdapter(Picasso picasso, TvFragmentMvpContract.Presenter presenter) {
+    RecyclerAdapter(Picasso picasso, Contract.Presenter presenter) {
         super(picasso);
         this.presenter = presenter;
     }

@@ -11,7 +11,7 @@ class PeopleFragmentModule {
 
     private PeopleFragment peopleFragment;
 
-      PeopleFragmentModule(PeopleFragment peopleFragment) {
+    PeopleFragmentModule(PeopleFragment peopleFragment) {
         this.peopleFragment = peopleFragment;
     }
 
@@ -24,19 +24,13 @@ class PeopleFragmentModule {
 
     @Provides
     @PeopleFragmentScope
-    PeopleFragmentMvpContract.View getView(PeopleFragment peopleFragment) {
+    Contract.View getView(PeopleFragment peopleFragment) {
         return peopleFragment;
     }
 
     @Provides
     @PeopleFragmentScope
-    PeopleFragmentMvpContract.Model getModel(Model model) {
-        return model;
-    }
-
-    @Provides
-    @PeopleFragmentScope
-    PeopleFragmentMvpContract.Presenter getPresenter(Presenter presenter) {
+    Contract.Presenter getPresenter(Presenter presenter) {
         return presenter;
     }
 

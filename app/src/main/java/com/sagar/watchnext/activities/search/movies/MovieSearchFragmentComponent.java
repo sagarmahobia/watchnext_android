@@ -12,4 +12,6 @@ import dagger.Component;
 @Component(modules = MovieSearchFragmentModule.class, dependencies = SearchActivityComponent.class)
 public interface MovieSearchFragmentComponent {
     void inject(MovieSearchFragment movieSearchFragment);
+
+    void inject(Presenter presenter);
 }

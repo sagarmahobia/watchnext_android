@@ -7,13 +7,13 @@ import javax.inject.Inject;
  */
 
 @PeopleFragmentScope
-public class Presenter implements PeopleFragmentMvpContract.Presenter {
-    private PeopleFragmentMvpContract.Model model;
-    private PeopleFragmentMvpContract.View view;
+public class Presenter implements Contract.Presenter {
 
     @Inject
-    public Presenter(PeopleFragmentMvpContract.Model model, PeopleFragmentMvpContract.View view) {
-        this.model = model;
-        this.view = view;
+    Contract.View view;
+
+    @Inject
+    public Presenter(PeopleFragmentComponent component) {
+        component.inject(this);
     }
 }

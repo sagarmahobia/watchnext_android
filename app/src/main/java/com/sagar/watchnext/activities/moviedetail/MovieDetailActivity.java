@@ -1,22 +1,13 @@
 package com.sagar.watchnext.activities.moviedetail;
 
-import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
-import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
-import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
-import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
-import com.sagar.watchnext.utils.ImageUrlUtil;
-import com.sagar.watchnext.utils.PixelDensityUtil;
-import com.squareup.picasso.Picasso;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.constraint.Group;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -25,12 +16,20 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.sagar.watchnext.R;
+import com.sagar.watchnext.WatchNextApplication;
+import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
+import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
+import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
+import com.sagar.watchnext.utils.ImageUrlUtil;
+import com.sagar.watchnext.utils.PixelDensityUtil;
+import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -41,12 +40,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieDetailActivity extends AppCompatActivity implements MovieDetailActivityMvpContract.View {
+public class MovieDetailActivity extends AppCompatActivity implements Contract.View {
 
 
     //dagger
     @Inject
-    MovieDetailActivityMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
     @Inject
     Picasso picasso;
@@ -109,6 +108,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+    private int movie_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
                 watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
                 movieDetailActivityModule(new MovieDetailActivityModule(this)).
                 build().
-                injectMovieDetailActivity(this);
+                inject(this);
 
         ButterKnife.bind(this);
 
@@ -134,7 +134,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         backDropImage.setLayoutParams(lp);
 
         Intent intent = getIntent();
-        int movie_id = intent.getIntExtra("movie_id", -1);
+        movie_id = intent.getIntExtra("movie_id", -1);
 
         if (movie_id == -1) {
             //todo handle error in getting movie_id
@@ -142,9 +142,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
             return;
         }
         swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(movie_id));
-
-        presenter.onCreate(movie_id);
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.load());
+        getLifecycle().addObserver(presenter);
     }
 
     @Override
@@ -158,9 +157,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     }
 
     @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
+    public int getMovieId() {
+        return movie_id;
     }
 
     @SuppressLint("DefaultLocale")
@@ -301,8 +299,6 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
-
-
 
 
 

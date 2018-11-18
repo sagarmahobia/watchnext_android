@@ -25,19 +25,13 @@ class HomeFragmentModule {
 
     @Provides
     @HomeFragmentScope
-    HomeFragmentMvpContract.View getView(HomeFragment homeFragment) {
+    Contract.View getView(HomeFragment homeFragment) {
         return homeFragment;
     }
 
     @Provides
     @HomeFragmentScope
-    HomeFragmentMvpContract.Model getModel(Model model) {
-        return model;
-    }
-
-    @Provides
-    @HomeFragmentScope
-    HomeFragmentMvpContract.Presenter getPresenter(Presenter presenter) {
+    Contract.Presenter getPresenter(Presenter presenter) {
         return presenter;
     }
 }

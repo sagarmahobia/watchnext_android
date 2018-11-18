@@ -1,5 +1,8 @@
 package com.sagar.watchnext.activities.main.tv;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.tv.Show;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
@@ -16,29 +19,34 @@ import io.reactivex.schedulers.Schedulers;
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:15
  */
 @TvFragmentScope
-public class Presenter implements TvFragmentMvpContract.Presenter {
-    private TvFragmentMvpContract.Model model;
-    private TvFragmentMvpContract.View view;
-    private CompositeDisposable disposables;
+public class Presenter implements Contract.Presenter {
+
+    @Inject
+    Contract.View view;
+
+    @Inject
+    TmdbTvRepo tvRepo;
 
     private List<Show> airingTodayShows;
     private List<Show> onTheAirShows;
     private List<Show> popularShows;
     private List<Show> topRatedShows;
 
-    private TmdbTvRepo tvRepo;
+    private CompositeDisposable disposables;
 
     @Inject
-    public Presenter(TvFragmentMvpContract.Model model, TvFragmentMvpContract.View view, TmdbTvRepo tvRepo) {
-        this.model = model;
-        this.view = view;
-        this.tvRepo = tvRepo;
+    public Presenter(TvFragmentComponent component) {
+        component.inject(this);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
         disposables = new CompositeDisposable();
+        load();
     }
 
     @Override
-    public void onCreate() {
-
+    public void load() {
         //airingToday
         disposables.add(tvRepo.getAiringToday().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
@@ -83,11 +91,6 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 }));
 
 
-    }
-
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
     }
 
     private List<Show> getListByType(ListType listType) {
@@ -165,4 +168,10 @@ public class Presenter implements TvFragmentMvpContract.Presenter {
                 break;
         }
     }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        disposables.dispose();
+    }
+
 }

@@ -11,5 +11,7 @@ import dagger.Component;
 @TvDetailActivityScope
 @Component(modules = TvDetailActivityModule.class, dependencies = WatchNextApplicationComponent.class)
 public interface TvDetailActivityComponent {
-    void injectTvDetailActivity(TvDetailActivity tvDetailActivity);
+    void inject(TvDetailActivity tvDetailActivity);
+
+    void inject(Presenter presenter);
 }

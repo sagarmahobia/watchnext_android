@@ -22,23 +22,15 @@ class TvFragmentModule {
         return tvFragment;
     }
 
-
     @TvFragmentScope
     @Provides
-    TvFragmentMvpContract.View getView(TvFragment tvFragment) {
+    Contract.View getView(TvFragment tvFragment) {
         return tvFragment;
     }
 
-
     @TvFragmentScope
     @Provides
-    TvFragmentMvpContract.Model getModel(Model model) {
-        return model;
-    }
-
-    @TvFragmentScope
-    @Provides
-    TvFragmentMvpContract.Presenter getPresenter(Presenter presenter) {
+    Contract.Presenter getPresenter(Presenter presenter) {
         return presenter;
     }
 

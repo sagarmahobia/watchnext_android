@@ -1,11 +1,13 @@
 package com.sagar.watchnext.activities.main.tv;
 
+import android.arch.lifecycle.LifecycleObserver;
+
 import com.sagar.watchnext.adapters.Card;
 
 /**
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:14
  */
-public class TvFragmentMvpContract {
+public class Contract {
     interface View {
         void showToast(String s);
 
@@ -19,10 +21,8 @@ public class TvFragmentMvpContract {
 
     }
 
-    public interface Presenter {
-        void onCreate();
-
-        void onDestroy();
+    public interface Presenter extends LifecycleObserver {
+        void load();
 
         //adapter calls
         void onBindCard(ListType listType, Card card, int position);
@@ -33,9 +33,4 @@ public class TvFragmentMvpContract {
 
         void loadMore(ListType listType, int pageToLoad);
     }
-
-    interface Model {
-
-    }
-
 }

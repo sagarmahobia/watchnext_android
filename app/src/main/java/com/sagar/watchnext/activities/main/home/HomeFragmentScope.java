@@ -12,5 +12,5 @@ import javax.inject.Scope;
 
 @Scope
 @Retention(RetentionPolicy.CLASS)
-public @interface HomeFragmentScope {
+@interface HomeFragmentScope {
 }

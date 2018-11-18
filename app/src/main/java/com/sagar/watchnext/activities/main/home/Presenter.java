@@ -1,5 +1,8 @@
 package com.sagar.watchnext.activities.main.home;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.models.tv.Show;
@@ -19,39 +22,42 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 @HomeFragmentScope
-public class Presenter implements HomeFragmentMvpContract.Presenter {
+public class Presenter implements Contract.Presenter {
 
-    private HomeFragmentMvpContract.View view;
-    private HomeFragmentMvpContract.Model model;
+    @Inject
+    Contract.View view;
+
+    @Inject
+    TmdbMovieRepo movieRepo;
+
+    @Inject
+    TmdbTvRepo tvRepo;
+
     private List<Movie> movies;
     private List<Show> shows;
 
     private CompositeDisposable disposables;
 
-    private TmdbMovieRepo movieRepo;
-    private TmdbTvRepo tvRepo;
 
     @Inject
-    public Presenter(HomeFragmentMvpContract.View view, HomeFragmentMvpContract.Model model, TmdbMovieRepo movieRepo, TmdbTvRepo tvRepo) {
-        this.view = view;
-        this.model = model;
-        this.movieRepo = movieRepo;
-        this.tvRepo = tvRepo;
+    public Presenter(HomeFragmentComponent component) {
+        component.inject(this);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
         disposables = new CompositeDisposable();
+        load();
     }
 
     @Override
-    public void onCreate() {
-
-
+    public void load() {
         disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
                     this.movies = movies.getMovies();
                     view.onSucceedLoadingList(ListType.InTheaters);
-                }, e -> {
-                    view.onErrorLoadingList(ListType.InTheaters);
-                }));
+                }, e -> view.onErrorLoadingList(ListType.InTheaters)));
 
 
         disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io())
@@ -59,9 +65,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
                 .subscribe(shows -> {
                     this.shows = shows.getShows();
                     view.onSucceedLoadingList(ListType.OnTv);
-                }, e -> {
-                    view.onErrorLoadingList(ListType.OnTv);
-                }));
+                }, e -> view.onErrorLoadingList(ListType.OnTv)));
 
     }
 
@@ -133,7 +137,7 @@ public class Presenter implements HomeFragmentMvpContract.Presenter {
     }
 
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         disposables.dispose();
     }

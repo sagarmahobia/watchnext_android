@@ -1,11 +1,13 @@
 package com.sagar.watchnext.activities.main.movies;
 
+import android.arch.lifecycle.LifecycleObserver;
+
 import com.sagar.watchnext.adapters.Card;
 
 /**
  * Created by SAGAR MAHOBIA on 03-Jul-18. at 10:06
  */
-public interface MoviesFragmentMvpContract {
+public interface Contract {
     interface View {
         void showToast(String msg);
 
@@ -20,11 +22,9 @@ public interface MoviesFragmentMvpContract {
 
     }
 
-    interface Presenter {
-        //life cycle callbacks
-        void onCreate();
+    interface Presenter extends LifecycleObserver {
 
-        void onDestroy();
+        void load();
 
         //adapter calls
         void onBindMovieCard(ListType listType, Card card, int position);
@@ -37,7 +37,4 @@ public interface MoviesFragmentMvpContract {
 
     }
 
-    interface Model {
-
-    }
 }

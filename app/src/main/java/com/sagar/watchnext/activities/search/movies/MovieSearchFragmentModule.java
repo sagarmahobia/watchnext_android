@@ -25,21 +25,14 @@ public class MovieSearchFragmentModule {
 
     @Provides
     @MovieSearchFragmentScope
-    MovieSearchFragmentMvpContract.View view(MovieSearchFragment movieSearchFragment) {
+    Contract.View view(MovieSearchFragment movieSearchFragment) {
         return movieSearchFragment;
     }
 
     @Provides
     @MovieSearchFragmentScope
-    MovieSearchFragmentMvpContract.Presenter presenter(Presenter presenter) {
+    Contract.Presenter presenter(Presenter presenter) {
         return presenter;
     }
-
-    @Provides
-    @MovieSearchFragmentScope
-    MovieSearchFragmentMvpContract.Model model(Model model) {
-        return model;
-    }
-
 
 }

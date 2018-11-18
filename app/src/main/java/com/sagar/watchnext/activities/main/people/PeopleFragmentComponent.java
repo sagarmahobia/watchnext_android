@@ -12,4 +12,6 @@ import dagger.Component;
 @Component(modules = PeopleFragmentModule.class, dependencies = MainActivityComponent.class)
 interface PeopleFragmentComponent {
     void inject(PeopleFragment peopleFragment);
+
+    void inject(Presenter presenter);
 }

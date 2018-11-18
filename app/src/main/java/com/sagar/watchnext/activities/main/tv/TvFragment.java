@@ -29,10 +29,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 
-public class TvFragment extends Fragment implements TvFragmentMvpContract.View {
+public class TvFragment extends Fragment implements Contract.View {
 
     @Inject
-    Presenter presenter;
+    Contract.Presenter presenter;
 
     private RelativeLayout airingTodayTvCard;
     private RelativeLayout onTheAirTvCard;
@@ -165,7 +165,7 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View {
         topRatedRecycler.addOnScrollListener(scrollListenerForTopRated);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.onCreate();
+            presenter.load();
             scrollListenerForAiringToday.resetState();
             scrollListenerForOnTheAir.resetState();
             scrollListenerForPopular.resetState();
@@ -197,20 +197,14 @@ public class TvFragment extends Fragment implements TvFragmentMvpContract.View {
                 .tvFragmentModule(new TvFragmentModule(this))
                 .build().inject(this);
 
+        getLifecycle().addObserver(presenter);
+
         airingTodayAdapter.setListType(ListType.AiringToday);
         onTheAirAdapter.setListType(ListType.OnTheAir);
         popularAdapter.setListType(ListType.Popular);
         topRatedAdapter.setListType(ListType.TopRated);
 
-        presenter.onCreate();
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
-    }
-
 
     @Override
     public void showToast(String msg) {

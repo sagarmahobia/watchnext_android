@@ -13,4 +13,6 @@ import dagger.Component;
 public interface MoviesFragmentComponent {
 
     void inject(MoviesFragment moviesFragment);
+
+    void inject(Presenter presenter);
 }

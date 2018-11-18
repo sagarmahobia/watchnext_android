@@ -1,12 +1,13 @@
 package com.sagar.watchnext.activities.search.tv;
 
-import com.sagar.watchnext.adapters.Card;
+import android.arch.lifecycle.LifecycleObserver;
+
 import com.sagar.watchnext.adapters.search.SearchCard;
 
 /**
  * Created by SAGAR MAHOBIA on 12-Jul-18. at 14:05
  */
-public interface TvSearchFragmentMvpContract {
+public interface Contract {
     interface View {
         void showToast(String msg);
 
@@ -29,13 +30,7 @@ public interface TvSearchFragmentMvpContract {
         void showNoMatchMessage();
     }
 
-    interface Model {
-    }
-
-    interface Presenter {
-        void onCreate();
-
-        void onDestroy();
+    interface Presenter extends LifecycleObserver {
 
         void query(String query);
 

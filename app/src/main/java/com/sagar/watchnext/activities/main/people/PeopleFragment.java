@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
@@ -21,7 +20,7 @@ import com.sagar.watchnext.activities.main.MainActivityComponent;
 import javax.inject.Inject;
 
 
-public class PeopleFragment extends Fragment implements PeopleFragmentMvpContract.View, View.OnClickListener {
+public class PeopleFragment extends Fragment implements Contract.View, View.OnClickListener {
 
     @Inject
     Presenter presenter;

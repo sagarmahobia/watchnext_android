@@ -1,5 +1,8 @@
 package com.sagar.watchnext.activities.main.movies;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.Card;
 import com.sagar.watchnext.network.models.movies.Movie;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
@@ -17,9 +20,14 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 @MoviesFragmentScope
-public class Presenter implements MoviesFragmentMvpContract.Presenter {
-    private MoviesFragmentMvpContract.Model model;
-    private MoviesFragmentMvpContract.View view;
+public class Presenter implements Contract.Presenter {
+
+    @Inject
+    Contract.View view;
+
+    @Inject
+    TmdbMovieRepo movieRepo;
+
 
     private List<Movie> inTheatersMovies;
     private List<Movie> topRatedMovies;
@@ -28,20 +36,20 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
 
     private CompositeDisposable disposables;
 
-    private TmdbMovieRepo movieRepo;
-
     @Inject
-    public Presenter(MoviesFragmentMvpContract.Model model, MoviesFragmentMvpContract.View view, TmdbMovieRepo movieRepo) {
-        this.model = model;
-        this.view = view;
-        this.movieRepo = movieRepo;
+    public Presenter(MoviesFragmentComponent component) {
+        component.inject(this);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
         disposables = new CompositeDisposable();
+        load();
     }
 
     @Override
-    public void onCreate() {
+    public void load() {
 //in Theaters
-
         disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
@@ -82,11 +90,6 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 }));
 
 
-    }
-
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
     }
 
     private List<Movie> getMovieListByType(ListType listType) {
@@ -158,5 +161,10 @@ public class Presenter implements MoviesFragmentMvpContract.Presenter {
                 break;
         }
 
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        disposables.dispose();
     }
 }

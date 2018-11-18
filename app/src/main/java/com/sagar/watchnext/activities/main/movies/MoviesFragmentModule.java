@@ -23,19 +23,13 @@ public class MoviesFragmentModule {
 
     @Provides
     @MoviesFragmentScope
-    MoviesFragmentMvpContract.View getView(MoviesFragment moviesFragment) {
+    Contract.View getView(MoviesFragment moviesFragment) {
         return moviesFragment;
     }
 
     @Provides
     @MoviesFragmentScope
-    MoviesFragmentMvpContract.Model getModel(Model model) {
-        return model;
-    }
-
-    @Provides
-    @MoviesFragmentScope
-    MoviesFragmentMvpContract.Presenter getPresenter(Presenter presenter) {
+    Contract.Presenter getPresenter(Presenter presenter) {
         return presenter;
     }
 
