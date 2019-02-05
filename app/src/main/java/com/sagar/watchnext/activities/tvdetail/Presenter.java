@@ -17,17 +17,17 @@ import io.reactivex.schedulers.Schedulers;
 @TvDetailActivityScope
 public class Presenter implements Contract.Presenter {
 
-    @Inject
+    private
     Contract.View view;
-
-    @Inject
+    private
     TmdbTvRepo tvRepo;
 
     private CompositeDisposable disposable;
 
     @Inject
-    public Presenter(TvDetailActivityComponent component) {
-        component.inject(this);
+    public Presenter(Contract.View view, TmdbTvRepo tvRepo) {
+        this.view = view;
+        this.tvRepo = tvRepo;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

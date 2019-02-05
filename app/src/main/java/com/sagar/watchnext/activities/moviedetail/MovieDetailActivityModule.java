@@ -8,17 +8,6 @@ import dagger.Provides;
  */
 @Module
 public class MovieDetailActivityModule {
-    private MovieDetailActivity movieDetailActivity;
-
-    public MovieDetailActivityModule(MovieDetailActivity movieDetailActivity) {
-        this.movieDetailActivity = movieDetailActivity;
-    }
-
-    @MovieDetailActivityScope
-    @Provides
-    MovieDetailActivity getMovieDetailActivity() {
-        return this.movieDetailActivity;
-    }
 
     @MovieDetailActivityScope
     @Provides

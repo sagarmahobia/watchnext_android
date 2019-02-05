@@ -24,12 +24,8 @@ import io.reactivex.subjects.Subject;
  */
 @TvSearchFragmentScope
 public class Presenter implements Contract.Presenter {
-
-    @Inject
-    Contract.View view;
-
-    @Inject
-    TmdbTvRepo tvRepo;
+    private Contract.View view;
+    private TmdbTvRepo tvRepo;
 
     private CompositeDisposable disposable;
 
@@ -40,8 +36,9 @@ public class Presenter implements Contract.Presenter {
 
 
     @Inject
-    public Presenter(TvSearchFragmentComponent component) {
-        component.inject(this);
+    public Presenter(Contract.View view, TmdbTvRepo tvRepo) {
+        this.view = view;
+        this.tvRepo = tvRepo;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

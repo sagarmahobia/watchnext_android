@@ -1,5 +1,6 @@
 package com.sagar.watchnext.activities.main.movies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.MainActivityComponent;
 import com.sagar.watchnext.activities.main.movies.adapters.RecyclerAdapter;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import dagger.android.support.AndroidSupportInjection;
 
 
 public class MoviesFragment extends Fragment implements Contract.View {
@@ -58,8 +60,10 @@ public class MoviesFragment extends Fragment implements Contract.View {
     @Inject
     Contract.Presenter presenter;
 
-    public MoviesFragment() {
-        // Required empty public constructor
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
 
 
@@ -197,12 +201,6 @@ public class MoviesFragment extends Fragment implements Contract.View {
         if (actionBar != null) {
             actionBar.setTitle("Movies");
         }
-        MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
-
-        DaggerMoviesFragmentComponent.builder()
-                .mainActivityComponent(mainActivityComponent)
-                .moviesFragmentModule(new MoviesFragmentModule(this))
-                .build().inject(this);
 
         getLifecycle().addObserver(presenter);
 

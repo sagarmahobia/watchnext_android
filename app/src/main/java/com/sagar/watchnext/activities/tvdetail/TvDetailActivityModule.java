@@ -10,24 +10,11 @@ import dagger.Provides;
 @Module
 public class TvDetailActivityModule {
 
-    private TvDetailActivity tvDetailActivity;
-
-    public TvDetailActivityModule(TvDetailActivity tvDetailActivity) {
-        this.tvDetailActivity = tvDetailActivity;
-    }
-
-    @Provides
-    @TvDetailActivityScope
-    TvDetailActivity provideTvDetailActivity() {
-        return tvDetailActivity;
-    }
-
     @Provides
     @TvDetailActivityScope
     Contract.View provideView(TvDetailActivity tvDetailActivity) {
         return tvDetailActivity;
     }
-
 
     @Provides
     @TvDetailActivityScope

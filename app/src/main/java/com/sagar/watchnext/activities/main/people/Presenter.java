@@ -9,11 +9,10 @@ import javax.inject.Inject;
 @PeopleFragmentScope
 public class Presenter implements Contract.Presenter {
 
-    @Inject
-    Contract.View view;
+    private Contract.View view;
 
     @Inject
-    public Presenter(PeopleFragmentComponent component) {
-        component.inject(this);
+    public Presenter(Contract.View view) {
+        this.view = view;
     }
 }

@@ -25,12 +25,9 @@ import io.reactivex.subjects.Subject;
 
 @MovieSearchFragmentScope
 public class Presenter implements Contract.Presenter {
+    private Contract.View view;
 
-    @Inject
-    Contract.View view;
-
-    @Inject
-    TmdbMovieRepo movieRepo;
+    private TmdbMovieRepo movieRepo;
 
     private CompositeDisposable disposable;
 
@@ -41,8 +38,9 @@ public class Presenter implements Contract.Presenter {
 
 
     @Inject
-    public Presenter(MovieSearchFragmentComponent component) {
-        component.inject(this);
+    public Presenter(Contract.View view, TmdbMovieRepo movieRepo) {
+        this.view = view;
+        this.movieRepo = movieRepo;
     }
 
 

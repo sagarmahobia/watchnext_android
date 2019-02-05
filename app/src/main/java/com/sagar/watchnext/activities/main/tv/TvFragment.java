@@ -1,5 +1,6 @@
 package com.sagar.watchnext.activities.main.tv;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.MainActivityComponent;
 import com.sagar.watchnext.activities.main.tv.adapters.RecyclerAdapter;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import dagger.android.support.AndroidSupportInjection;
 
 
 public class TvFragment extends Fragment implements Contract.View {
@@ -70,10 +72,14 @@ public class TvFragment extends Fragment implements Contract.View {
     }
 
     @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -186,16 +192,11 @@ public class TvFragment extends Fragment implements Contract.View {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
         if (actionBar != null) {
             actionBar.setTitle("TV Shows");
         }
-        DaggerTvFragmentComponent.builder()
-                .mainActivityComponent(mainActivityComponent)
-                .tvFragmentModule(new TvFragmentModule(this))
-                .build().inject(this);
 
         getLifecycle().addObserver(presenter);
 

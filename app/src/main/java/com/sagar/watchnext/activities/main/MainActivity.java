@@ -15,29 +15,32 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.activities.about.AboutPageActivity;
 import com.sagar.watchnext.activities.main.home.HomeFragment;
 import com.sagar.watchnext.activities.main.movies.MoviesFragment;
 import com.sagar.watchnext.activities.main.tv.TvFragment;
 import com.sagar.watchnext.activities.search.SearchActivity;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HasSupportFragmentInjector {
 
-    MainActivityComponent component;
-
-    public MainActivityComponent getComponent() {
-        return component;
-    }
+    @Inject
+    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -48,11 +51,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        component = DaggerMainActivityComponent.builder()
-                .watchNextApplicationComponent(WatchNextApplication.get(this).getComponent())
-                .mainActivityModule(new MainActivityModule(this))
-                .build();
-        component.inject(this);
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
         navigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -129,4 +127,8 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return this.fragmentDispatchingAndroidInjector;
+    }
 }

@@ -1,5 +1,6 @@
 package com.sagar.watchnext;
 
+import android.app.Application;
 import android.content.Context;
 
 import dagger.Module;
@@ -10,16 +11,11 @@ import dagger.Provides;
  */
 
 @Module
-public class ApplicationContextModule {
-    private Context context;
-
-    ApplicationContextModule(Context context) {
-        this.context = context;
-    }
+class ApplicationContextModule {
 
     @ApplicationScope
     @Provides
-    public Context provideContext() {
-        return this.context;
+    Context provideContext(Application context) {
+        return context;
     }
 }

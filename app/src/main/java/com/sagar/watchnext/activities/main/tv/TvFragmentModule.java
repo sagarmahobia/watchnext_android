@@ -8,19 +8,8 @@ import dagger.Provides;
  */
 
 @Module
-class TvFragmentModule {
+public class TvFragmentModule {
 
-    private TvFragment tvFragment;
-
-    TvFragmentModule(TvFragment tvFragment) {
-        this.tvFragment = tvFragment;
-    }
-
-    @TvFragmentScope
-    @Provides
-    TvFragment getTvFragment() {
-        return tvFragment;
-    }
 
     @TvFragmentScope
     @Provides

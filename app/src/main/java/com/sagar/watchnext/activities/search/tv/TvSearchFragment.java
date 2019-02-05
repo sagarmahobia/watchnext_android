@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.search.tv;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,9 +60,12 @@ public class TvSearchFragment extends Fragment implements ActivityStateObserver,
     private String query = "";
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
 
-    public TvSearchFragment() {
-
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -101,12 +106,6 @@ public class TvSearchFragment extends Fragment implements ActivityStateObserver,
         SearchActivity activity = (SearchActivity) getActivity();
         if (activity != null) {
             activity.setActivityStateObserver(this);
-            DaggerTvSearchFragmentComponent
-                    .builder()
-                    .tvSearchFragmentModule(new TvSearchFragmentModule(this))
-                    .searchActivityComponent(activity.getComponent())
-                    .build()
-                    .inject(this);
         }
 
         getLifecycle().addObserver(presenter);

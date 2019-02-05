@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.network.models.tv.details.Details;
 import com.sagar.watchnext.network.models.tv.details.Genre;
 import com.sagar.watchnext.network.models.tv.details.Network;
@@ -38,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
 public class TvDetailActivity extends AppCompatActivity implements Contract.View {
 
@@ -112,17 +112,13 @@ public class TvDetailActivity extends AppCompatActivity implements Contract.View
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv_detail);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        DaggerTvDetailActivityComponent.builder().
-                watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
-                tvDetailActivityModule(new TvDetailActivityModule(this)).
-                build().
-                inject(this);
 
         ButterKnife.bind(this);
 

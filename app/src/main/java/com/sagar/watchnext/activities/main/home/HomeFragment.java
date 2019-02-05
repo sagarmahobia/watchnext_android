@@ -1,5 +1,6 @@
 package com.sagar.watchnext.activities.main.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.MainActivityComponent;
 import com.sagar.watchnext.activities.main.home.adapters.RecyclerAdapter;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import dagger.android.support.AndroidSupportInjection;
 
 
 public class HomeFragment extends Fragment implements Contract.View {
@@ -50,10 +52,11 @@ public class HomeFragment extends Fragment implements Contract.View {
     Contract.Presenter presenter;
 
 
-    public HomeFragment() {
-        // Required empty public constructor
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
-
 
     public static HomeFragment newInstance() {
 
@@ -147,12 +150,6 @@ public class HomeFragment extends Fragment implements Contract.View {
         if (actionBar != null) {
             actionBar.setTitle("WatchNext - Home");
         }
-        MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
-
-        DaggerHomeFragmentComponent.builder().
-                mainActivityComponent(mainActivityComponent)
-                .homeFragmentModule(new HomeFragmentModule(this))
-                .build().inject(this);
 
         getLifecycle().addObserver(presenter);
 

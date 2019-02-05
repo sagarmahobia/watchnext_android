@@ -23,12 +23,8 @@ import io.reactivex.schedulers.Schedulers;
 
 @HomeFragmentScope
 public class Presenter implements Contract.Presenter {
-
-    @Inject
-    Contract.View view;
-
-    @Inject
-    TmdbMovieRepo movieRepo;
+    private Contract.View view;
+    private TmdbMovieRepo movieRepo;
 
     @Inject
     TmdbTvRepo tvRepo;
@@ -40,8 +36,9 @@ public class Presenter implements Contract.Presenter {
 
 
     @Inject
-    public Presenter(HomeFragmentComponent component) {
-        component.inject(this);
+    public Presenter(Contract.View view, TmdbMovieRepo movieRepo) {
+        this.view = view;
+        this.movieRepo = movieRepo;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

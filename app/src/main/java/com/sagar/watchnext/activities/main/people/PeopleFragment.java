@@ -15,9 +15,10 @@ import android.widget.TextView;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.MainActivityComponent;
 
 import javax.inject.Inject;
+
+import dagger.android.support.AndroidSupportInjection;
 
 
 public class PeopleFragment extends Fragment implements Contract.View, View.OnClickListener {
@@ -25,9 +26,12 @@ public class PeopleFragment extends Fragment implements Contract.View, View.OnCl
     @Inject
     Presenter presenter;
 
-    public PeopleFragment() {
-        // Required empty public constructor
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
+
 
     public static PeopleFragment newInstance() {
         PeopleFragment fragment = new PeopleFragment();
@@ -48,16 +52,11 @@ public class PeopleFragment extends Fragment implements Contract.View, View.OnCl
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
 
         if (actionBar != null) {
             actionBar.setTitle("People");
         }
-          DaggerPeopleFragmentComponent.builder().
-                mainActivityComponent(mainActivityComponent).
-                peopleFragmentModule(new PeopleFragmentModule(this)).
-                build() .inject(this);
     }
 
     @Override
@@ -80,13 +79,6 @@ public class PeopleFragment extends Fragment implements Contract.View, View.OnCl
 
 
         return scrollView;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
     }
 
     @Override

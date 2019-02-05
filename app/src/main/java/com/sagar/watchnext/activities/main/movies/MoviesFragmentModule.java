@@ -9,17 +9,6 @@ import dagger.Provides;
 @Module
 public class MoviesFragmentModule {
 
-    private MoviesFragment moviesFragment;
-
-    MoviesFragmentModule(MoviesFragment moviesFragment) {
-        this.moviesFragment = moviesFragment;
-    }
-
-    @Provides
-    @MoviesFragmentScope
-    MoviesFragment getMoviesFragment() {
-        return this.moviesFragment;
-    }
 
     @Provides
     @MoviesFragmentScope

@@ -1,5 +1,4 @@
-package com.sagar.watchnext.activities.main.home;
-
+package com.sagar.watchnext.activities.about;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import javax.inject.Scope;
 
 /**
- * Created by SAGAR MAHOBIA on 30-Jun-18. at 16:29
+ * Created by SAGAR MAHOBIA on 06-Feb-19. at 00:27
  */
 
 @Scope
 @Retention(RetentionPolicy.CLASS)
-public @interface HomeFragmentScope {
+public @interface AboutPageActivityScope {
 }

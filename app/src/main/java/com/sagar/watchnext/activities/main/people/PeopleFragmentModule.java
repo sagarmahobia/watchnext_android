@@ -7,20 +7,7 @@ import dagger.Provides;
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 16:37
  */
 @Module
-class PeopleFragmentModule {
-
-    private PeopleFragment peopleFragment;
-
-    PeopleFragmentModule(PeopleFragment peopleFragment) {
-        this.peopleFragment = peopleFragment;
-    }
-
-    @Provides
-    @PeopleFragmentScope
-    PeopleFragment getPeopleFragment() {
-        return this.peopleFragment;
-    }
-
+public class PeopleFragmentModule {
 
     @Provides
     @PeopleFragmentScope

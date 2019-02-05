@@ -8,19 +8,11 @@ import dagger.Provides;
  */
 @Module
 public class SearchActivityModule {
-    private SearchActivity searchActivity;
-
-
-    public SearchActivityModule(SearchActivity searchActivity) {
-        this.searchActivity = searchActivity;
-    }
 
     @Provides
     @SearchActivityScope
-    SearchActivity provideSearchActivity() {
-        return this.searchActivity;
+    SearchActivity provideSearchActivity(SearchActivity searchActivity) {
+        return searchActivity;
+
     }
-
-
-
 }

@@ -10,18 +10,6 @@ import dagger.Provides;
 @Module
 public class TvSearchFragmentModule {
 
-    private TvSearchFragment tvSearchFragment;
-
-    TvSearchFragmentModule(TvSearchFragment tvSearchFragment) {
-        this.tvSearchFragment = tvSearchFragment;
-    }
-
-    @Provides
-    @TvSearchFragmentScope
-    TvSearchFragment tvSearchFragment() {
-        return tvSearchFragment;
-    }
-
     @Provides
     @TvSearchFragmentScope
     Contract.View view(TvSearchFragment tvSearchFragment) {

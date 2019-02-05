@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.search.movies;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,10 +61,11 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
     private String query = "";
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
 
-    public MovieSearchFragment() {
-
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -103,11 +106,6 @@ public class MovieSearchFragment extends Fragment implements ActivityStateObserv
         SearchActivity activity = (SearchActivity) getActivity();
         if (activity != null) {
             activity.setActivityStateObserver(this);
-            DaggerMovieSearchFragmentComponent.builder().
-                    searchActivityComponent(activity.getComponent()).
-                    movieSearchFragmentModule(new MovieSearchFragmentModule(this)).
-                    build().
-                    inject(this);
         }
 
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.Group;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
 import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
 import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
@@ -39,6 +39,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
 public class MovieDetailActivity extends AppCompatActivity implements Contract.View {
 
@@ -112,18 +113,13 @@ public class MovieDetailActivity extends AppCompatActivity implements Contract.V
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        DaggerMovieDetailActivityComponent.
-                builder().
-                watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
-                movieDetailActivityModule(new MovieDetailActivityModule(this)).
-                build().
-                inject(this);
 
         ButterKnife.bind(this);
 
@@ -161,6 +157,7 @@ public class MovieDetailActivity extends AppCompatActivity implements Contract.V
         return movie_id;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @SuppressLint("DefaultLocale")
     @Override
     public void onSucceedLoadingMovieDetail(MovieDetail movieDetail) {
@@ -272,7 +269,7 @@ public class MovieDetailActivity extends AppCompatActivity implements Contract.V
             SpannableString spannableString = new SpannableString(homepage);
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(@NonNull View view) {
                     Log.d("SPAN", "clicked");
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(homepage));

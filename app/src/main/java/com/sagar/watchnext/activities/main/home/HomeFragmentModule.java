@@ -9,19 +9,8 @@ import dagger.Provides;
  */
 
 @Module
-class HomeFragmentModule {
+public class HomeFragmentModule {
 
-    private HomeFragment homeFragment;
-
-    HomeFragmentModule(HomeFragment homeFragment) {
-        this.homeFragment = homeFragment;
-    }
-
-    @Provides
-    @HomeFragmentScope
-    HomeFragment getHomeFragment() {
-        return this.homeFragment;
-    }
 
     @Provides
     @HomeFragmentScope
