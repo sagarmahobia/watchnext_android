@@ -95,13 +95,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
         if (id == R.id.home) {
-            fragment = HomeFragment.newInstance();
+            fragment = new HomeFragment();
 
         } else if (id == R.id.movies) {
-            fragment = MoviesFragment.newInstance();
+            fragment = new MoviesFragment();
 
         } else if (id == R.id.tv) {
-            fragment = TvFragment.newInstance();
+            fragment = new TvFragment();
 
         } else if (id == R.id.nav_share) {
             String shareBody = "WatchNext - Discover Movies & TV. \n" +

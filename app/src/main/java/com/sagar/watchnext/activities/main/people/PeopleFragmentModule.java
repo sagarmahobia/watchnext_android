@@ -1,7 +1,6 @@
 package com.sagar.watchnext.activities.main.people;
 
 import dagger.Module;
-import dagger.Provides;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 16:37
@@ -9,17 +8,6 @@ import dagger.Provides;
 @Module
 public class PeopleFragmentModule {
 
-    @Provides
-    @PeopleFragmentScope
-    Contract.View getView(PeopleFragment peopleFragment) {
-        return peopleFragment;
-    }
-
-    @Provides
-    @PeopleFragmentScope
-    Contract.Presenter getPresenter(Presenter presenter) {
-        return presenter;
-    }
 
 
 }

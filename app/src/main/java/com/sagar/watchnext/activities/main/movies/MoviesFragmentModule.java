@@ -1,25 +1,11 @@
 package com.sagar.watchnext.activities.main.movies;
 
 import dagger.Module;
-import dagger.Provides;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 16:33
  */
 @Module
 public class MoviesFragmentModule {
-
-
-    @Provides
-    @MoviesFragmentScope
-    Contract.View getView(MoviesFragment moviesFragment) {
-        return moviesFragment;
-    }
-
-    @Provides
-    @MoviesFragmentScope
-    Contract.Presenter getPresenter(Presenter presenter) {
-        return presenter;
-    }
 
 }

@@ -16,15 +16,11 @@ import android.widget.TextView;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
 
-import javax.inject.Inject;
-
 import dagger.android.support.AndroidSupportInjection;
 
 
-public class PeopleFragment extends Fragment implements Contract.View, View.OnClickListener {
+public class PeopleFragment extends Fragment implements View.OnClickListener {
 
-    @Inject
-    Presenter presenter;
 
     @Override
     public void onAttach(Context context) {

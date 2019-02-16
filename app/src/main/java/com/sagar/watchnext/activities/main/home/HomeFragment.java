@@ -1,30 +1,32 @@
 package com.sagar.watchnext.activities.main.home;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.home.adapters.RecyclerAdapter;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
+import com.sagar.watchnext.databinding.FragmentHomeBinding;
+import com.sagar.watchnext.response.Response;
+import com.sagar.watchnext.response.Status;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,25 +34,23 @@ import javax.inject.Inject;
 import dagger.android.support.AndroidSupportInjection;
 
 
-public class HomeFragment extends Fragment implements Contract.View {
-
-    private RecyclerView recyclerViewOnTv;
-    private RecyclerView recyclerViewInTheaters;
-
-    private RelativeLayout inTheatersCard;
-    private RelativeLayout onTvCard;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
+public class HomeFragment extends Fragment {
 
     @Inject
-    RecyclerAdapter onTvRecyclerAdapter;
+    CardAdapter tvShowsRecyclerAdapter;
 
     @Inject
-    RecyclerAdapter inTheatersRecyclerAdapter;
+    CardAdapter moviesRecyclerAdapter;
 
     @Inject
-    Contract.Presenter presenter;
+    HomeFragmentViewModelFactory viewModelFactory;
 
+    private FragmentHomeBinding binding;
+
+    private HomeFragmentViewModel viewModel;
+
+    private CardRecyclerModel moviesCardRecyclerModel;
+    private CardRecyclerModel tvShowsCardRecyclerModel;
 
     @Override
     public void onAttach(Context context) {
@@ -58,20 +58,13 @@ public class HomeFragment extends Fragment implements Contract.View {
         super.onAttach(context);
     }
 
-    public static HomeFragment newInstance() {
-
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString("");
-//        }
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeFragmentViewModel.class);
+
+        moviesCardRecyclerModel = viewModel.getMoviesCardRecyclerModel();
+        tvShowsCardRecyclerModel = viewModel.getTvShowsCardRecyclerModel();
     }
 
     @Override
@@ -79,66 +72,71 @@ public class HomeFragment extends Fragment implements Contract.View {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
-        LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
 
+        binding.movies.setModel(moviesCardRecyclerModel);
+        binding.tvShows.setModel(tvShowsCardRecyclerModel);
 
-        inTheatersCard = (RelativeLayout) inflater.inflate(
-                R.layout.card_horizontal_recycler,
-                linearLayout, false);
+        moviesCardRecyclerModel.setTitle("In Theaters");
+        tvShowsCardRecyclerModel.setTitle("On TV");
 
-        onTvCard = (RelativeLayout) inflater.inflate(
-                R.layout.card_horizontal_recycler,
-                linearLayout, false);
+        binding.movies.horizontalListRecycler.setLayoutManager(
+                new LinearLayoutManager(
+                        this.getContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false)
+        );
 
-        ((TextView) inTheatersCard.findViewById(R.id.card_header_text)).setText("In Theaters");
-        ((TextView) onTvCard.findViewById(R.id.card_header_text)).setText("On TV");
-
-        recyclerViewOnTv = onTvCard.findViewById(R.id.horizontal_list_recycler);
-        recyclerViewInTheaters = inTheatersCard.findViewById(R.id.horizontal_list_recycler);
-
-        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
-        for (int i = 1; i <= 2; i++) {
-            linearLayoutManagers.add(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        }
-
-        recyclerViewOnTv.setLayoutManager(linearLayoutManagers.get(0));
-        recyclerViewInTheaters.setLayoutManager(linearLayoutManagers.get(1));
-
-        EndlessRecyclerViewScrollListener scrollListenerForOnTv =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewOnTv.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        presenter.loadMore(ListType.OnTv, pageToLoad);
-                        onTvCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                    }
-                };
+        binding.tvShows.horizontalListRecycler.setLayoutManager(
+                new LinearLayoutManager(
+                        this.getContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false)
+        );
 
         EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewInTheaters.getLayoutManager()) {
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.movies.horizontalListRecycler.getLayoutManager()) {
                     @Override
                     public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        presenter.loadMore(ListType.InTheaters, pageToLoad);
-                        inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                        viewModel.loadMoreMovies(pageToLoad);
+                        binding.movies.progressBar.setVisibility(View.VISIBLE);
 
                     }
                 };
 
-        recyclerViewOnTv.addOnScrollListener(scrollListenerForOnTv);
-        recyclerViewInTheaters.addOnScrollListener(scrollListenerForInTheaters);
+        EndlessRecyclerViewScrollListener scrollListenerForOnTv =
+                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.tvShows.horizontalListRecycler.getLayoutManager()) {
+                    @Override
+                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
+                        viewModel.loadMoreTvShows(pageToLoad);
+                        binding.tvShows.progressBar.setVisibility(View.VISIBLE);
+                    }
+                };
 
+        binding.movies.horizontalListRecycler.addOnScrollListener(scrollListenerForInTheaters);
+        binding.tvShows.horizontalListRecycler.addOnScrollListener(scrollListenerForOnTv);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.load();
+        binding.movies.horizontalListRecycler.setAdapter(moviesRecyclerAdapter);
+        binding.tvShows.horizontalListRecycler.setAdapter(tvShowsRecyclerAdapter);
+
+        moviesRecyclerAdapter.setAdapterListener(model ->
+                HomeFragment.this.startMovieDetailActivity(model.getId()));
+
+        tvShowsRecyclerAdapter.setAdapterListener(model ->
+                HomeFragment.this.startTvDetailActivity(model.getId()));
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.load();
+
+            moviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            tvShowsCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
             scrollListenerForOnTv.resetState();
             scrollListenerForInTheaters.resetState();
         });
 
-        linearLayout.addView(inTheatersCard);
-        linearLayout.addView(onTvCard);
-
-        swipeRefreshLayout.setRefreshing(true);
-        return swipeRefreshLayout;
+        binding.swipeRefreshLayout.setRefreshing(true);
+        return binding.getRoot();
     }
 
 
@@ -151,51 +149,40 @@ public class HomeFragment extends Fragment implements Contract.View {
             actionBar.setTitle("WatchNext - Home");
         }
 
-        getLifecycle().addObserver(presenter);
+        viewModel.getMoviesLiveData().observe(this, this::onResponseMovies);
+        viewModel.getShowsLiveData().observe(this, this::onResponseTvShows);
 
-        onTvRecyclerAdapter.setListType(ListType.OnTv);
-        inTheatersRecyclerAdapter.setListType(ListType.InTheaters);
     }
 
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-    }
+    private void onResponseMovies(Response<List<CardModel>> response) {
+        binding.swipeRefreshLayout.setRefreshing(false);
 
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            moviesRecyclerAdapter.submitList(data);
 
-    @Override
-    public void onSucceedLoadingList(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                recyclerViewInTheaters.setAdapter(inTheatersRecyclerAdapter);
-                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.GONE);
-                break;
-            default:
-                recyclerViewOnTv.setAdapter(onTvRecyclerAdapter);
-                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                onTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
+            moviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
 
+            moviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
         }
-        swipeRefreshLayout.setRefreshing(false);
-
     }
 
-    @Override
-    public void onErrorLoadingList(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                break;
-            default:
-                onTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
+    private void onResponseTvShows(Response<List<CardModel>> response) {
+        binding.swipeRefreshLayout.setRefreshing(false);
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<CardModel> data = response.getData();
+            tvShowsRecyclerAdapter.submitList(data);
+            tvShowsCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
+
+        } else if (response.getStatus() == Status.ERROR) {
+            tvShowsCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
         }
-        swipeRefreshLayout.setRefreshing(false);
     }
 
-    @Override
+    //    @Override
     public void startMovieDetailActivity(int movieId) {
 
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
@@ -203,7 +190,7 @@ public class HomeFragment extends Fragment implements Contract.View {
         startActivity(intent);
     }
 
-    @Override
+    //    @Override
     public void startTvDetailActivity(int tv_id) {
 
         Intent intent = new Intent(getContext(), TvDetailActivity.class);
@@ -211,17 +198,4 @@ public class HomeFragment extends Fragment implements Contract.View {
         startActivity(intent);
     }
 
-    @Override
-    public void notifyAdaptersNewData(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                inTheatersRecyclerAdapter.notifyDataSetChanged();
-                inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-                break;
-            case OnTv:
-                onTvRecyclerAdapter.notifyDataSetChanged();
-                onTvCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-                break;
-        }
-    }
 }
