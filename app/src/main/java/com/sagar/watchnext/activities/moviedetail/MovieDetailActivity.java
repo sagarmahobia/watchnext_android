@@ -1,145 +1,91 @@
 package com.sagar.watchnext.activities.moviedetail;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.constraint.Group;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
-import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
-import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
-import com.sagar.watchnext.utils.ImageUrlUtil;
+import com.sagar.watchnext.databinding.ActivityMovieDetailBinding;
+import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
+import com.sagar.watchnext.observablemodels.HeaderModel;
 import com.sagar.watchnext.utils.PixelDensityUtil;
-import com.squareup.picasso.Picasso;
-
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
+import com.sagar.watchnext.viewmodelfactories.ApplicationViewModelFactory;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 
-public class MovieDetailActivity extends AppCompatActivity implements Contract.View {
-
-
-    //dagger
-    @Inject
-    Contract.Presenter presenter;
-
-    @Inject
-    Picasso picasso;
+public class MovieDetailActivity extends AppCompatActivity {
 
     @Inject
     PixelDensityUtil pixelDensityUtil;
 
+    @Inject
+    ApplicationViewModelFactory viewModelFactory;
 
-    //butter knife
-    @BindView(R.id.content_scroll_view)
-    ScrollView scrollView;
+    private MovieDetailActivityViewModel viewModel;
 
-    @BindView(R.id.error_message_text_and_image)
-    Group errorMessageGroup;
+    private MovieDetailActivityDataModel dataModel;
 
-    @BindView(R.id.backdrop_image)
-    ImageView backDropImage;
+    private MovieDetailActivityModel activityModel;
+    private ContentVisibilityModel visibilityModel;
+    private HeaderModel headerModel;
 
-    @BindView(R.id.poster_image)
-    ImageView posterImage;
-
-    @BindView(R.id.title)
-    TextView movieTitle;
-
-    @BindView(R.id.year)
-    TextView movieYear;
-
-    @BindView(R.id.runtime)
-    TextView movieRuntime;
-
-    @BindView(R.id.genres)
-    TextView movieGenres;
-
-    @BindView(R.id.overview_text)
-    TextView overviewText;
-
-    @BindView(R.id.original_title_text)
-    TextView originalTitleText;
-
-    @BindView(R.id.original_language_text)
-    TextView originalLanguageText;
-
-    @BindView(R.id.status_text)
-    TextView statusText;
-
-    @BindView(R.id.release_date_text)
-    TextView releaseDateText;
-
-    @BindView(R.id.budget_text)
-    TextView budgetText;
-
-    @BindView(R.id.revenue_text)
-    TextView revenueText;
-
-    @BindView(R.id.production_companies_text)
-    TextView productionCompaniesText;
-
-    @BindView(R.id.homepage_text)
-    TextView homepageText;
-
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
     private int movie_id;
+
+    private ActivityMovieDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
+
+
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
 
         RelativeLayout.LayoutParams lp =
                 new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                         pixelDensityUtil.getBackDropImageHeight()
                 );
-        backDropImage.setLayoutParams(lp);
+        binding.header.backdropImage.setLayoutParams(lp);
 
         Intent intent = getIntent();
         movie_id = intent.getIntExtra("movie_id", -1);
-
         if (movie_id == -1) {
             //todo handle error in getting movie_id
             this.finish();
             return;
         }
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.load());
-        getLifecycle().addObserver(presenter);
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieDetailActivityViewModel.class);
+
+        dataModel = viewModel.getDataModel();
+        dataModel.setMovieId(movie_id);
+        activityModel = viewModel.getActivityModel();
+        headerModel = viewModel.getHeaderModel();
+        visibilityModel = viewModel.getVisibilityModel();
+
+        binding.setModel(activityModel);
+        binding.setVisibilityModel(visibilityModel);
+        binding.header.setModel(headerModel);
+
+        binding.swipeRefreshLayout.setRefreshing(true);
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.load();
+        });
+
+        viewModel.load();
     }
 
     @Override
@@ -151,174 +97,4 @@ public class MovieDetailActivity extends AppCompatActivity implements Contract.V
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public int getMovieId() {
-        return movie_id;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @SuppressLint("DefaultLocale")
-    @Override
-    public void onSucceedLoadingMovieDetail(MovieDetail movieDetail) {
-        swipeRefreshLayout.setRefreshing(false);
-        errorMessageGroup.setVisibility(View.GONE);
-        getSupportActionBar().setTitle(movieDetail.getTitle());
-        scrollView.setVisibility(View.VISIBLE);
-
-        picasso.load(ImageUrlUtil.getBackdropImageUrl(movieDetail.getBackdropPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(backDropImage);
-        picasso.load(ImageUrlUtil.getPosterImageUrl(movieDetail.getPosterPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(posterImage);
-
-        movieTitle.setText(movieDetail.getTitle());
-
-        String releaseDate = movieDetail.getReleaseDate();
-        if (releaseDate != null && releaseDate.length() > 4) {
-            movieYear.setText(releaseDate.substring(0, 4));
-        }
-        int t = movieDetail.getRuntime();
-        int hours = t / 60; //since both are ints, you get an int
-        int minutes = t % 60;
-
-        if (hours == 0 && minutes == 0) {
-            movieRuntime.setText("");
-        } else if (hours == 0) {
-            movieRuntime.setText(String.format("%02dm", minutes));
-        } else if (minutes == 0) {
-            movieRuntime.setText(String.format("%02dh", hours));
-        } else {
-            movieRuntime.setText(String.format("%02dh %02dm", hours, minutes));
-        }
-
-        StringBuilder genreString = new StringBuilder();
-        List<Genre> genres = movieDetail.getGenres();
-        int index = 1;
-        int size = genres.size();
-        for (Genre genre : movieDetail.getGenres()) {
-            if (index++ < size) {
-                genreString.append(genre.getName()).append(", ");
-            } else {
-                genreString.append(genre.getName());
-            }
-        }
-
-        if (size > 0) {
-            movieGenres.setText(genreString.toString());
-        }
-
-        String overview = movieDetail.getOverview();
-        if (overview != null) {
-            overviewText.setText(overview);
-        }
-
-        String originalTitle = movieDetail.getOriginalTitle();
-        if (originalTitle != null) {
-            originalTitleText.setText(originalTitle);
-        }
-
-        String originalLanguage = movieDetail.getOriginalLanguage();
-        if (originalLanguage != null) {
-            Locale loc = new Locale(originalLanguage);
-            originalLanguage = loc.getDisplayLanguage(loc);
-            originalLanguageText.setText(originalLanguage);
-        }
-
-        String status = movieDetail.getStatus();
-        if (status != null) {
-            statusText.setText(status);
-        }
-
-        if (releaseDate != null) {
-            releaseDateText.setText(releaseDate);
-        }
-
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
-        format.setMaximumFractionDigits(0);
-
-        int budget = movieDetail.getBudget();
-        if (budget != 0) {
-            budgetText.setText(format.format(budget));
-        }
-
-        int revenue = movieDetail.getRevenue();
-        if (revenue != 0) {
-            revenueText.setText(format.format(revenue));
-        }
-
-        StringBuilder productionCompanyString = new StringBuilder();
-        index = 1;
-        size = movieDetail.getProductionCompanies().size();
-        for (ProductionCompany productionCompany : movieDetail.getProductionCompanies()) {
-            if (index++ < size) {
-                productionCompanyString.append(productionCompany.getName()).append(", ");
-            } else {
-                productionCompanyString.append(productionCompany.getName());
-            }
-        }
-        if (size > 0) {
-            productionCompaniesText.setText(productionCompanyString);
-        }
-
-        String homepage = movieDetail.getHomepage();
-        if (homepage != null && homepage.length() > 0) {
-            SpannableString spannableString = new SpannableString(homepage);
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(@NonNull View view) {
-                    Log.d("SPAN", "clicked");
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(homepage));
-                    startActivity(i);
-                }
-            };
-            spannableString.setSpan(clickableSpan, 0, homepage.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), 0, homepage.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            homepageText.setText(spannableString);
-            homepageText.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-
-    }
-
-    @Override
-    public void onErrorLoadingMovieDetail() {
-        scrollView.setVisibility(View.INVISIBLE);
-        swipeRefreshLayout.setRefreshing(false);
-        errorMessageGroup.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

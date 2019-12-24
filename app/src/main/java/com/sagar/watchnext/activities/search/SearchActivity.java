@@ -1,15 +1,15 @@
 package com.sagar.watchnext.activities.search;
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.search.adapters.ViewPagerAdapter;
 import com.sagar.watchnext.activities.search.movies.MovieSearchFragment;
@@ -25,12 +25,12 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.HasAndroidInjector;
 
-public class SearchActivity extends AppCompatActivity implements TextWatcher, HasSupportFragmentInjector {
+public class SearchActivity extends AppCompatActivity implements TextWatcher, HasAndroidInjector {
 
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+    DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
 
 
     @BindView(R.id.viewpager)
@@ -110,8 +110,9 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ha
         }
     }
 
+
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return fragmentDispatchingAndroidInjector;
     }
 }

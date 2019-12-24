@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.search.movies.adapters;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.sagar.watchnext.activities.search.movies.Contract;
 import com.sagar.watchnext.activities.search.movies.MovieSearchFragmentScope;

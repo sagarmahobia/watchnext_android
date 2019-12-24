@@ -1,23 +1,22 @@
 package com.sagar.watchnext;
 
-import android.app.Activity;
 import android.app.Application;
 
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import dagger.android.HasAndroidInjector;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 12:45
  */
 
 
-public class WatchNextApplication extends Application implements HasActivityInjector {
+public class WatchNextApplication extends Application implements HasAndroidInjector {
 
     @Inject
-    DispatchingAndroidInjector<Activity> activityDispatchingAndroidInjector;
+    DispatchingAndroidInjector<Object> activityDispatchingAndroidInjector;
 
     private WatchNextApplicationComponent component;
 
@@ -26,14 +25,14 @@ public class WatchNextApplication extends Application implements HasActivityInje
         super.onCreate();
 
         DaggerWatchNextApplicationComponent
-                .builder()
-                .application(this)
-                .build()
+                .factory()
+                .create(this)
                 .inject(this);
     }
 
+
     @Override
-    public AndroidInjector<Activity> activityInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return activityDispatchingAndroidInjector;
     }
 }

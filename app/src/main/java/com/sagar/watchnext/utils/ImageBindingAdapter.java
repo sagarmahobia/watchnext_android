@@ -1,7 +1,8 @@
 package com.sagar.watchnext.utils;
 
-import android.databinding.BindingAdapter;
 import android.widget.ImageView;
+
+import androidx.databinding.BindingAdapter;
 
 import com.sagar.watchnext.R;
 import com.squareup.picasso.Picasso;

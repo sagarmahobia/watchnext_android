@@ -1,6 +1,7 @@
 package com.sagar.watchnext.response;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import static com.sagar.watchnext.response.Status.ERROR;
 import static com.sagar.watchnext.response.Status.LOADING;

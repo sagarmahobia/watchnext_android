@@ -1,6 +1,6 @@
 package com.sagar.watchnext.activities.search.tv.adapters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.sagar.watchnext.activities.search.tv.Contract;
 import com.sagar.watchnext.activities.search.tv.TvSearchFragmentScope;

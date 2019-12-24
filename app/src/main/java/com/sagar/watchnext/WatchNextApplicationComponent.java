@@ -5,6 +5,7 @@ import android.app.Application;
 
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.android.support.AndroidSupportInjectionModule;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 12:46
@@ -13,18 +14,15 @@ import dagger.Component;
 @ApplicationScope
 @Component(modules = {ApplicationContextModule.class,
         NetworkModule.class,
+        AndroidSupportInjectionModule.class,
         ActivityProvider.class})
 public interface WatchNextApplicationComponent {
 
-
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        Builder application(Application application);
-
-        WatchNextApplicationComponent build();
+    @Component.Factory
+    interface Factory {
+        WatchNextApplicationComponent create(@BindsInstance Application application);
     }
 
-    void inject(WatchNextApplication watchNextApplication);
+    void inject(WatchNextApplication application);
 
 }

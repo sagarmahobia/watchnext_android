@@ -1,9 +1,9 @@
 package com.sagar.watchnext.adapters.card;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 
-import com.android.databinding.library.baseAdapters.BR;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.library.baseAdapters.BR;
 
 /**
  * Created by SAGAR MAHOBIA on 16-Feb-19. at 01:04

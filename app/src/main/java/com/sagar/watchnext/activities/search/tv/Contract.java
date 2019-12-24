@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.search.tv;
 
-import android.arch.lifecycle.LifecycleObserver;
+
+import androidx.lifecycle.LifecycleObserver;
 
 import com.sagar.watchnext.adapters.search.SearchCard;
 
