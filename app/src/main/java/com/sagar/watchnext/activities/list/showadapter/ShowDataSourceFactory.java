@@ -17,22 +17,24 @@ public class ShowDataSourceFactory extends DataSource.Factory<Integer, ShowModel
     private ShowDataSource dataSource;
     private String type;
     private String subtype;
+    private int id;
     private TMDBRepository tmdbRepository;
 
     public ShowDataSourceFactory(CompositeDisposable disposable,
                                  MutableLiveData<PagingState> stateLiveData,
-                                 String type, String subtype, TMDBRepository tmdbRepository) {
+                                 String type, String subtype, int id, TMDBRepository tmdbRepository) {
         this.disposable = disposable;
         this.stateLiveData = stateLiveData;
         this.type = type;
         this.subtype = subtype;
+        this.id = id;
         this.tmdbRepository = tmdbRepository;
     }
 
     @NonNull
     @Override
     public DataSource<Integer, ShowModel> create() {
-        dataSource = new ShowDataSource(tmdbRepository, disposable, stateLiveData, type, subtype);
+        dataSource = new ShowDataSource(tmdbRepository, disposable, stateLiveData, type, subtype,id);
         return dataSource;
     }
 

@@ -42,8 +42,8 @@ public class ListActivityViewModel extends ViewModel {
         showDataSourceFactory.invalidate();
     }
 
-    void prepare(String type, String subtype) {
-        showDataSourceFactory = new ShowDataSourceFactory(disposable, pagedListStateLiveData, type, subtype, tmdbRepository);
+    void prepare(String type, String subtype, int id) {
+        showDataSourceFactory = new ShowDataSourceFactory(disposable, pagedListStateLiveData, type, subtype,id, tmdbRepository);
 
         PagedList.Config build = new PagedList.Config.Builder().setPrefetchDistance(20).build();
 

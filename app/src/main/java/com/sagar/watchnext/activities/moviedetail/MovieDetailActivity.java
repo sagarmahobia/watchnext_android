@@ -9,13 +9,23 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.databinding.ActivityMovieDetailBinding;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
+import com.sagar.watchnext.response.Response;
+import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.utils.PixelDensityUtil;
 import com.sagar.watchnext.viewmodelfactories.ApplicationViewModelFactory;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -28,6 +38,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     @Inject
     ApplicationViewModelFactory viewModelFactory;
+
+    @Inject
+    CardAdapter recommendationAdapter;
+
+    @Inject
+    CardAdapter similarAdapter;
 
     private MovieDetailActivityViewModel viewModel;
 
@@ -71,21 +87,97 @@ public class MovieDetailActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieDetailActivityViewModel.class);
 
         dataModel = viewModel.getDataModel();
-        dataModel.setMovieId(movie_id);
         activityModel = viewModel.getActivityModel();
         headerModel = viewModel.getHeaderModel();
         visibilityModel = viewModel.getVisibilityModel();
-
-        binding.setModel(activityModel);
-        binding.setVisibilityModel(visibilityModel);
-        binding.header.setModel(headerModel);
 
         binding.swipeRefreshLayout.setRefreshing(true);
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
         });
 
+        dataModel.setMovieId(movie_id);
+
+        binding.setModel(activityModel);
+        binding.setVisibilityModel(visibilityModel);
+        binding.header.setModel(headerModel);
+
+
+        /* Recommendation */
+
+        binding.recommendations.setModel(viewModel.getRecommendationCardRecyclerModel());
+        binding.recommendations.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.recommendations.horizontalListRecycler.setAdapter(recommendationAdapter);
+
+        viewModel.getRecommendationCardRecyclerModel().setTitle("Recommended");
+        binding.recommendations.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "movie");
+            listActivityIntent.putExtra("subtype", "recommendations");
+            listActivityIntent.putExtra("id", movie_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        recommendationAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, MovieDetailActivity.class);
+            thisActivityIntent.putExtra("movie_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+
+        /*SIMILAR*/
+        binding.similar.setModel(viewModel.getSimilarCardRecyclerModel());
+        binding.similar.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.similar.horizontalListRecycler.setAdapter(similarAdapter);
+
+        viewModel.getSimilarCardRecyclerModel().setTitle("Similar");
+        binding.similar.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "movie");
+            listActivityIntent.putExtra("subtype", "similar");
+            listActivityIntent.putExtra("id", movie_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        similarAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, MovieDetailActivity.class);
+            thisActivityIntent.putExtra("movie_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+
         viewModel.load();
+
+        viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
+        viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+    }
+
+    private void observeRecommendationResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            recommendationAdapter.submitList(data);
+
+            viewModel.getRecommendationCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getRecommendationCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+    }
+
+    private void observeSimilarResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            similarAdapter.submitList(data);
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
     }
 
     @Override

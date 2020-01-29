@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.ItemKeyedDataSource;
 
 import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.newmodels.Result;
 import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.response.PagingState;
 import com.sagar.watchnext.utils.ImageUrlUtil;
@@ -12,6 +13,7 @@ import com.sagar.watchnext.utils.ImageUrlUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
@@ -24,24 +26,33 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
     private int page = 0;
     private String type;
     private String subtype;
+    private int id;
 
 
     ShowDataSource(
             TMDBRepository tmdbRepository, @NonNull CompositeDisposable disposable,
             @NonNull MutableLiveData<PagingState> stateLiveData,
-            String type, String subtype) {
+            String type, String subtype, int id) {
         this.tmdbRepository = tmdbRepository;
 
         this.disposable = disposable;
         this.stateLiveData = stateLiveData;
         this.type = type;
         this.subtype = subtype;
+        this.id = id;
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<ShowModel> callback) {
         stateLiveData.postValue(PagingState.loading());
-        disposable.add(tmdbRepository.getPagedList(type, subtype,1).map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
+        Observable<Result> pagedList;
+        if (id == -1) {
+            pagedList = tmdbRepository.getPagedList(type, subtype, 1);
+        } else {
+            pagedList = tmdbRepository.getListWithId(type, id, subtype, 1);
+        }
+
+        disposable.add(pagedList.map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
                     callback.onResult(feeds);
                     page = 2;
                     stateLiveData.postValue(PagingState.success());
@@ -55,7 +66,14 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
     @Override
     public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<ShowModel> callback) {
         stateLiveData.postValue(PagingState.loading());
-        disposable.add(tmdbRepository.getPagedList(type, subtype, page).map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
+        Observable<Result> pagedList;
+        if (id == -1) {
+            pagedList = tmdbRepository.getPagedList(type, subtype, page);
+        } else {
+            pagedList = tmdbRepository.getListWithId(type, id, subtype, page);
+        }
+
+        disposable.add(pagedList.map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
                     callback.onResult(feeds);
                     page++;
                     stateLiveData.postValue(PagingState.success());

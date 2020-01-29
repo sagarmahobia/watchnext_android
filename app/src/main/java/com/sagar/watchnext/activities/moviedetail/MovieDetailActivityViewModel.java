@@ -2,15 +2,22 @@ package com.sagar.watchnext.activities.moviedetail;
 
 import android.annotation.SuppressLint;
 
+import androidx.lifecycle.MutableLiveData;
+
+import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
 import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
+import com.sagar.watchnext.network.newmodels.CardItem;
 import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
+import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.utils.ImageUrlUtil;
 import com.sagar.watchnext.viewmodels.DisposableViewModel;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +32,12 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
     private MovieDetailActivityDataModel dataModel = new MovieDetailActivityDataModel();
     private HeaderModel headerModel = new HeaderModel();
     private ContentVisibilityModel visibilityModel = new ContentVisibilityModel();
+
+    private CardRecyclerModel recommendationCardRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel similarCardRecyclerModel = new CardRecyclerModel();
+
+    private MutableLiveData<Response> recommendationResponse = new MutableLiveData<>();
+    private MutableLiveData<Response> similarResponse = new MutableLiveData<>();
 
     public MovieDetailActivityViewModel(TMDBRepository tmdbRepository) {
         super();
@@ -45,6 +58,22 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
 
     public ContentVisibilityModel getVisibilityModel() {
         return visibilityModel;
+    }
+
+    MutableLiveData<Response> getRecommendationResponse() {
+        return recommendationResponse;
+    }
+
+    public MutableLiveData<Response> getSimilarResponse() {
+        return similarResponse;
+    }
+
+    CardRecyclerModel getRecommendationCardRecyclerModel() {
+        return recommendationCardRecyclerModel;
+    }
+
+    public CardRecyclerModel getSimilarCardRecyclerModel() {
+        return similarCardRecyclerModel;
     }
 
     @SuppressLint("DefaultLocale")
@@ -184,6 +213,50 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
                         }
                 )
         );
+
+        /*   */
+        recommendationCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+        disposable.add(tmdbRepository.getListWithId("movie", dataModel.getMovieId(), "recommendations", 1)
+                .map(result -> populateCardModels(result.getCardItems()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    recommendationResponse.setValue(Response.success(result));
+
+                }, throwable -> {
+                    recommendationResponse.setValue(Response.error(throwable));
+
+                }));
+        /*   */
+        similarCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+        disposable.add(tmdbRepository.getListWithId("movie", dataModel.getMovieId(), "similar", 1)
+                .map(result -> populateCardModels(result.getCardItems()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    similarResponse.setValue(Response.success(result));
+
+                }, throwable -> {
+                    similarResponse.setValue(Response.error(throwable));
+
+                }));
+
+    }
+
+    private List<CardModel> populateCardModels(List<CardItem> cardItems) {
+        List<CardModel> cardModels = new ArrayList<>();
+        for (CardItem cardItem : cardItems) {
+            CardModel cardModel = new CardModel();
+            cardModel.setId(cardItem.getId());
+            cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(cardItem.getPosterPath()));
+            cardModel.setTitle(cardItem.getTitle());
+            cardModels.add(cardModel);
+        }
+        return cardModels;
     }
 
 }

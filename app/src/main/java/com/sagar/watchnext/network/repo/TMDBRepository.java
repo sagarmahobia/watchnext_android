@@ -40,21 +40,21 @@ public interface TMDBRepository {
     Observable<Result> searchByQuery(@Path("type") String type, @Query("query") String query, @Query("page") int page);
 
     @GET("{type}/{id}/images")
-    Observable<Images> getImages(@Path("type") String type, @Path("id") int tvId);
+    Observable<Images> getImages(@Path("type") String type, @Path("id") int id);
 
     /*
-     *  @GET("{type}/{id}/similar")
      *  @GET("{type}/{id}/recommendations")
+     *  @GET("{type}/{id}/similar")
      *
      * */
 
     @GET("{type}/{id}/{subtype}")
-    Observable<Result> getSimilars(@Path("type") String type, @Path("id") int tvId, @Path("subtype") String subtype, @Query("page") int page);
+    Observable<Result> getListWithId(@Path("type") String type, @Path("id") int id, @Path("subtype") String subtype, @Query("page") int page);
 
     @GET("{type}/{id}/videos")
     Observable<Videos> getVideos(@Path("type") String type, @Path("id") int tvId);
 
-    @GET("{type}/{tv_id}/reviews")
-    Observable<Reviews> getReviews(@Path("type") String type, @Path("tv_id") int tvId, @Query("page") int page);
+    @GET("{type}/{id}/reviews")
+    Observable<Reviews> getReviews(@Path("type") String type, @Path("id") int id, @Query("page") int page);
 
 }

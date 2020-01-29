@@ -15,41 +15,51 @@
 
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        app:cardBackgroundColor="@color/colorBackgroundCardLight"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="4dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardBackgroundColor="@color/colorBackgroundCardLight"
+            app:cardCornerRadius="3dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/imagePoster"
-                android:layout_width="125dp"
-                android:layout_height="188dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                bind:imageUrl="@{model.imageUrl}" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="125dp"
-                android:layout_height="55dp"
-                android:layout_below="@+id/imagePoster"
-                android:layout_alignStart="@+id/imagePoster"
-                android:ellipsize="end"
-                android:gravity="center_vertical|start"
-                android:maxLines="2"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@{model.title}"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/imagePoster"
+                    android:layout_width="125dp"
+                    android:layout_height="188dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    bind:imageUrl="@{model.imageUrl}" />
 
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="125dp"
+                    android:layout_height="55dp"
+                    android:layout_below="@+id/imagePoster"
+                    android:layout_alignStart="@+id/imagePoster"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical|start"
+                    android:maxLines="2"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@{model.title}"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

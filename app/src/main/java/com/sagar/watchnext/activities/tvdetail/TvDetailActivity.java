@@ -9,12 +9,22 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.databinding.ActivityTvDetailBinding;
+import com.sagar.watchnext.response.Response;
+import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.utils.PixelDensityUtil;
 import com.sagar.watchnext.viewmodelfactories.ApplicationViewModelFactory;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,9 +42,16 @@ public class TvDetailActivity extends AppCompatActivity {
     @Inject
     PixelDensityUtil pixelDensityUtil;
 
+    @Inject
+    CardAdapter recommendationAdapter;
+
+    @Inject
+    CardAdapter similarAdapter;
+
     private int tv_id;
 
     private ActivityTvDetailBinding binding;
+    private TvDetailActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +60,7 @@ public class TvDetailActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_tv_detail);
 
-        TvDetailActivityViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(TvDetailActivityViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(TvDetailActivityViewModel.class);
 
         binding.setModel(viewModel.getActivityModel());
         binding.header.setModel(viewModel.getHeaderModel());
@@ -71,7 +88,83 @@ public class TvDetailActivity extends AppCompatActivity {
             return;
         }
         binding.swipeRefreshLayout.setOnRefreshListener(() -> viewModel.load());
+
+
+        /* Recommendations */
+
+        binding.recommendations.setModel(viewModel.getRecommendedCardRecyclerModel());
+        binding.recommendations.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.recommendations.horizontalListRecycler.setAdapter(recommendationAdapter);
+
+        viewModel.getRecommendedCardRecyclerModel().setTitle("Recommended");
+        binding.recommendations.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "tv");
+            listActivityIntent.putExtra("subtype", "recommendations");
+            listActivityIntent.putExtra("id", tv_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        recommendationAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, TvDetailActivity.class);
+            thisActivityIntent.putExtra("tv_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+        /*Similar*/
+
+        binding.similar.setModel(viewModel.getSimilarCardRecyclerModel());
+        binding.similar.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.similar.horizontalListRecycler.setAdapter(similarAdapter);
+
+        viewModel.getSimilarCardRecyclerModel().setTitle("Similar");
+        binding.similar.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "tv");
+            listActivityIntent.putExtra("subtype", "similar");
+            listActivityIntent.putExtra("id", tv_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        similarAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, TvDetailActivity.class);
+            thisActivityIntent.putExtra("tv_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+
+
         viewModel.load();
+        viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
+        viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+    }
+
+    private void observeRecommendationResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            recommendationAdapter.submitList(data);
+
+            viewModel.getRecommendedCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getRecommendedCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+    }
+
+    private void observeSimilarResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            similarAdapter.submitList(data);
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
     }
 
     @Override

@@ -41,6 +41,7 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
 
         String type = getIntent().getStringExtra("type");
         String subtype = getIntent().getStringExtra("subtype");
+        int id = getIntent().getIntExtra("id", -1);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
 
@@ -49,7 +50,7 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
         binding.setModel(activityModel);
         binding.setHandler(this);
 
-        viewModel.prepare(type, subtype);
+        viewModel.prepare(type, subtype,id);
 
         binding.recycler.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recycler.setAdapter(adapter);

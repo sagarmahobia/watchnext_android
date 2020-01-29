@@ -55,12 +55,13 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/detail_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/card_detail_header"
                         app:cardBackgroundColor="@color/colorBackgroundCard"
                         app:contentPadding="5dp"
-                        app:contentPaddingBottom="10dp"
+                        app:contentPaddingBottom="8dp"
                         app:contentPaddingTop="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -293,6 +294,26 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
+
+                    <include
+                        android:id="@+id/recommendations"
+                        layout="@layout/card_horizontal_recycler"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+
+                    <include
+                        android:id="@+id/similar"
+                        layout="@layout/card_horizontal_recycler"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendations" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
 

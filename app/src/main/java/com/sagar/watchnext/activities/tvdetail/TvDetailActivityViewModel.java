@@ -5,16 +5,20 @@ import android.annotation.SuppressLint;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.network.models.tv.details.Genre;
 import com.sagar.watchnext.network.models.tv.details.Network;
 import com.sagar.watchnext.network.models.tv.details.ProductionCompany;
+import com.sagar.watchnext.network.newmodels.CardItem;
 import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.utils.ImageUrlUtil;
 import com.sagar.watchnext.viewmodels.DisposableViewModel;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,7 +35,10 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
     private TvDetailActivityModel activityModel = new TvDetailActivityModel();
     private ContentVisibilityModel visibilityModel = new ContentVisibilityModel();
 
-    private MutableLiveData<Response> tvDetailResponseLiveData = new MutableLiveData<>();
+    private CardRecyclerModel recommendedCardRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel similarCardRecyclerModel = new CardRecyclerModel();
+    private MutableLiveData<Response> recommendationResponse = new MutableLiveData<>();
+    private MutableLiveData<Response> similarResponse = new MutableLiveData<>();
 
     public TvDetailActivityViewModel(TMDBRepository tmdbRepository) {
 
@@ -54,6 +61,22 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
         return visibilityModel;
     }
 
+    public MutableLiveData<Response> getRecommendationResponse() {
+        return recommendationResponse;
+    }
+
+    public MutableLiveData<Response> getSimilarResponse() {
+        return similarResponse;
+    }
+
+    public CardRecyclerModel getRecommendedCardRecyclerModel() {
+        return recommendedCardRecyclerModel;
+    }
+
+    public CardRecyclerModel getSimilarCardRecyclerModel() {
+        return similarCardRecyclerModel;
+    }
+
     @SuppressLint("DefaultLocale")
     public void load() {
         visibilityModel.setStatus(ContentVisibilityModel.Status.LOADING);
@@ -72,20 +95,22 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
                                         headerModel.setYear(firstAirDate.substring(0, 4));
                                     }
 
-                                    int t = details.getEpisodeRunTimeList().get(0);
-                                    int hours = t / 60; //since both are ints, you get an int
-                                    int minutes = t % 60;
+                                    List<Integer> episodeRunTimeList = details.getEpisodeRunTimeList();
+                                    if (episodeRunTimeList != null && !episodeRunTimeList.isEmpty()) {
+                                        int t = episodeRunTimeList.get(0);
+                                        int hours = t / 60; //since both are ints, you get an int
+                                        int minutes = t % 60;
 
-                                    if (hours == 0 && minutes == 0) {
-                                        headerModel.setRunTime("");
-                                    } else if (hours == 0) {
-                                        headerModel.setRunTime(String.format("%02dm", minutes));
-                                    } else if (minutes == 0) {
-                                        headerModel.setRunTime(String.format("%02dh", hours));
-                                    } else {
-                                        headerModel.setRunTime(String.format("%02dh %02dm", hours, minutes));
+                                        if (hours == 0 && minutes == 0) {
+                                            headerModel.setRunTime("");
+                                        } else if (hours == 0) {
+                                            headerModel.setRunTime(String.format("%02dm", minutes));
+                                        } else if (minutes == 0) {
+                                            headerModel.setRunTime(String.format("%02dh", hours));
+                                        } else {
+                                            headerModel.setRunTime(String.format("%02dh %02dm", hours, minutes));
+                                        }
                                     }
-
                                     StringBuilder genreString = new StringBuilder();
                                     List<Genre> genres = details.getGenres();
                                     int index = 1;
@@ -213,7 +238,48 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
 
                                 })
         );
+        recommendedCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
 
+        disposable.add(tmdbRepository.getListWithId("tv", dataModel.getTvId(), "recommendations", 1)
+                .map(result -> populateCardModels(result.getCardItems()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    recommendationResponse.setValue(Response.success(result));
+
+                }, throwable -> {
+                    recommendationResponse.setValue(Response.error(throwable));
+
+                }));
+
+        similarCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+        disposable.add(tmdbRepository.getListWithId("tv", dataModel.getTvId(), "similar", 1)
+                .map(result -> populateCardModels(result.getCardItems()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    similarResponse.setValue(Response.success(result));
+
+                }, throwable -> {
+                    similarResponse.setValue(Response.error(throwable));
+
+                }));
+    }
+
+
+    private List<CardModel> populateCardModels(List<CardItem> cardItems) {
+        List<CardModel> cardModels = new ArrayList<>();
+        for (CardItem cardItem : cardItems) {
+            CardModel cardModel = new CardModel();
+            cardModel.setId(cardItem.getId());
+            cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(cardItem.getPosterPath()));
+            cardModel.setTitle(cardItem.getTitle());
+            cardModels.add(cardModel);
+        }
+        return cardModels;
     }
 
 
