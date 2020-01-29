@@ -7,14 +7,15 @@ import java.util.List;
 
 public class Credits {
 
+    @SerializedName("id")
+    private int id;
+
     @SerializedName("cast")
     private List<Cast> casts;
 
     @SerializedName("crew")
     private List<Crew> crews;
 
-    @SerializedName("id")
-    private int id;
 
     public List<Cast> getCasts() {
         return casts;

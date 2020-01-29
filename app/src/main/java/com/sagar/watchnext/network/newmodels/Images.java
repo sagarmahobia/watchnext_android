@@ -1,5 +1,5 @@
 
-package com.sagar.watchnext.network.models.tv.images;
+package com.sagar.watchnext.network.newmodels;
 
 import com.google.gson.annotations.SerializedName;
 

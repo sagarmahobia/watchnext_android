@@ -14,14 +14,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
-import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 import com.sagar.watchnext.databinding.FragmentTvBinding;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
@@ -108,51 +107,25 @@ public class TvFragment extends Fragment {
         binding.popular.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(2));
         binding.topRated.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(3));
 
-        EndlessRecyclerViewScrollListener scrollListenerForAiringToday =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.airingToday.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreAiringToday(pageToLoad);
-                        binding.airingToday.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-        EndlessRecyclerViewScrollListener scrollListenerForOnTheAir =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.onTheAir.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreOnTheAir(pageToLoad);
-                        binding.onTheAir.progressBar.setVisibility(View.VISIBLE);
-                    }
-                };
-        EndlessRecyclerViewScrollListener scrollListenerForPopular =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.popular.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMorePopular(pageToLoad);
-                        binding.popular.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-        EndlessRecyclerViewScrollListener scrollListenerForTopRated =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.topRated.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreTopRated(pageToLoad);
-                        binding.topRated.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-
-        binding.airingToday.horizontalListRecycler.addOnScrollListener(scrollListenerForAiringToday);
-        binding.onTheAir.horizontalListRecycler.addOnScrollListener(scrollListenerForOnTheAir);
-        binding.popular.horizontalListRecycler.addOnScrollListener(scrollListenerForPopular);
-        binding.topRated.horizontalListRecycler.addOnScrollListener(scrollListenerForTopRated);
-
         binding.airingToday.horizontalListRecycler.setAdapter(airingTodayAdapter);
         binding.onTheAir.horizontalListRecycler.setAdapter(onTheAirAdapter);
         binding.popular.horizontalListRecycler.setAdapter(popularAdapter);
         binding.topRated.horizontalListRecycler.setAdapter(topRatedAdapter);
+
+        binding.airingToday.seeAll.setOnClickListener(v -> {
+            startList("tv", "airing_today");
+        });
+        binding.onTheAir.seeAll.setOnClickListener(v -> {
+            startList("tv", "on_the_air");
+        });
+        ;
+        binding.popular.seeAll.setOnClickListener(v -> {
+            startList("tv", "popular");
+        });
+        ;
+        binding.topRated.seeAll.setOnClickListener(v -> {
+            startList("tv", "top_rated");
+        });
 
         airingTodayAdapter.setAdapterListener((model) -> TvFragment.this.startTvDetailActivity(model.getId()));
         onTheAirAdapter.setAdapterListener((model) -> TvFragment.this.startTvDetailActivity(model.getId()));
@@ -162,15 +135,20 @@ public class TvFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
-            scrollListenerForAiringToday.resetState();
-            scrollListenerForOnTheAir.resetState();
-            scrollListenerForPopular.resetState();
-            scrollListenerForTopRated.resetState();
+
         });
 
         binding.swipeRefreshLayout.setRefreshing(true);
 
         return binding.getRoot();
+    }
+
+    private void startList(String type, String subtype) {
+
+        Intent intent = new Intent(this.getContext(), ListActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("subtype", subtype);
+        startActivity(intent);
     }
 
 

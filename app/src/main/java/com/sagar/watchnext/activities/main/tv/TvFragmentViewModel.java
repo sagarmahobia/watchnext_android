@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sagar.watchnext.adapters.card.CardModel;
-import com.sagar.watchnext.network.models.tv.Show;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.utils.ImageUrlUtil;
@@ -24,43 +25,29 @@ import io.reactivex.schedulers.Schedulers;
 public class TvFragmentViewModel extends ViewModel {
 
     private TmdbTvRepo tvRepo;
+    private TMDBRepository tmdbRepository;
 
-    private List<CardModel> airingTodayShows;
-    private List<CardModel> onTheAirShows;
-    private List<CardModel> popularShows;
-    private List<CardModel> topRatedShows;
+    private List<CardModel> airingTodayShows = new ArrayList<>();
+    private List<CardModel> onTheAirShows = new ArrayList<>();
+    private List<CardModel> popularShows = new ArrayList<>();
+    private List<CardModel> topRatedShows = new ArrayList<>();
 
-    private MutableLiveData<Response> airingTodayShowsLiveData;
-    private MutableLiveData<Response> onTheAirShowsLiveData;
-    private MutableLiveData<Response> popularShowsLiveData;
-    private MutableLiveData<Response> topRatedShowsLiveData;
+    private MutableLiveData<Response> airingTodayShowsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Response> onTheAirShowsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Response> popularShowsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Response> topRatedShowsLiveData = new MutableLiveData<>();
 
-    private CardRecyclerModel airingTodayShowsRecyclerModel;
-    private CardRecyclerModel onTheAirShowsRecyclerModel;
-    private CardRecyclerModel popularShowsRecyclerModel;
-    private CardRecyclerModel topRatedShowsRecyclerModel;
+    private CardRecyclerModel airingTodayShowsRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel onTheAirShowsRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel popularShowsRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel topRatedShowsRecyclerModel = new CardRecyclerModel();
 
-    private CompositeDisposable disposables;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
-    TvFragmentViewModel(TmdbTvRepo tvRepo) {
+    TvFragmentViewModel(TmdbTvRepo tvRepo, TMDBRepository tmdbRepository) {
         this.tvRepo = tvRepo;
+        this.tmdbRepository = tmdbRepository;
 
-        airingTodayShows = new ArrayList<>();
-        onTheAirShows = new ArrayList<>();
-        popularShows = new ArrayList<>();
-        topRatedShows = new ArrayList<>();
-
-        airingTodayShowsLiveData = new MutableLiveData<>();
-        onTheAirShowsLiveData = new MutableLiveData<>();
-        popularShowsLiveData = new MutableLiveData<>();
-        topRatedShowsLiveData = new MutableLiveData<>();
-
-        airingTodayShowsRecyclerModel = new CardRecyclerModel();
-        onTheAirShowsRecyclerModel = new CardRecyclerModel();
-        popularShowsRecyclerModel = new CardRecyclerModel();
-        topRatedShowsRecyclerModel = new CardRecyclerModel();
-
-        disposables = new CompositeDisposable();
         load();
     }
 
@@ -98,56 +85,56 @@ public class TvFragmentViewModel extends ViewModel {
 
     public void load() {
         //airingToday
-        disposables.add(tvRepo.getAiringToday().subscribeOn(Schedulers.io()).
+        disposables.add(tmdbRepository.getFirstPage("tv", "airing_today").subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
 
                     this.airingTodayShows.clear();
-                    populateCardModels(airingTodayShows, shows.getShows());
+                    populateCardModels(airingTodayShows, shows.getCardItems());
                     airingTodayShowsLiveData.setValue(Response.success(airingTodayShows));
 
                 }, e -> airingTodayShowsLiveData.setValue(Response.error(e))));
 
         //on the air
-        disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io()).
+        disposables.add(tmdbRepository.getFirstPage("tv", "on_the_air").subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
 
                     this.onTheAirShows.clear();
-                    populateCardModels(onTheAirShows, shows.getShows());
+                    populateCardModels(onTheAirShows, shows.getCardItems());
                     onTheAirShowsLiveData.setValue(Response.success(onTheAirShows));
 
                 }, e -> onTheAirShowsLiveData.setValue(Response.error(e))));
 
         //popular
-        disposables.add(tvRepo.getPopular().subscribeOn(Schedulers.io()).
+        disposables.add(tmdbRepository.getFirstPage("tv", "popular").subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
 
                     this.popularShows.clear();
-                    populateCardModels(popularShows, shows.getShows());
+                    populateCardModels(popularShows, shows.getCardItems());
                     popularShowsLiveData.setValue(Response.success(popularShows));
 
                 }, e -> popularShowsLiveData.setValue(Response.error(e))));
 
         //top rated
-        disposables.add(tvRepo.getTopRated().subscribeOn(Schedulers.io()).
+        disposables.add(tmdbRepository.getFirstPage("tv", "top_rated").subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
 
                     this.topRatedShows.clear();
-                    populateCardModels(topRatedShows, shows.getShows());
+                    populateCardModels(topRatedShows, shows.getCardItems());
                     topRatedShowsLiveData.setValue(Response.success(topRatedShows));
 
                 }, e -> topRatedShowsLiveData.setValue(Response.error(e))));
     }
 
-    private void populateCardModels(List<CardModel> cardModels, List<Show> shows) {
-        for (Show show : shows) {
+    private void populateCardModels(List<CardModel> cardModels, List<CardItem> shows) {
+        for (CardItem show : shows) {
             CardModel cardModel = new CardModel();
             cardModel.setId(show.getId());
             cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(show.getPosterPath()));
-            cardModel.setTitle(show.getName());
+            cardModel.setTitle(show.getTitle());
             cardModels.add(cardModel);
         }
     }
@@ -158,39 +145,4 @@ public class TvFragmentViewModel extends ViewModel {
         disposables.dispose();
     }
 
-    void loadMoreAiringToday(int pageToLoad) {
-        disposables.add(tvRepo.getAiringToday(pageToLoad).subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(shows -> {
-                    populateCardModels(airingTodayShows, shows.getShows());
-                    airingTodayShowsLiveData.setValue(Response.success(airingTodayShows));
-                }));
-    }
-
-    void loadMoreOnTheAir(int pageToLoad) {
-        disposables.add(tvRepo.getOnTheAir(pageToLoad).subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(shows -> {
-                    populateCardModels(onTheAirShows, shows.getShows());
-                    onTheAirShowsLiveData.setValue(Response.success(onTheAirShows));
-                }));
-    }
-
-    void loadMorePopular(int pageToLoad) {
-        disposables.add(tvRepo.getPopular(pageToLoad).subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(shows -> {
-                    populateCardModels(popularShows, shows.getShows());
-                    popularShowsLiveData.setValue(Response.success(popularShows));
-                }));
-    }
-
-    void loadMoreTopRated(int pageToLoad) {
-        disposables.add(tvRepo.getTopRated(pageToLoad).subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(shows -> {
-                    populateCardModels(topRatedShows, shows.getShows());
-                    topRatedShowsLiveData.setValue(Response.success(topRatedShows));
-                }));
-    }
 }

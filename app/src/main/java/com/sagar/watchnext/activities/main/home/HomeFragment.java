@@ -14,15 +14,14 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
-import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 import com.sagar.watchnext.databinding.FragmentHomeBinding;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
@@ -64,6 +63,9 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeFragmentViewModel.class);
 
+        viewModel.getMoviesLiveData().observe(this, this::onResponseMovies);
+        viewModel.getShowsLiveData().observe(this, this::onResponseTvShows);
+
         moviesCardRecyclerModel = viewModel.getMoviesCardRecyclerModel();
         tvShowsCardRecyclerModel = viewModel.getTvShowsCardRecyclerModel();
     }
@@ -95,27 +97,14 @@ public class HomeFragment extends Fragment {
                         false)
         );
 
-        EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.movies.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreMovies(pageToLoad);
-                        binding.movies.progressBar.setVisibility(View.VISIBLE);
 
-                    }
-                };
+        binding.movies.seeAll.setOnClickListener(v -> {
+            startList("movie", "now_playing");
+        });
 
-        EndlessRecyclerViewScrollListener scrollListenerForOnTv =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.tvShows.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreTvShows(pageToLoad);
-                        binding.tvShows.progressBar.setVisibility(View.VISIBLE);
-                    }
-                };
-
-        binding.movies.horizontalListRecycler.addOnScrollListener(scrollListenerForInTheaters);
-        binding.tvShows.horizontalListRecycler.addOnScrollListener(scrollListenerForOnTv);
+        binding.tvShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "airing_today");
+        });
 
         binding.movies.horizontalListRecycler.setAdapter(moviesRecyclerAdapter);
         binding.tvShows.horizontalListRecycler.setAdapter(tvShowsRecyclerAdapter);
@@ -132,12 +121,18 @@ public class HomeFragment extends Fragment {
             moviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             tvShowsCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
 
-            scrollListenerForOnTv.resetState();
-            scrollListenerForInTheaters.resetState();
         });
 
         binding.swipeRefreshLayout.setRefreshing(true);
         return binding.getRoot();
+    }
+
+    private void startList(String type, String subtype) {
+
+        Intent intent = new Intent(this.getContext(), ListActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("subtype", subtype);
+        startActivity(intent);
     }
 
 
@@ -150,8 +145,6 @@ public class HomeFragment extends Fragment {
             actionBar.setTitle("WatchNext - Home");
         }
 
-        viewModel.getMoviesLiveData().observe(this, this::onResponseMovies);
-        viewModel.getShowsLiveData().observe(this, this::onResponseTvShows);
 
     }
 

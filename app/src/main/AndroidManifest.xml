@@ -37,7 +37,9 @@
         <activity
             android:name=".activities.about.AboutPageActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.list.ListActivity" />
+        <activity
+            android:name=".activities.list.ListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

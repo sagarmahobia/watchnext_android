@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.sagar.watchnext.network.models.tv.details.Genre;
 import com.sagar.watchnext.network.models.tv.details.Network;
 import com.sagar.watchnext.network.models.tv.details.ProductionCompany;
-import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
 import com.sagar.watchnext.response.Response;
@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class TvDetailActivityViewModel extends DisposableViewModel {
 
-    private TmdbTvRepo tmdbTvRepo;
+    private TMDBRepository tmdbRepository;
 
 
     private TvDetailActivityDataModel dataModel = new TvDetailActivityDataModel();
@@ -33,9 +33,9 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
 
     private MutableLiveData<Response> tvDetailResponseLiveData = new MutableLiveData<>();
 
-    public TvDetailActivityViewModel(TmdbTvRepo tmdbTvRepo) {
+    public TvDetailActivityViewModel(TMDBRepository tmdbRepository) {
 
-        this.tmdbTvRepo = tmdbTvRepo;
+        this.tmdbRepository = tmdbRepository;
     }
 
     public TvDetailActivityDataModel getDataModel() {
@@ -57,7 +57,7 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
     @SuppressLint("DefaultLocale")
     public void load() {
         visibilityModel.setStatus(ContentVisibilityModel.Status.LOADING);
-        disposable.add(tmdbTvRepo.getDetails(dataModel.getTvId()).
+        disposable.add(tmdbRepository.getTVDetails(dataModel.getTvId()).
                         subscribeOn(Schedulers.io()).
                         observeOn(AndroidSchedulers.mainThread()).
                         subscribe(

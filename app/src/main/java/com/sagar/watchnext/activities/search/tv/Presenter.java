@@ -5,8 +5,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import com.sagar.watchnext.adapters.search.SearchCard;
-import com.sagar.watchnext.network.models.tv.Show;
-import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.utils.GenreUtil;
 
 import java.util.List;
@@ -26,20 +26,21 @@ import io.reactivex.subjects.Subject;
 @TvSearchFragmentScope
 public class Presenter implements Contract.Presenter {
     private Contract.View view;
-    private TmdbTvRepo tvRepo;
+    private TMDBRepository tmdbRepository;
 
     private CompositeDisposable disposable;
 
-    private List<Show> searchResult;
+    private List<CardItem> searchResult;
     private String forQuery;
 
     private Subject<String> throttle;
 
 
     @Inject
-    public Presenter(Contract.View view, TmdbTvRepo tvRepo) {
+    public Presenter(Contract.View view, TMDBRepository tmdbRepository) {
         this.view = view;
-        this.tvRepo = tvRepo;
+        this.tmdbRepository = tmdbRepository;
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -57,17 +58,17 @@ public class Presenter implements Contract.Presenter {
                     view.showProgress();
                     view.resetEndlessLoader();
                     disposable.add(
-                            tvRepo.searchByQuery(q).
+                            tmdbRepository.searchByQuery("tv", q, 1).
                                     subscribeOn(Schedulers.io()).
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(shows -> {
-                                                if (shows.getShows().size() < 1) {
+                                                if (shows.getCardItems().size() < 1) {
                                                     view.showNoMatchMessage();
                                                 } else {
                                                     view.hideErrorMessage();
                                                 }
                                                 view.hideProgress();
-                                                searchResult = shows.getShows();
+                                                searchResult = shows.getCardItems();
                                                 view.notifyAdapter();
                                             },
                                             error -> view.onErrorLoadingShowList())
@@ -98,10 +99,10 @@ public class Presenter implements Contract.Presenter {
     public void onBindCard(SearchCard card, int position) {
 
         card.setImage(searchResult.get(position).getPosterPath());
-        card.setTitle(searchResult.get(position).getName());
+        card.setTitle(searchResult.get(position).getTitle());
 
-        String firstAirDate = searchResult.get(position).getFirstAirDate();
-        if (!firstAirDate.isEmpty()) {
+        String firstAirDate = searchResult.get(position).getReleaseOrFirstAirDate();
+        if (!(firstAirDate == null || firstAirDate.isEmpty())) {
             card.setYear(firstAirDate.substring(0, 4));
         }
 
@@ -129,14 +130,14 @@ public class Presenter implements Contract.Presenter {
     public void onLoadMore(int pageToLoad) {
         String cQuery = forQuery;
         view.showProgress();
-        disposable.add(tvRepo.searchByQuery(cQuery, pageToLoad).
+        disposable.add(tmdbRepository.searchByQuery("tv", cQuery, pageToLoad).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
                             if (!forQuery.equalsIgnoreCase(cQuery)) {
                                 return;
                             }
-                            searchResult.addAll(shows.getShows());
+                            searchResult.addAll(shows.getCardItems());
                             view.notifyAdapter();
                             view.hideProgress();
                         }

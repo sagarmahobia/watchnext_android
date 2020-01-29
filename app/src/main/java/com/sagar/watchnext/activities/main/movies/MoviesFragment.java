@@ -14,14 +14,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
-import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
 import com.sagar.watchnext.databinding.FragmentMoviesBinding;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
@@ -105,53 +104,20 @@ public class MoviesFragment extends Fragment {
         binding.popular.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(2));
         binding.topRated.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(3));
 
-        EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.inTheaters.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreInTheatersMovies(pageToLoad);
-                        binding.inTheaters.progressBar.setVisibility(View.VISIBLE);
-                    }
-                };
+        binding.inTheaters.seeAll.setOnClickListener(v -> {
+            startList("movie", "now_playing");
+        });
+        binding.upcoming.seeAll.setOnClickListener(v -> {
+            startList("movie", "upcoming");
+        });
+        binding.popular.seeAll.setOnClickListener(v -> {
+            startList("movie", "popular");
+        });
+        binding.topRated.seeAll.setOnClickListener(v -> {
+            startList("movie", "top_rated");
+        });
 
-
-        EndlessRecyclerViewScrollListener scrollListenerForUpcoming =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.upcoming.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreUpcomingMovies(pageToLoad);
-                        binding.upcoming.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-
-        EndlessRecyclerViewScrollListener scrollListenerForPopular =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.popular.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMorePopularMovies(pageToLoad);
-                        binding.popular.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-
-        EndlessRecyclerViewScrollListener scrollListenerForTopRated =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) binding.topRated.horizontalListRecycler.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        viewModel.loadMoreTopRatedMovies(pageToLoad);
-                        binding.topRated.progressBar.setVisibility(View.VISIBLE);
-
-                    }
-                };
-
-        binding.inTheaters.horizontalListRecycler.addOnScrollListener(scrollListenerForInTheaters);
-        binding.upcoming.horizontalListRecycler.addOnScrollListener(scrollListenerForUpcoming);
-        binding.popular.horizontalListRecycler.addOnScrollListener(scrollListenerForPopular);
-        binding.topRated.horizontalListRecycler.addOnScrollListener(scrollListenerForTopRated);
-
-
-        binding.inTheaters.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
+                binding.inTheaters.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
         binding.upcoming.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
         binding.popular.horizontalListRecycler.setAdapter(popularMoviesAdapter);
         binding.topRated.horizontalListRecycler.setAdapter(topRatedMoviesAdapter);
@@ -178,10 +144,6 @@ public class MoviesFragment extends Fragment {
             popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             topRatedCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
 
-            scrollListenerForInTheaters.resetState();
-            scrollListenerForUpcoming.resetState();
-            scrollListenerForPopular.resetState();
-            scrollListenerForTopRated.resetState();
         });
 
         binding.swipeRefreshLayout.setRefreshing(true);
@@ -263,4 +225,12 @@ public class MoviesFragment extends Fragment {
         intent.putExtra("movie_id", movieId);
         startActivity(intent);
     }
+
+    public void startList(String type, String subType) {
+        Intent intent = new Intent(getContext(), ListActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("subtype", subType);
+        startActivity(intent);
+    }
+
 }

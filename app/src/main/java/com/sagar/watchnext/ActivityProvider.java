@@ -3,6 +3,9 @@ package com.sagar.watchnext;
 import com.sagar.watchnext.activities.about.AboutPageActivity;
 import com.sagar.watchnext.activities.about.AboutPageActivityModule;
 import com.sagar.watchnext.activities.about.AboutPageActivityScope;
+import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.activities.list.ListActivityModule;
+import com.sagar.watchnext.activities.list.ListActivityScope;
 import com.sagar.watchnext.activities.main.FragmentProvider;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.main.MainActivityModule;
@@ -48,4 +51,7 @@ abstract class ActivityProvider {
     @AboutPageActivityScope
     abstract AboutPageActivity aboutPageActivity();
 
+    @ContributesAndroidInjector(modules = {ListActivityModule.class})
+    @ListActivityScope
+    abstract ListActivity bindListActivity();
 }

@@ -3,6 +3,7 @@ package com.sagar.watchnext;
 import android.content.Context;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
@@ -110,6 +111,13 @@ public class NetworkModule {
     TmdbTvRepo provideTmdbTvRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbTvRepo.class);
+    }
+
+    @Provides
+    @ApplicationScope
+    TMDBRepository tmdbRepository(Retrofit retrofit) {
+
+        return retrofit.create(TMDBRepository.class);
     }
 
 }

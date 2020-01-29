@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 
 import javax.inject.Inject;
@@ -17,17 +18,19 @@ import javax.inject.Inject;
 public class MoviesFragmentViewModelFactory implements ViewModelProvider.Factory {
 
     private TmdbMovieRepo movieRepo;
+    private TMDBRepository tmdbRepository;
 
     @Inject
-    MoviesFragmentViewModelFactory(TmdbMovieRepo movieRepo) {
+    MoviesFragmentViewModelFactory(TmdbMovieRepo movieRepo, TMDBRepository tmdbRepository) {
         this.movieRepo = movieRepo;
+        this.tmdbRepository = tmdbRepository;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(MoviesFragmentViewModel.class)) {
-            return (T) new MoviesFragmentViewModel(movieRepo);
+            return (T) new MoviesFragmentViewModel(movieRepo,tmdbRepository);
         } else {
             throw new IllegalStateException("unknown view model");
         }

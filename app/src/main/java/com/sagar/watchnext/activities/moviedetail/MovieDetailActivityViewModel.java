@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
 import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
-import com.sagar.watchnext.network.repo.TmdbMovieRepo;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
 import com.sagar.watchnext.utils.ImageUrlUtil;
@@ -19,16 +19,16 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MovieDetailActivityViewModel extends DisposableViewModel {
 
-    private TmdbMovieRepo tmdbMovieRepo;
+    private TMDBRepository tmdbRepository;
 
     private MovieDetailActivityModel activityModel = new MovieDetailActivityModel();
     private MovieDetailActivityDataModel dataModel = new MovieDetailActivityDataModel();
     private HeaderModel headerModel = new HeaderModel();
     private ContentVisibilityModel visibilityModel = new ContentVisibilityModel();
 
-    public MovieDetailActivityViewModel(TmdbMovieRepo tmdbMovieRepo) {
+    public MovieDetailActivityViewModel(TMDBRepository tmdbRepository) {
         super();
-        this.tmdbMovieRepo = tmdbMovieRepo;
+        this.tmdbRepository = tmdbRepository;
     }
 
     MovieDetailActivityModel getActivityModel() {
@@ -50,7 +50,7 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
     @SuppressLint("DefaultLocale")
     void load() {
         visibilityModel.setStatus(ContentVisibilityModel.Status.LOADING);
-        disposable.add(tmdbMovieRepo.getMovieDetail(dataModel.getMovieId()).
+        disposable.add(tmdbRepository.getMovieDetails(dataModel.getMovieId()).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movieDetail -> {

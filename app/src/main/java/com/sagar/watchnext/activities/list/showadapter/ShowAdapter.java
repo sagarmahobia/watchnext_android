@@ -19,7 +19,7 @@ public class ShowAdapter extends PagedListAdapter<ShowModel, ShowViewHolder> {
 
         @Override
         public boolean areContentsTheSame(@NonNull ShowModel oldItem, @NonNull ShowModel newItem) {
-            return oldItem.getId().equals(newItem.getId());//TODO
+            return oldItem.getId() == (newItem.getId());//TODO
         }
     };
     private LayoutInflater inflater;

@@ -5,7 +5,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import com.sagar.watchnext.adapters.search.SearchCard;
-import com.sagar.watchnext.network.models.movies.Movie;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.utils.GenreUtil;
 
@@ -28,19 +29,21 @@ import io.reactivex.subjects.Subject;
 public class Presenter implements Contract.Presenter {
     private Contract.View view;
 
+    private TMDBRepository tmdbRepository;
     private TmdbMovieRepo movieRepo;
 
     private CompositeDisposable disposable;
 
-    private List<Movie> searchResult;
+    private List<CardItem> searchResult;
     private String forQuery;
 
     private Subject<String> throttle;
 
 
     @Inject
-    public Presenter(Contract.View view, TmdbMovieRepo movieRepo) {
+    public Presenter(Contract.View view, TMDBRepository tmdbRepository, TmdbMovieRepo movieRepo) {
         this.view = view;
+        this.tmdbRepository = tmdbRepository;
         this.movieRepo = movieRepo;
     }
 
@@ -60,16 +63,16 @@ public class Presenter implements Contract.Presenter {
                     view.showProgress();
                     view.resetEndlessLoader();
                     disposable.add(
-                            movieRepo.searchByQuery(q).
+                            tmdbRepository.searchByQuery("movie", q,1).
                                     subscribeOn(Schedulers.io()).
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(movieList -> {
-                                                if (movieList.getMovies().size() < 1) {
+                                                if (movieList.getCardItems().size() < 1) {
                                                     view.showNoMatchMessage();
                                                 } else {
                                                     view.hideErrorMessage();
                                                 }
-                                                searchResult = movieList.getMovies();
+                                                searchResult = movieList.getCardItems();
                                                 view.hideProgress();
                                                 view.notifyAdapter();
                                             },
@@ -103,7 +106,7 @@ public class Presenter implements Contract.Presenter {
         card.setImage(searchResult.get(position).getPosterPath());
         card.setTitle(searchResult.get(position).getTitle());
 
-        String releaseDate = searchResult.get(position).getReleaseDate();
+        String releaseDate = searchResult.get(position).getReleaseOrFirstAirDate();
         if (!releaseDate.isEmpty()) {
             card.setYear(releaseDate.substring(0, 4));
         }
@@ -132,14 +135,14 @@ public class Presenter implements Contract.Presenter {
     public void onLoadMore(int pageToLoad) {
         String cQuery = forQuery;
         view.showProgress();
-        disposable.add(movieRepo.searchByQuery(cQuery, pageToLoad).
+        disposable.add(tmdbRepository.searchByQuery("movie", cQuery, pageToLoad).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movieList -> {
                             if (!forQuery.equalsIgnoreCase(cQuery)) {
                                 return;
                             }
-                            searchResult.addAll(movieList.getMovies());
+                            searchResult.addAll(movieList.getCardItems());
                             view.notifyAdapter();
                             view.hideProgress();
                         }

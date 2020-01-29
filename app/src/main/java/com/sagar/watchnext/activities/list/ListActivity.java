@@ -1,5 +1,6 @@
 package com.sagar.watchnext.activities.list;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.list.showadapter.ShowAdapter;
+import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
+import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.databinding.ActivityListBinding;
 import com.sagar.watchnext.response.PagingState;
 
@@ -30,11 +33,14 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
 
     private ListActivityModel activityModel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
+
+        String type = getIntent().getStringExtra("type");
+        String subtype = getIntent().getStringExtra("subtype");
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
 
@@ -42,6 +48,8 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
         activityModel = viewModel.getActivityModel();
         binding.setModel(activityModel);
         binding.setHandler(this);
+
+        viewModel.prepare(type, subtype);
 
         binding.recycler.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recycler.setAdapter(adapter);
@@ -73,6 +81,23 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
                 //  binding.noFeeds.setVisibility(View.GONE);
 
             }
+        });
+
+
+        adapter.setClickListener(showModel -> {
+
+            if (type.equalsIgnoreCase("tv")) {
+
+                Intent intent = new Intent(this, TvDetailActivity.class);
+                intent.putExtra("tv_id", showModel.getId());
+                startActivity(intent);
+            } else if (type.equalsIgnoreCase("movie")) {
+                Intent intent = new Intent(this, MovieDetailActivity.class);
+                intent.putExtra("movie_id", showModel.getId());
+                startActivity(intent);
+            } else {
+            }
+
         });
     }
 }

@@ -4,7 +4,6 @@ package com.sagar.watchnext.views.cardrecycler;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
-import com.sagar.watchnext.BR;
 
 /**
  * Created by SAGAR MAHOBIA on 16-Feb-19. at 18:12
@@ -21,7 +20,7 @@ public class CardRecyclerModel extends BaseObservable {
 
     public void setTitle(String title) {
         this.title = title;
-        notifyPropertyChanged(BR.title);
+        notifyPropertyChanged(com.sagar.watchnext.BR.title);
     }
 
     @Bindable
@@ -31,7 +30,7 @@ public class CardRecyclerModel extends BaseObservable {
 
     public void setStatus(Status status) {
         this.status = status;
-        notifyPropertyChanged(BR.status);
+        notifyPropertyChanged(com.sagar.watchnext.BR.status);
     }
 
     public enum Status {

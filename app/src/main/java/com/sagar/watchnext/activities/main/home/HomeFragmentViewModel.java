@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sagar.watchnext.adapters.card.CardModel;
-import com.sagar.watchnext.network.models.movies.Movie;
-import com.sagar.watchnext.network.models.tv.Show;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
 import com.sagar.watchnext.response.Response;
@@ -27,32 +27,25 @@ public class HomeFragmentViewModel extends ViewModel {
 
     private TmdbMovieRepo movieRepo;
     private TmdbTvRepo tvRepo;
+    private TMDBRepository tmdbRepository;
 
-    private List<CardModel> movies;
-    private List<CardModel> shows;
+    private List<CardModel> movies = new ArrayList<>();
+    private List<CardModel> shows = new ArrayList<>();
 
-    private MutableLiveData<Response> moviesLiveData;
-    private MutableLiveData<Response> showsLiveData;
+    private MutableLiveData<Response> moviesLiveData = new MutableLiveData<>();
+    private MutableLiveData<Response> showsLiveData = new MutableLiveData<>();
 
-    private CardRecyclerModel moviesCardRecyclerModel;
-    private CardRecyclerModel tvShowsCardRecyclerModel;
+    private CardRecyclerModel moviesCardRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel tvShowsCardRecyclerModel = new CardRecyclerModel();
 
-    private CompositeDisposable disposables;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
-    HomeFragmentViewModel(TmdbMovieRepo movieRepo, TmdbTvRepo tvRepo) {
+    HomeFragmentViewModel(TmdbMovieRepo movieRepo, TmdbTvRepo tvRepo, TMDBRepository tmdbRepository) {
+
         this.movieRepo = movieRepo;
         this.tvRepo = tvRepo;
+        this.tmdbRepository = tmdbRepository;
 
-        movies = new ArrayList<>();
-        shows = new ArrayList<>();
-
-        moviesLiveData = new MutableLiveData<>();
-        showsLiveData = new MutableLiveData<>();
-
-        moviesCardRecyclerModel = new CardRecyclerModel();
-        tvShowsCardRecyclerModel = new CardRecyclerModel();
-
-        disposables = new CompositeDisposable();
         load();
     }
 
@@ -73,11 +66,11 @@ public class HomeFragmentViewModel extends ViewModel {
     }
 
     public void load() {
-        disposables.add(movieRepo.getInTheaterMovies().subscribeOn(Schedulers.io()).
+        disposables.add(tmdbRepository.getFirstPage("movie", "now_playing").subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movies -> {
                             this.movies.clear();
-                            for (Movie movie : movies.getMovies()) {
+                            for (CardItem movie : movies.getCardItems()) {
                                 CardModel cardModel = new CardModel();
                                 cardModel.setId(movie.getId());
                                 cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(movie.getPosterPath()));
@@ -89,15 +82,15 @@ public class HomeFragmentViewModel extends ViewModel {
                 ));
 
 
-        disposables.add(tvRepo.getOnTheAir().subscribeOn(Schedulers.io())
+        disposables.add(tmdbRepository.getFirstPage("tv", "on_the_air").subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shows -> {
                             this.shows.clear();
-                            for (Show show : shows.getShows()) {
+                            for (CardItem show : shows.getCardItems()) {
                                 CardModel cardModel = new CardModel();
                                 cardModel.setId(show.getId());
                                 cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(show.getPosterPath()));
-                                cardModel.setTitle(show.getName());
+                                cardModel.setTitle(show.getTitle());
                                 this.shows.add(cardModel);
                             }
                             showsLiveData.setValue(Response.success(this.shows));
@@ -110,38 +103,6 @@ public class HomeFragmentViewModel extends ViewModel {
     public void onCleared() {
         super.onCleared();
         disposables.dispose();
-    }
-
-    void loadMoreMovies(int pageToLoad) {
-        disposables.add(movieRepo.getInTheaterMovies(pageToLoad).
-                subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(movieList -> {
-                    for (Movie movie : movieList.getMovies()) {
-                        CardModel cardModel = new CardModel();
-                        cardModel.setId(movie.getId());
-                        cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(movie.getPosterPath()));
-                        cardModel.setTitle(movie.getTitle());
-                        this.movies.add(cardModel);
-                    }
-                    moviesLiveData.setValue(Response.success(this.movies));
-                }));
-    }
-
-    void loadMoreTvShows(int pageToLoad) {
-        disposables.add(tvRepo.getOnTheAir(pageToLoad).
-                subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(tvList -> {
-                    for (Show show : tvList.getShows()) {
-                        CardModel cardModel = new CardModel();
-                        cardModel.setId(show.getId());
-                        cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(show.getPosterPath()));
-                        cardModel.setTitle(show.getName());
-                        this.shows.add(cardModel);
-                    }
-                    showsLiveData.setValue(Response.success(shows));
-                }));
     }
 
 }

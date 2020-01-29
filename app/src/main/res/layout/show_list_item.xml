@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
 
     <data>
 
@@ -13,10 +15,41 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="@color/colorBackgroundCardLight"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="4dp">
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/imagePoster"
+                android:layout_width="125dp"
+                android:layout_height="188dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                bind:imageUrl="@{model.imageUrl}" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="125dp"
+                android:layout_height="55dp"
+                android:layout_below="@+id/imagePoster"
+                android:layout_alignStart="@+id/imagePoster"
+                android:ellipsize="end"
+                android:gravity="center_vertical|start"
+                android:maxLines="2"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@{model.title}"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 </layout>

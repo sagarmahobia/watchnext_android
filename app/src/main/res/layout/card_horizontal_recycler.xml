@@ -67,20 +67,21 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_toStartOf="@+id/progressBar"
+                        android:layout_toStartOf="@+id/see_all"
                         android:padding="8dp"
                         android:text="@{model.title}"
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBar"
+                    <Button
+                        android:id="@+id/see_all"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="30dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="10dp"
-                        android:visibility="@{model.status == Status.UPDATING ? View.VISIBLE: View.GONE}" />
+                        android:text="SEE ALL" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
