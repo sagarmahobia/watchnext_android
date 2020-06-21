@@ -1,7 +1,5 @@
 package com.sagar.watchnext.activities.main.movies;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,30 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.activities.main.BaseFragment;
 import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
-import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.databinding.FragmentMoviesBinding;
-import com.sagar.watchnext.response.Response;
-import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.support.AndroidSupportInjection;
 
-
-public class MoviesFragment extends Fragment {
+public class MoviesFragment extends BaseFragment {
 
     @Inject
     CardAdapter inTheatersMoviesAdapter;
@@ -61,15 +48,9 @@ public class MoviesFragment extends Fragment {
     private CardRecyclerModel upcomingCardRecyclerModel;
 
     @Override
-    public void onAttach(Context context) {
-        AndroidSupportInjection.inject(this);
-        super.onAttach(context);
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MoviesFragmentViewModel.class);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(MoviesFragmentViewModel.class);
 
         inTheatersCardRecyclerModel = viewModel.getInTheatersCardRecyclerModel();
         topRatedCardRecyclerModel = viewModel.getTopRatedCardRecyclerModel();
@@ -94,46 +75,29 @@ public class MoviesFragment extends Fragment {
         popularCardRecyclerModel.setTitle("Popular");
         topRatedCardRecyclerModel.setTitle("Top Rated");
 
-        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
-        for (int i = 1; i <= 4; i++) {
-            linearLayoutManagers.add(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        }
-
-        binding.inTheaters.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(0));
-        binding.upcoming.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(1));
-        binding.popular.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(2));
-        binding.topRated.horizontalListRecycler.setLayoutManager(linearLayoutManagers.get(3));
-
         binding.inTheaters.seeAll.setOnClickListener(v -> {
-            startList("movie", "now_playing");
+            startList("movie", "now_playing","Now Playing Movies");
         });
         binding.upcoming.seeAll.setOnClickListener(v -> {
-            startList("movie", "upcoming");
+            startList("movie", "upcoming","Upcoming Movies");
         });
         binding.popular.seeAll.setOnClickListener(v -> {
-            startList("movie", "popular");
+            startList("movie", "popular", "Popular Movies");
         });
         binding.topRated.seeAll.setOnClickListener(v -> {
-            startList("movie", "top_rated");
+            startList("movie", "top_rated","Top Rated Movies");
         });
 
-                binding.inTheaters.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
+        binding.inTheaters.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
         binding.upcoming.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
         binding.popular.horizontalListRecycler.setAdapter(popularMoviesAdapter);
         binding.topRated.horizontalListRecycler.setAdapter(topRatedMoviesAdapter);
 
 
-        inTheatersMoviesAdapter.setAdapterListener(model ->
-                MoviesFragment.this.startMovieDetailActivity(model.getId()));
-
-        popularMoviesAdapter.setAdapterListener(model ->
-                MoviesFragment.this.startMovieDetailActivity(model.getId()));
-
-        topRatedMoviesAdapter.setAdapterListener(model ->
-                MoviesFragment.this.startMovieDetailActivity(model.getId()));
-
-        upcomingMoviesAdapter.setAdapterListener(model ->
-                MoviesFragment.this.startMovieDetailActivity(model.getId()));
+        inTheatersMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
+        popularMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
+        topRatedMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
+        upcomingMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
 
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -147,6 +111,7 @@ public class MoviesFragment extends Fragment {
         });
 
         binding.swipeRefreshLayout.setRefreshing(true);
+
         return binding.getRoot();
     }
 
@@ -160,77 +125,22 @@ public class MoviesFragment extends Fragment {
             actionBar.setTitle("Movies");
         }
 
-        viewModel.getInTheatersMoviesLiveData().observe(this, this::onResponseInTheaters);
-        viewModel.getUpcomingMoviesLiveData().observe(this, this::onResponseUpcoming);
-        viewModel.getPopularMoviesLiveData().observe(this, this::onResponsePopular);
-        viewModel.getTopRatedMoviesLiveData().observe(this, this::onResponseTopRated);
+        viewModel.getInTheatersMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, inTheatersMoviesAdapter, inTheatersCardRecyclerModel));
+
+        viewModel.getUpcomingMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, upcomingMoviesAdapter, upcomingCardRecyclerModel));
+
+        viewModel.getPopularMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, popularMoviesAdapter, popularCardRecyclerModel));
+
+        viewModel.getTopRatedMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, topRatedMoviesAdapter, topRatedCardRecyclerModel));
 
     }
 
-    private void onResponseInTheaters(Response<List<CardModel>> response) {
+    @Override
+    protected void stopSwipeRefresh() {
         binding.swipeRefreshLayout.setRefreshing(false);
-        if (response.getStatus() == Status.SUCCESS) {
-            List<CardModel> data = response.getData();
-            inTheatersMoviesAdapter.submitList(data);
-
-            inTheatersCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
-        } else if (response.getStatus() == Status.ERROR) {
-
-            inTheatersCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
-        }
     }
-
-    private void onResponseUpcoming(Response<List<CardModel>> response) {
-        binding.swipeRefreshLayout.setRefreshing(false);
-        if (response.getStatus() == Status.SUCCESS) {
-            List<CardModel> data = response.getData();
-            upcomingMoviesAdapter.submitList(data);
-
-            upcomingCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
-        } else if (response.getStatus() == Status.ERROR) {
-
-            upcomingCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
-        }
-    }
-
-    private void onResponsePopular(Response<List<CardModel>> response) {
-        binding.swipeRefreshLayout.setRefreshing(false);
-        if (response.getStatus() == Status.SUCCESS) {
-            List<CardModel> data = response.getData();
-            popularMoviesAdapter.submitList(data);
-
-            popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
-        } else if (response.getStatus() == Status.ERROR) {
-
-            popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
-        }
-    }
-
-    private void onResponseTopRated(Response<List<CardModel>> response) {
-        binding.swipeRefreshLayout.setRefreshing(false);
-        if (response.getStatus() == Status.SUCCESS) {
-            List<CardModel> data = response.getData();
-            topRatedMoviesAdapter.submitList(data);
-
-            topRatedCardRecyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
-        } else if (response.getStatus() == Status.ERROR) {
-
-            topRatedCardRecyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
-        }
-    }
-
-
-    public void startMovieDetailActivity(int movieId) {
-        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        intent.putExtra("movie_id", movieId);
-        startActivity(intent);
-    }
-
-    public void startList(String type, String subType) {
-        Intent intent = new Intent(getContext(), ListActivity.class);
-        intent.putExtra("type", type);
-        intent.putExtra("subtype", subType);
-        startActivity(intent);
-    }
-
 }

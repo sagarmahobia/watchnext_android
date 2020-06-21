@@ -10,11 +10,13 @@ class MovieDetail {
     @SerializedName("backdrop_path")
     val backdropPath: String? = null
     //todo check data type
+
     /* "belongs_to_collection": {
     "id": 344830,
     "name": "Fifty Shades Collection",
     "poster_path": "/oJrMaAhQlV5K9QFhulFehTn7JVn.jpg",
     "backdrop_path": "/5OmblvyjPX4QRI77y9LPGttbHct.jpg"
+
   }*/
 
     @SerializedName("belongs_to_collection")

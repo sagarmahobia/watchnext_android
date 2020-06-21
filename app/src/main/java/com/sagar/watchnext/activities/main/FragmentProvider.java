@@ -6,9 +6,6 @@ import com.sagar.watchnext.activities.main.home.HomeFragmentScope;
 import com.sagar.watchnext.activities.main.movies.MoviesFragment;
 import com.sagar.watchnext.activities.main.movies.MoviesFragmentModule;
 import com.sagar.watchnext.activities.main.movies.MoviesFragmentScope;
-import com.sagar.watchnext.activities.main.people.PeopleFragment;
-import com.sagar.watchnext.activities.main.people.PeopleFragmentModule;
-import com.sagar.watchnext.activities.main.people.PeopleFragmentScope;
 import com.sagar.watchnext.activities.main.tv.TvFragment;
 import com.sagar.watchnext.activities.main.tv.TvFragmentModule;
 import com.sagar.watchnext.activities.main.tv.TvFragmentScope;
@@ -36,9 +33,6 @@ public abstract class FragmentProvider {
     @TvFragmentScope
     abstract TvFragment tvFragment();
 
-    @ContributesAndroidInjector(modules = PeopleFragmentModule.class)
-    @PeopleFragmentScope
-    abstract PeopleFragment peopleFragment();
 
 
 }

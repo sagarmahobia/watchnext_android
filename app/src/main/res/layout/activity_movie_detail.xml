@@ -22,11 +22,7 @@
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBackgroundCardLight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/colorBackground"
             bind:refreshing="@{visibilityModel.progressVisibility}">
 
             <ScrollView
@@ -37,13 +33,17 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBackground">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_detail_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="@color/colorBackgroundCardLight"
+                        android:elevation="0dp"
+                        app:cardBackgroundColor="@color/colorBackgroundCard"
+                        app:cardCornerRadius="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -59,7 +59,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/card_detail_header"
-                        app:cardBackgroundColor="@color/colorBackgroundCard"
+                        android:elevation="0dp"
+                        app:cardBackgroundColor="@color/colorBackground"
+                        app:cardCornerRadius="0dp"
                         app:contentPadding="5dp"
                         app:contentPaddingBottom="8dp"
                         app:contentPaddingTop="15dp"

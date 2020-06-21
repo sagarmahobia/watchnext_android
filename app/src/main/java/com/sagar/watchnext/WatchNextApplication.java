@@ -18,7 +18,6 @@ public class WatchNextApplication extends Application implements HasAndroidInjec
     @Inject
     DispatchingAndroidInjector<Object> activityDispatchingAndroidInjector;
 
-    private WatchNextApplicationComponent component;
 
     @Override
     public void onCreate() {

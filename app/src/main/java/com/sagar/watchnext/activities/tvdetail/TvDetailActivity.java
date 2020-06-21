@@ -3,6 +3,7 @@ package com.sagar.watchnext.activities.tvdetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.ActionBar;
@@ -69,6 +70,7 @@ public class TvDetailActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle("Detail");
         }
 
         RelativeLayout.LayoutParams lp =
@@ -147,7 +149,10 @@ public class TvDetailActivity extends AppCompatActivity {
         if (response.getStatus() == Status.SUCCESS) {
             List<CardModel> data = response.getData();
             recommendationAdapter.submitList(data);
-
+            if (data == null || data.isEmpty()) {
+                binding.recommendations.root.setVisibility(View.GONE);
+                return;
+            }
             viewModel.getRecommendedCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
         } else if (response.getStatus() == Status.ERROR) {
 
@@ -159,7 +164,10 @@ public class TvDetailActivity extends AppCompatActivity {
         if (response.getStatus() == Status.SUCCESS) {
             List<CardModel> data = response.getData();
             similarAdapter.submitList(data);
-
+            if (data == null || data.isEmpty()) {
+                binding.similar.root.setVisibility(View.GONE);
+                return;
+            }
             viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
         } else if (response.getStatus() == Status.ERROR) {
 

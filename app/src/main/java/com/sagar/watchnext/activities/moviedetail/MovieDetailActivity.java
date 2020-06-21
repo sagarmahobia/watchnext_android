@@ -3,12 +3,13 @@ package com.sagar.watchnext.activities.moviedetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,6 +67,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle("Detail");
+
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
@@ -84,7 +87,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             return;
         }
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieDetailActivityViewModel.class);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(MovieDetailActivityViewModel.class);
 
         dataModel = viewModel.getDataModel();
         activityModel = viewModel.getActivityModel();
@@ -123,6 +126,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         recommendationAdapter.setAdapterListener(model -> {
             Intent thisActivityIntent = new Intent(this, MovieDetailActivity.class);
             thisActivityIntent.putExtra("movie_id", model.getId());
+            supportActionBar.setTitle("Detail");
             startActivity(thisActivityIntent);
 
         });
@@ -159,8 +163,13 @@ public class MovieDetailActivity extends AppCompatActivity {
     private void observeRecommendationResponse(Response<List<CardModel>> response) {
         if (response.getStatus() == Status.SUCCESS) {
             List<CardModel> data = response.getData();
+
             recommendationAdapter.submitList(data);
 
+            if (data == null || data.isEmpty()) {
+                binding.recommendations.root.setVisibility(View.GONE);
+                return;
+            }
             viewModel.getRecommendationCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
         } else if (response.getStatus() == Status.ERROR) {
 
@@ -172,7 +181,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (response.getStatus() == Status.SUCCESS) {
             List<CardModel> data = response.getData();
             similarAdapter.submitList(data);
-
+            if (data == null || data.isEmpty()) {
+                binding.similar.root.setVisibility(View.GONE);
+                return;
+            }
             viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
         } else if (response.getStatus() == Status.ERROR) {
 

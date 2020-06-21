@@ -13,6 +13,9 @@ public class CardRecyclerModel extends BaseObservable {
     private String title;
     private Status status;
 
+    private String type;
+
+
     @Bindable
     public String getTitle() {
         return title;
@@ -31,6 +34,17 @@ public class CardRecyclerModel extends BaseObservable {
     public void setStatus(Status status) {
         this.status = status;
         notifyPropertyChanged(com.sagar.watchnext.BR.status);
+    }
+
+    @Bindable
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+        notifyPropertyChanged(com.sagar.watchnext.BR.type);
+
     }
 
     public enum Status {

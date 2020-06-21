@@ -20,6 +20,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+
+                <TextView
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Movies"
+                    android:textColor="@color/colorLightText"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <include
                     android:id="@+id/in_theaters"
                     layout="@layout/card_horizontal_recycler"
@@ -27,7 +42,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
                 <include
                     android:id="@+id/upcoming"
@@ -37,7 +52,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recommendations" />
+                    app:layout_constraintTop_toBottomOf="@+id/in_theaters" />
 
                 <include
                     android:id="@+id/popular"

@@ -21,8 +21,8 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
+            android:background="@color/colorBackground"
             android:layout_height="match_parent"
-            android:background="@color/colorBackgroundCardLight"
             bind:refreshing="@{visibilityModel.progressVisibility}">
 
             <ScrollView
@@ -33,13 +33,16 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBackground">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_detail_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="@color/colorBackgroundCardLight"
+                        app:cardCornerRadius="0dp"
+                        android:elevation="0dp"
+                        app:cardBackgroundColor="@color/colorBackgroundCard"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -55,10 +58,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/card_detail_header"
-                        app:cardBackgroundColor="@color/colorBackgroundCard"
+                        app:cardBackgroundColor="@color/colorBackground"
                         app:contentPadding="5dp"
                         app:contentPaddingBottom="16dp"
                         app:contentPaddingTop="15dp"
+                        app:cardCornerRadius="0dp"
+                        android:elevation="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintEnd_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/card_detail_header">
@@ -325,6 +330,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+
                     <include
                         android:id="@+id/similar"
                         layout="@layout/card_horizontal_recycler"

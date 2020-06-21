@@ -2,10 +2,12 @@ package com.sagar.watchnext.activities.list;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.sagar.watchnext.R;
@@ -41,16 +43,23 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
 
         String type = getIntent().getStringExtra("type");
         String subtype = getIntent().getStringExtra("subtype");
+        String title = getIntent().getStringExtra("title");
         int id = getIntent().getIntExtra("id", -1);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListActivityViewModel.class);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(ListActivityViewModel.class);
         activityModel = viewModel.getActivityModel();
         binding.setModel(activityModel);
         binding.setHandler(this);
 
-        viewModel.prepare(type, subtype,id);
+        viewModel.prepare(type, subtype, id);
+
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle(title);
+        }
 
         binding.recycler.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recycler.setAdapter(adapter);
@@ -96,9 +105,18 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
                 Intent intent = new Intent(this, MovieDetailActivity.class);
                 intent.putExtra("movie_id", showModel.getId());
                 startActivity(intent);
-            } else {
             }
 
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (android.R.id.home == id) {
+            this.onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

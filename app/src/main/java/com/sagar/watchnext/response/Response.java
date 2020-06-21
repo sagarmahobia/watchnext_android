@@ -39,18 +39,18 @@ public class Response<T> {
     }
 
     @NonNull
-    public static <T> Response loading() {
+    public static <T> Response<?> loading() {
         return new Response<T>(LOADING, null, null);
     }
 
 
     @NonNull
-    public static <T> Response success(T data) {
+    public static <T> Response<T> success(T data) {
         return new Response<>(SUCCESS, data, null);
     }
 
     @NonNull
-    public static Response error(@NonNull Throwable error) {
+    public static Response<?> error(@NonNull Throwable error) {
         return new Response<>(ERROR, null, error);
     }
 
