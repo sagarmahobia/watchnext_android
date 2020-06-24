@@ -15,12 +15,13 @@ public class HomeFragmentViewModel extends BaseViewModel {
     }
 
     public void load() {
-
+        loadTrendingMovies();
         loadInTheatersMovies();
         loadUpcomingMovies();
         loadPopularMovies();
         loadTopRatedMovies();
 
+        loadTrendingShows();
         loadAiringTodayShows();
         loadOnTheAirTodayShows();
         loadPopularShows();

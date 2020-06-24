@@ -24,6 +24,9 @@ import javax.inject.Inject;
 public class MoviesFragment extends BaseFragment {
 
     @Inject
+    CardAdapter trendingMoviesAdapter;
+
+    @Inject
     CardAdapter inTheatersMoviesAdapter;
 
     @Inject
@@ -42,6 +45,7 @@ public class MoviesFragment extends BaseFragment {
 
     private MoviesFragmentViewModel viewModel;
 
+    private CardRecyclerModel trendingCardRecyclerModel;
     private CardRecyclerModel inTheatersCardRecyclerModel;
     private CardRecyclerModel topRatedCardRecyclerModel;
     private CardRecyclerModel popularCardRecyclerModel;
@@ -52,6 +56,7 @@ public class MoviesFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(MoviesFragmentViewModel.class);
 
+        trendingCardRecyclerModel = viewModel.getTrendingMoviesCardRecyclerModel();
         inTheatersCardRecyclerModel = viewModel.getInTheatersCardRecyclerModel();
         topRatedCardRecyclerModel = viewModel.getTopRatedCardRecyclerModel();
         popularCardRecyclerModel = viewModel.getPopularCardRecyclerModel();
@@ -65,44 +70,53 @@ public class MoviesFragment extends BaseFragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies, container, false);
 
+        binding.trendingMovies.setModel(trendingCardRecyclerModel);
         binding.inTheaters.setModel(inTheatersCardRecyclerModel);
         binding.upcoming.setModel(upcomingCardRecyclerModel);
         binding.popular.setModel(popularCardRecyclerModel);
         binding.topRated.setModel(topRatedCardRecyclerModel);
 
+        trendingCardRecyclerModel.setTitle("Trending");
         inTheatersCardRecyclerModel.setTitle("In Theaters");
         upcomingCardRecyclerModel.setTitle("Upcoming");
         popularCardRecyclerModel.setTitle("Popular");
         topRatedCardRecyclerModel.setTitle("Top Rated");
 
+        binding.trendingMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "trending", "Trending Movies");
+        });
+
         binding.inTheaters.seeAll.setOnClickListener(v -> {
-            startList("movie", "now_playing","Now Playing Movies");
+            startList("movie", "now_playing", "Now Playing Movies");
         });
         binding.upcoming.seeAll.setOnClickListener(v -> {
-            startList("movie", "upcoming","Upcoming Movies");
+            startList("movie", "upcoming", "Upcoming Movies");
         });
         binding.popular.seeAll.setOnClickListener(v -> {
             startList("movie", "popular", "Popular Movies");
         });
         binding.topRated.seeAll.setOnClickListener(v -> {
-            startList("movie", "top_rated","Top Rated Movies");
+            startList("movie", "top_rated", "Top Rated Movies");
         });
 
+        binding.trendingMovies.horizontalListRecycler.setAdapter(trendingMoviesAdapter);
         binding.inTheaters.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
         binding.upcoming.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
         binding.popular.horizontalListRecycler.setAdapter(popularMoviesAdapter);
         binding.topRated.horizontalListRecycler.setAdapter(topRatedMoviesAdapter);
 
 
-        inTheatersMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
-        popularMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
-        topRatedMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
-        upcomingMoviesAdapter.setAdapterListener(model -> MoviesFragment.this.startMovieDetailActivity(model.getId()));
+        trendingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        inTheatersMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        popularMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        topRatedMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        upcomingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
 
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
 
+            trendingCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             inTheatersCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             upcomingCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
@@ -124,6 +138,10 @@ public class MoviesFragment extends BaseFragment {
         if (actionBar != null) {
             actionBar.setTitle("Movies");
         }
+
+
+        viewModel.getTrendingMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingMoviesAdapter, trendingCardRecyclerModel));
 
         viewModel.getInTheatersMoviesLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, inTheatersMoviesAdapter, inTheatersCardRecyclerModel));

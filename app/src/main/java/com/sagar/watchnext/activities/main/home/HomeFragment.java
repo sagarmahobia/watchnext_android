@@ -26,6 +26,10 @@ import javax.inject.Inject;
 public class HomeFragment extends BaseFragment {
 
     @Inject
+    CardAdapter trendingMoviesAdapter;
+
+
+    @Inject
     CardAdapter inTheatersMoviesAdapter;
 
     @Inject
@@ -36,6 +40,10 @@ public class HomeFragment extends BaseFragment {
 
     @Inject
     CardAdapter upcomingMoviesAdapter;
+
+
+    @Inject
+    CardAdapter trendingShowsAdapter;
 
     @Inject
     CardAdapter airingTodayAdapter;
@@ -57,11 +65,13 @@ public class HomeFragment extends BaseFragment {
 
     private HomeFragmentViewModel viewModel;
 
+    private CardRecyclerModel trendingMoviesCardRecyclerModel;
     private CardRecyclerModel inTheatersCardRecyclerModel;
     private CardRecyclerModel topRatedCardRecyclerModel;
     private CardRecyclerModel popularCardRecyclerModel;
     private CardRecyclerModel upcomingCardRecyclerModel;
 
+    private CardRecyclerModel trendingShowsRecyclerModel;
     private CardRecyclerModel airingTodayShowsRecyclerModel;
     private CardRecyclerModel onTheAirShowsRecyclerModel;
     private CardRecyclerModel popularShowsRecyclerModel;
@@ -74,11 +84,14 @@ public class HomeFragment extends BaseFragment {
         viewModel = new ViewModelProvider(this, viewModelFactory).get(HomeFragmentViewModel.class);
 
 
+        trendingMoviesCardRecyclerModel = viewModel.getTrendingMoviesCardRecyclerModel();
         inTheatersCardRecyclerModel = viewModel.getInTheatersCardRecyclerModel();
         topRatedCardRecyclerModel = viewModel.getTopRatedCardRecyclerModel();
         popularCardRecyclerModel = viewModel.getPopularCardRecyclerModel();
         upcomingCardRecyclerModel = viewModel.getUpcomingCardRecyclerModel();
 
+
+        trendingShowsRecyclerModel = viewModel.getTrendingShowsRecyclerModel();
         airingTodayShowsRecyclerModel = viewModel.getAiringTodayShowsRecyclerModel();
         onTheAirShowsRecyclerModel = viewModel.getOnTheAirShowsRecyclerModel();
         popularShowsRecyclerModel = viewModel.getPopularShowsRecyclerModel();
@@ -92,17 +105,20 @@ public class HomeFragment extends BaseFragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
 
-
+        binding.trendingMovies.setModel(trendingMoviesCardRecyclerModel);
         binding.inTheatersMovies.setModel(inTheatersCardRecyclerModel);
         binding.upcomingMovies.setModel(upcomingCardRecyclerModel);
         binding.popularMovies.setModel(popularCardRecyclerModel);
         binding.topRatedMovies.setModel(topRatedCardRecyclerModel);
 
+        binding.trendingShows.setModel(trendingShowsRecyclerModel);
         binding.airingTodayShows.setModel(airingTodayShowsRecyclerModel);
         binding.onTheAirShows.setModel(onTheAirShowsRecyclerModel);
         binding.popularShows.setModel(popularShowsRecyclerModel);
         binding.topRatedShows.setModel(topRatedShowsRecyclerModel);
 
+        trendingMoviesCardRecyclerModel.setTitle("Trending");
+        trendingMoviesCardRecyclerModel.setType("Movies");
 
         inTheatersCardRecyclerModel.setTitle("In Theaters");
         inTheatersCardRecyclerModel.setType("Movies");
@@ -117,6 +133,9 @@ public class HomeFragment extends BaseFragment {
         topRatedCardRecyclerModel.setType("Movies");
 
 
+        trendingShowsRecyclerModel.setTitle("Trending");
+        trendingShowsRecyclerModel.setType("Shows");
+
         airingTodayShowsRecyclerModel.setTitle("Airing Today");
         airingTodayShowsRecyclerModel.setType("Shows");
 
@@ -130,23 +149,26 @@ public class HomeFragment extends BaseFragment {
         topRatedShowsRecyclerModel.setType("Shows");
 
 
+        binding.trendingMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "trending", "Trending Movies");
+        });
         binding.inTheatersMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "now_playing", "Movies Now Playing");
         });
-
         binding.upcomingMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "upcoming", "Upcoming Movies");
         });
-
         binding.popularMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "popular", "Popular Movies");
         });
-
         binding.topRatedMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "top_rated", "Top Rated Movies");
         });
 
 
+        binding.trendingShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "trending", "Trending Shows");
+        });
         binding.airingTodayShows.seeAll.setOnClickListener(v -> {
             startList("tv", "airing_today", "Shows Airing Today");
         });
@@ -160,12 +182,13 @@ public class HomeFragment extends BaseFragment {
             startList("tv", "top_rated", "Top Rated Shows");
         });
 
-
+        binding.trendingMovies.horizontalListRecycler.setAdapter(trendingMoviesAdapter);
         binding.inTheatersMovies.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
         binding.upcomingMovies.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
         binding.popularMovies.horizontalListRecycler.setAdapter(popularMoviesAdapter);
         binding.topRatedMovies.horizontalListRecycler.setAdapter(topRatedMoviesAdapter);
 
+        binding.trendingShows.horizontalListRecycler.setAdapter(trendingShowsAdapter);
         binding.airingTodayShows.horizontalListRecycler.setAdapter(airingTodayAdapter);
         binding.onTheAirShows.horizontalListRecycler.setAdapter(onTheAirAdapter);
         binding.popularShows.horizontalListRecycler.setAdapter(popularAdapter);
@@ -177,32 +200,28 @@ public class HomeFragment extends BaseFragment {
         });
 
 
-        inTheatersMoviesAdapter.setAdapterListener(model ->
-                this.startMovieDetailActivity(model.getId()));
-        upcomingMoviesAdapter.setAdapterListener(model ->
-                this.startMovieDetailActivity(model.getId()));
-        popularMoviesAdapter.setAdapterListener(model ->
-                this.startMovieDetailActivity(model.getId()));
-        topRatedMoviesAdapter.setAdapterListener(model ->
-                this.startMovieDetailActivity(model.getId()));
+        trendingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        inTheatersMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        upcomingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        popularMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        topRatedMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
 
-        airingTodayAdapter.setAdapterListener(model ->
-                this.startTvDetailActivity(model.getId()));
-        onTheAirAdapter.setAdapterListener(model ->
-                this.startTvDetailActivity(model.getId()));
-        popularAdapter.setAdapterListener(model ->
-                this.startTvDetailActivity(model.getId()));
-        topRatedAdapter.setAdapterListener(model ->
-                this.startTvDetailActivity(model.getId()));
+        trendingShowsAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        airingTodayAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        onTheAirAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        popularAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        topRatedAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
 
+            trendingMoviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             inTheatersCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             upcomingCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             topRatedCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
 
+            trendingShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             airingTodayShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             onTheAirShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             popularShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
@@ -224,18 +243,20 @@ public class HomeFragment extends BaseFragment {
             actionBar.setTitle("WatchNext - Home");
         }
 
+        viewModel.getTrendingMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingMoviesAdapter, trendingMoviesCardRecyclerModel));
         viewModel.getInTheatersMoviesLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, inTheatersMoviesAdapter, inTheatersCardRecyclerModel));
-
         viewModel.getUpcomingMoviesLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, upcomingMoviesAdapter, upcomingCardRecyclerModel));
-
         viewModel.getPopularMoviesLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, popularMoviesAdapter, popularCardRecyclerModel));
-
         viewModel.getTopRatedMoviesLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, topRatedMoviesAdapter, topRatedCardRecyclerModel));
 
+
+        viewModel.getTrendingShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingShowsAdapter, trendingShowsRecyclerModel));
         viewModel.getAiringTodayShowsLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, airingTodayAdapter, airingTodayShowsRecyclerModel));
         viewModel.getOnTheAirShowsLiveData().observe(this.getViewLifecycleOwner(),

@@ -98,7 +98,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <include
-                    android:id="@+id/in_theaters_movies"
+                    android:id="@+id/trending_movies"
                     layout="@layout/card_horizontal_recycler"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -106,6 +106,26 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/search_bar" />
+
+                <include
+                    android:id="@+id/trending_shows"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/trending_movies" />
+
+                <include
+                    android:id="@+id/in_theaters_movies"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/trending_shows" />
 
                 <include
                     android:id="@+id/airing_today_shows"
@@ -178,6 +198,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/top_rated_movies" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:paddingBottom="8dp"
+                    android:text="A lot more coming soon."
+                    android:textColor="@color/colorLightText"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@+id/top_rated_shows" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

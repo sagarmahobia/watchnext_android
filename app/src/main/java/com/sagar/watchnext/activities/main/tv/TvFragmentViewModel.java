@@ -16,6 +16,7 @@ public class TvFragmentViewModel extends BaseViewModel {
     }
 
     public void load() {
+        loadTrendingShows();
         loadAiringTodayShows();
         loadOnTheAirTodayShows();
         loadPopularShows();

@@ -17,6 +17,8 @@ import retrofit2.http.Query;
  */
 public interface TMDBRepository {
 
+
+    //per tv
     @GET("tv/{tv_id}")
     Observable<Details> getTVDetails(@Path("tv_id") int tvId);
 
@@ -29,6 +31,14 @@ public interface TMDBRepository {
      *
      *
      * */
+
+    @GET("trending/{type}/week")
+    Observable<Result> getTrending(@Path("type") String type);
+
+    @GET("trending/{type}/week")
+    Observable<Result> getTrending(@Path("type") String type, @Query("page") int page);
+
+
     @GET("{type}/{subtype}")
     Observable<Result> getFirstPage(@Path("type") String type, @Path("subtype") String subtype);
 

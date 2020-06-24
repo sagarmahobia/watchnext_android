@@ -25,6 +25,9 @@ public class TvFragment extends BaseFragment {
 
 
     @Inject
+    CardAdapter trendingShowsAdapter;
+
+    @Inject
     CardAdapter airingTodayAdapter;
 
     @Inject
@@ -43,6 +46,7 @@ public class TvFragment extends BaseFragment {
 
     private TvFragmentViewModel viewModel;
 
+    private CardRecyclerModel trendingShowsRecyclerModel;
     private CardRecyclerModel airingTodayShowsRecyclerModel;
     private CardRecyclerModel onTheAirShowsRecyclerModel;
     private CardRecyclerModel popularShowsRecyclerModel;
@@ -54,6 +58,7 @@ public class TvFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(TvFragmentViewModel.class);
 
+        trendingShowsRecyclerModel = viewModel.getTrendingShowsRecyclerModel();
         airingTodayShowsRecyclerModel = viewModel.getAiringTodayShowsRecyclerModel();
         onTheAirShowsRecyclerModel = viewModel.getOnTheAirShowsRecyclerModel();
         popularShowsRecyclerModel = viewModel.getPopularShowsRecyclerModel();
@@ -67,38 +72,44 @@ public class TvFragment extends BaseFragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tv, container, false);
 
+        binding.trendingShows.setModel(trendingShowsRecyclerModel);
         binding.airingToday.setModel(airingTodayShowsRecyclerModel);
         binding.onTheAir.setModel(onTheAirShowsRecyclerModel);
         binding.popular.setModel(popularShowsRecyclerModel);
         binding.topRated.setModel(topRatedShowsRecyclerModel);
 
+
+        trendingShowsRecyclerModel.setTitle("Trending");
         airingTodayShowsRecyclerModel.setTitle("Airing Today");
         onTheAirShowsRecyclerModel.setTitle("On The Air");
         popularShowsRecyclerModel.setTitle("Popular");
         topRatedShowsRecyclerModel.setTitle("Top Rated");
 
+        binding.trendingShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "trending", "Trending Shows");
+        });
         binding.airingToday.seeAll.setOnClickListener(v -> {
-            startList("tv", "airing_today","Shows Airing Today");
+            startList("tv", "airing_today", "Shows Airing Today");
         });
         binding.onTheAir.seeAll.setOnClickListener(v -> {
-            startList("tv", "on_the_air","Shows On The Air");
+            startList("tv", "on_the_air", "Shows On The Air");
         });
-        ;
         binding.popular.seeAll.setOnClickListener(v -> {
-            startList("tv", "popular","Popular Shows");
+            startList("tv", "popular", "Popular Shows");
         });
-        ;
         binding.topRated.seeAll.setOnClickListener(v -> {
-            startList("tv", "top_rated","Top Rated Shows");
+            startList("tv", "top_rated", "Top Rated Shows");
         });
 
 
+        binding.trendingShows.horizontalListRecycler.setAdapter(trendingShowsAdapter);
         binding.airingToday.horizontalListRecycler.setAdapter(airingTodayAdapter);
         binding.onTheAir.horizontalListRecycler.setAdapter(onTheAirAdapter);
         binding.popular.horizontalListRecycler.setAdapter(popularAdapter);
         binding.topRated.horizontalListRecycler.setAdapter(topRatedAdapter);
 
 
+        trendingShowsAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         airingTodayAdapter.setAdapterListener((model) -> this.startTvDetailActivity(model.getId()));
         onTheAirAdapter.setAdapterListener((model) -> this.startTvDetailActivity(model.getId()));
         popularAdapter.setAdapterListener((model) -> this.startTvDetailActivity(model.getId()));
@@ -107,6 +118,7 @@ public class TvFragment extends BaseFragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
+            trendingShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             airingTodayShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             onTheAirShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             popularShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
@@ -120,7 +132,6 @@ public class TvFragment extends BaseFragment {
     }
 
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -131,6 +142,8 @@ public class TvFragment extends BaseFragment {
         }
 
 
+        viewModel.getTrendingShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingShowsAdapter, trendingShowsRecyclerModel));
         viewModel.getAiringTodayShowsLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, airingTodayAdapter, airingTodayShowsRecyclerModel));
         viewModel.getOnTheAirShowsLiveData().observe(this.getViewLifecycleOwner(),
@@ -146,6 +159,5 @@ public class TvFragment extends BaseFragment {
     protected void stopSwipeRefresh() {
         binding.swipeRefreshLayout.setRefreshing(false);
     }
-
 
 }

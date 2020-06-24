@@ -1,6 +1,5 @@
 package com.sagar.watchnext.activities.tvdetail;
 
-
 import android.annotation.SuppressLint;
 
 import androidx.lifecycle.MutableLiveData;
@@ -278,6 +277,7 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
             cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(cardItem.getPosterPath()));
             cardModel.setTitle(cardItem.getTitle());
             cardModels.add(cardModel);
+            cardModel.setRating(String.valueOf(cardItem.getVoteAverage()));
         }
         return cardModels;
     }

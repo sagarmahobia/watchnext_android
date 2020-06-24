@@ -16,6 +16,7 @@ public class MoviesFragmentViewModel extends BaseViewModel {
 
 
     public void load() {
+        loadTrendingMovies();
         loadInTheatersMovies();
         loadUpcomingMovies();
         loadPopularMovies();

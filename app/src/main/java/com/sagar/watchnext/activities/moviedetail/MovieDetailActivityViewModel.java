@@ -254,6 +254,7 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
             cardModel.setId(cardItem.getId());
             cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(cardItem.getPosterPath()));
             cardModel.setTitle(cardItem.getTitle());
+            cardModel.setRating(String.valueOf(cardItem.getVoteAverage()));
             cardModels.add(cardModel);
         }
         return cardModels;

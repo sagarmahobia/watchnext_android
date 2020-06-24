@@ -60,10 +60,12 @@ public class NetworkModule {
     @ApplicationScope
     OkHttpClient provideOkHttpClient(Interceptor interceptor, HttpLoggingInterceptor httpLoggingInterceptor) {
 
-        return new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .addInterceptor(httpLoggingInterceptor)//todo remove
-                .build();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(interceptor);
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(httpLoggingInterceptor);
+        }
+        return builder.build();
     }
 
     @Provides
@@ -86,8 +88,11 @@ public class NetworkModule {
         Picasso picasso = new Picasso.Builder(context)
                 .downloader(new OkHttp3Downloader(context, Integer.MAX_VALUE))
                 .build();
-        picasso.setIndicatorsEnabled(true);//todo remove
-        picasso.setLoggingEnabled(true);//todo remove
+
+        if (BuildConfig.DEBUG) {
+            picasso.setIndicatorsEnabled(true);//todo remove
+            picasso.setLoggingEnabled(true);//todo remove
+        }
         return picasso;
     }
 

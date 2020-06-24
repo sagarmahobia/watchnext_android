@@ -46,7 +46,10 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<ShowModel> callback) {
         stateLiveData.postValue(PagingState.loading());
         Observable<Result> pagedList;
-        if (id == -1) {
+
+        if (subtype.equalsIgnoreCase("trending")) {
+            pagedList = tmdbRepository.getTrending(type, 1);
+        } else if (id == -1) {
             pagedList = tmdbRepository.getPagedList(type, subtype, 1);
         } else {
             pagedList = tmdbRepository.getListWithId(type, id, subtype, 1);
@@ -67,7 +70,10 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
     public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<ShowModel> callback) {
         stateLiveData.postValue(PagingState.loading());
         Observable<Result> pagedList;
-        if (id == -1) {
+
+        if (subtype.equalsIgnoreCase("trending")) {
+            pagedList = tmdbRepository.getTrending(type, page);
+        } else if (id == -1) {
             pagedList = tmdbRepository.getPagedList(type, subtype, page);
         } else {
             pagedList = tmdbRepository.getListWithId(type, id, subtype, page);
@@ -102,6 +108,7 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
             cardModel.setId(cardItem.getId());
             cardModel.setImageUrl(ImageUrlUtil.getPosterImageUrl(cardItem.getPosterPath()));
             cardModel.setTitle(cardItem.getTitle());
+            cardModel.setRating(String.valueOf(cardItem.getVoteAverage()));
             showModels.add(cardModel);
         }
         return showModels;

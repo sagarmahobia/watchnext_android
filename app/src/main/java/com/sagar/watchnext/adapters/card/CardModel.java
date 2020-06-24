@@ -16,6 +16,8 @@ public class CardModel extends BaseObservable {
 
     private String title;
 
+    private String rating;
+
     @Bindable
     public String getImageUrl() {
         return imageUrl;
@@ -26,6 +28,11 @@ public class CardModel extends BaseObservable {
         return title;
     }
 
+    @Bindable
+    public String getRating() {
+        return rating;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
         notifyPropertyChanged(BR.imageUrl);
@@ -34,6 +41,12 @@ public class CardModel extends BaseObservable {
     public void setTitle(String title) {
         this.title = title;
         notifyPropertyChanged(BR.title);
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+        notifyPropertyChanged(BR.rating);
+
     }
 
     public int getId() {

@@ -13,6 +13,7 @@ public class ShowModel extends BaseObservable {
     private String imageUrl;
 
     private String title;
+    private String rating;
 
     @Bindable
     public String getImageUrl() {
@@ -42,4 +43,14 @@ public class ShowModel extends BaseObservable {
         this.id = id;
     }
 
+    public void setRating(String rating) {
+        this.rating = rating;
+        notifyPropertyChanged(BR.title);
+
+    }
+
+    @Bindable
+    public String getRating() {
+        return rating;
+    }
 }
