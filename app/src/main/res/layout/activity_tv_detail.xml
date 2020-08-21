@@ -1,316 +1,392 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:bind="http://schemas.android.com/tools">
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/swipe_refresh_layout"
+    <data>
+
+        <variable
+            name="model"
+            type="com.sagar.watchnext.activities.tvdetail.TvDetailActivityModel" />
+
+        <variable
+            name="visibilityModel"
+            type="com.sagar.watchnext.observablemodels.ContentVisibilityModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorBackgroundCardLight"
-        tools:context=".activities.tvdetail.TvDetailActivity">
+        android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/content_scroll_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
+            android:background="@color/colorBackground"
             android:layout_height="match_parent"
-            android:visibility="invisible">
+            bind:refreshing="@{visibilityModel.progressVisibility}">
 
-            <RelativeLayout
+            <ScrollView
+                android:id="@+id/content_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                bind:inVisibility="@{visibilityModel.contentVisibility}">
 
-                <android.support.v7.widget.CardView
-                    android:id="@+id/card_detail_header"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/colorBackgroundCardLight">
+                    android:background="@color/colorBackground">
 
-                    <include layout="@layout/card_content_header" />
-
-                </android.support.v7.widget.CardView>
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/card_detail_header"
-                    app:cardBackgroundColor="@color/colorBackgroundCard"
-                    app:contentPadding="5dp"
-                    app:contentPaddingBottom="10dp"
-                    app:contentPaddingTop="15dp">
-
-                    <RelativeLayout
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_detail_header"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="0dp"
+                        android:elevation="0dp"
+                        app:cardBackgroundColor="@color/colorBackgroundCard"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/overview_title"
+                        <include
+                            android:id="@+id/header"
+                            layout="@layout/card_content_header" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/detail_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/card_detail_header"
+                        app:cardBackgroundColor="@color/colorBackground"
+                        app:contentPadding="5dp"
+                        app:contentPaddingBottom="16dp"
+                        app:contentPaddingTop="15dp"
+                        app:cardCornerRadius="0dp"
+                        android:elevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/card_detail_header">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="10dp"
-                            android:layout_marginStart="10dp"
-                            android:text="Overview"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/overview_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/overview_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/overview_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="Overview"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/original_name_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/overview_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Original Title"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/overview_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.overViewText}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/overview_title" />
 
-                        <TextView
-                            android:id="@+id/original_name_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/original_name_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/original_name_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Original Title"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/overview_text" />
 
-                        <TextView
-                            android:id="@+id/original_language_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/original_name_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Original Language"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/original_name_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.originalTitle}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/original_name_title" />
 
-                        <TextView
-                            android:id="@+id/original_language_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/original_language_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/original_language_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Original Language"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/original_name_text" />
 
-                        <TextView
-                            android:id="@+id/show_type_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/original_language_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Show Type"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/original_language_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.originalLanguage}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/original_language_title" />
 
-                        <TextView
-                            android:id="@+id/show_type_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/show_type_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/show_type_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Show Type"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/original_language_text" />
 
-                        <TextView
-                            android:id="@+id/show_status_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/show_type_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Show Status"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/show_type_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.showType}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/show_type_title" />
 
-                        <TextView
-                            android:id="@+id/show_status_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/show_status_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/show_status_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Show Status"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/show_type_text" />
 
-                        <TextView
-                            android:id="@+id/first_air_date_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/show_status_text"
-                            android:layout_marginTop="10dp"
-                            android:text="First Air Date"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/show_status_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.statusText}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/show_status_title" />
 
-                        <TextView
-                            android:id="@+id/first_air_date_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/first_air_date_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/first_air_date_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="First Air Date"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/show_status_text" />
 
-                        <TextView
-                            android:id="@+id/last_air_date_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/first_air_date_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Last Air Date"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/first_air_date_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.firstAirDate}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/first_air_date_title" />
 
-                        <TextView
-                            android:id="@+id/last_air_date_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/last_air_date_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/last_air_date_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Last Air Date"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/first_air_date_text" />
 
-                        <TextView
-                            android:id="@+id/networks_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/last_air_date_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Networks"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/last_air_date_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.lastAirDate}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/last_air_date_title" />
 
-                        <TextView
-                            android:id="@+id/networks_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/networks_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/networks_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Networks"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/last_air_date_text" />
 
-                        <TextView
-                            android:id="@+id/production_companies_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/networks_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Production Companies"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/networks_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.network}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/networks_title" />
 
-                        <TextView
-                            android:id="@+id/production_companies_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/production_companies_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/production_companies_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Production Companies"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/networks_text" />
 
-                        <TextView
-                            android:id="@+id/homepage_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/production_companies_text"
-                            android:layout_marginTop="10dp"
-                            android:text="Homepage"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/production_companies_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.productionCompanies}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/production_companies_title" />
 
-                        <TextView
-                            android:id="@+id/homepage_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/overview_title"
-                            android:layout_alignStart="@+id/overview_title"
-                            android:layout_below="@+id/homepage_title"
-                            android:text="N/A"
-                            android:textColor="@color/colorGrayText"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/homepage_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Homepage"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/production_companies_text" />
 
-                    </RelativeLayout>
-                </android.support.v7.widget.CardView>
-            </RelativeLayout>
-        </ScrollView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+                            <TextView
+                                android:id="@+id/homepage_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@{model.homepage}"
+                                android:textColor="@color/colorGrayText"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                                app:layout_constraintTop_toBottomOf="@id/homepage_title" />
 
-    <ImageView
-        android:id="@+id/error_icon_image_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="200dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_error_outline"
-        app:layout_constraintBottom_toTopOf="@+id/error_message_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/start_guideline"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintGuide_percent="0.04"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline" />
 
-    <TextView
-        android:id="@+id/error_message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:padding="8dp"
-        android:text="Something went wrong"
-        android:textColor="@color/colorGrayText"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/error_icon_image_view" />
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/end_guideline"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                                app:layout_constraintGuide_percent="0.96"
+                                app:layout_constraintStart_toStartOf="@id/start_guideline" />
 
-    <android.support.constraint.Group
-        android:id="@+id/error_message_text_and_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="error_message_text,error_icon_image_view" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-</android.support.constraint.ConstraintLayout>
+                    <include
+                        android:id="@+id/videos"
+                        layout="@layout/card_horizontal_videos"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+
+
+                    <include
+                        android:id="@+id/recommendations"
+                        layout="@layout/card_horizontal_recycler"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/videos" />
+
+                    <include
+                        android:id="@+id/similar"
+                        layout="@layout/card_horizontal_recycler"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendations" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <ImageView
+            android:id="@+id/error_icon_image_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="200dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_error_outline"
+            app:layout_constraintBottom_toTopOf="@+id/error_message_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/error_message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:padding="8dp"
+            android:text="Something went wrong"
+            android:textColor="@color/colorGrayText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/error_icon_image_view" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/error_message_text_and_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="error_message_text,error_icon_image_view"
+            bind:goneVisibility="@{visibilityModel.errorGroupVisibility}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,8 +1,8 @@
 package com.sagar.watchnext.activities.search.tv.adapters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import com.sagar.watchnext.activities.search.tv.TvSearchFragmentMvpContract;
+import com.sagar.watchnext.activities.search.tv.Contract;
 import com.sagar.watchnext.activities.search.tv.TvSearchFragmentScope;
 import com.sagar.watchnext.adapters.search.BaseSearchRecyclerAdapter;
 import com.sagar.watchnext.adapters.search.SearchCardViewHolder;
@@ -17,10 +17,10 @@ import javax.inject.Inject;
 @TvSearchFragmentScope
 public class RecyclerAdapter extends BaseSearchRecyclerAdapter {
 
-    private TvSearchFragmentMvpContract.Presenter presenter;
+    private Contract.Presenter presenter;
 
     @Inject
-    RecyclerAdapter(Picasso picasso, TvSearchFragmentMvpContract.Presenter presenter) {
+    RecyclerAdapter(Picasso picasso, Contract.Presenter presenter) {
         super(picasso);
         this.presenter = presenter;
     }

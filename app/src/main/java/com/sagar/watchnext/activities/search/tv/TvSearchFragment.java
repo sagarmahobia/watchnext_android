@@ -1,21 +1,23 @@
 package com.sagar.watchnext.activities.search.tv;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.Group;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.search.ActivityStateObserver;
@@ -28,14 +30,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TvSearchFragment extends Fragment implements ActivityStateObserver, TvSearchFragmentMvpContract.View {
+public class TvSearchFragment extends Fragment implements ActivityStateObserver, Contract.View {
 
     @Inject
-    TvSearchFragmentMvpContract.Presenter presenter;
+    Contract.Presenter presenter;
 
     @Inject
     RecyclerAdapter adapter;
@@ -58,9 +61,12 @@ public class TvSearchFragment extends Fragment implements ActivityStateObserver,
     private String query = "";
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
 
-    public TvSearchFragment() {
-
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -101,23 +107,14 @@ public class TvSearchFragment extends Fragment implements ActivityStateObserver,
         SearchActivity activity = (SearchActivity) getActivity();
         if (activity != null) {
             activity.setActivityStateObserver(this);
-            DaggerTvSearchFragmentComponent
-                    .builder()
-                    .tvSearchFragmentModule(new TvSearchFragmentModule(this))
-                    .searchActivityComponent(activity.getComponent())
-                    .build()
-                    .inject(this);
         }
 
+        getLifecycle().addObserver(presenter);
+
         recyclerView.setAdapter(adapter);
-        presenter.onCreate();
+
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
-    }
 
     @Override
     public void onQuery(String query) {

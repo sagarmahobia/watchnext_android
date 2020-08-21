@@ -2,73 +2,108 @@ package com.sagar.watchnext.activities.main.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sagar.watchnext.R;
-import com.sagar.watchnext.activities.main.MainActivity;
-import com.sagar.watchnext.activities.main.MainActivityComponent;
-import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
-import com.sagar.watchnext.activities.main.home.adapters.RecyclerAdapter;
-import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
-import com.sagar.watchnext.adapters.listeners.EndlessRecyclerViewScrollListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.main.BaseFragment;
+import com.sagar.watchnext.activities.main.MainActivity;
+import com.sagar.watchnext.activities.search.SearchActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.people.PeopleAdapter;
+import com.sagar.watchnext.databinding.FragmentHomeBinding;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 
 import javax.inject.Inject;
 
 
-public class HomeFragment extends Fragment implements HomeFragmentMvpContract.View {
-
-    private RecyclerView recyclerViewOnTv;
-    private RecyclerView recyclerViewInTheaters;
-
-    private RelativeLayout inTheatersCard;
-    private RelativeLayout onTvCard;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
+public class HomeFragment extends BaseFragment {
 
     @Inject
-    RecyclerAdapter onTvRecyclerAdapter;
+    CardAdapter trendingMoviesAdapter;
+
 
     @Inject
-    RecyclerAdapter inTheatersRecyclerAdapter;
+    CardAdapter inTheatersMoviesAdapter;
 
     @Inject
-    HomeFragmentMvpContract.Presenter presenter;
+    CardAdapter popularMoviesAdapter;
+
+    @Inject
+    CardAdapter topRatedMoviesAdapter;
+
+    @Inject
+    CardAdapter upcomingMoviesAdapter;
 
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    @Inject
+    CardAdapter trendingShowsAdapter;
 
+    @Inject
+    CardAdapter airingTodayAdapter;
 
-    public static HomeFragment newInstance() {
+    @Inject
+    CardAdapter onTheAirAdapter;
 
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    @Inject
+    CardAdapter popularAdapter;
+
+    @Inject
+    CardAdapter topRatedAdapter;
+
+    @Inject
+    PeopleAdapter peopleAdapter;
+
+    @Inject
+    HomeFragmentViewModelFactory viewModelFactory;
+
+    private FragmentHomeBinding binding;
+
+    private HomeFragmentViewModel viewModel;
+
+    private CardRecyclerModel trendingMoviesCardRecyclerModel;
+    private CardRecyclerModel inTheatersCardRecyclerModel;
+    private CardRecyclerModel topRatedCardRecyclerModel;
+    private CardRecyclerModel popularCardRecyclerModel;
+    private CardRecyclerModel upcomingCardRecyclerModel;
+
+    private CardRecyclerModel trendingShowsRecyclerModel;
+    private CardRecyclerModel airingTodayShowsRecyclerModel;
+    private CardRecyclerModel onTheAirShowsRecyclerModel;
+    private CardRecyclerModel popularShowsRecyclerModel;
+    private CardRecyclerModel topRatedShowsRecyclerModel;
+
+    private CardRecyclerModel peopleCardRecyclerModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString("");
-//        }
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(HomeFragmentViewModel.class);
+
+
+        trendingMoviesCardRecyclerModel = viewModel.getTrendingMoviesCardRecyclerModel();
+        inTheatersCardRecyclerModel = viewModel.getInTheatersCardRecyclerModel();
+        topRatedCardRecyclerModel = viewModel.getTopRatedCardRecyclerModel();
+        popularCardRecyclerModel = viewModel.getPopularCardRecyclerModel();
+        upcomingCardRecyclerModel = viewModel.getUpcomingCardRecyclerModel();
+
+
+        trendingShowsRecyclerModel = viewModel.getTrendingShowsRecyclerModel();
+        airingTodayShowsRecyclerModel = viewModel.getAiringTodayShowsRecyclerModel();
+        onTheAirShowsRecyclerModel = viewModel.getOnTheAirShowsRecyclerModel();
+        popularShowsRecyclerModel = viewModel.getPopularShowsRecyclerModel();
+        topRatedShowsRecyclerModel = viewModel.getTopRatedShowsRecyclerModel();
+
+        peopleCardRecyclerModel = viewModel.getPeopleRecyclerModel();
+
     }
 
     @Override
@@ -76,68 +111,151 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_base, container, false);
-        LinearLayout linearLayout = swipeRefreshLayout.findViewById(R.id.card_list_container);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+
+        binding.trendingMovies.setModel(trendingMoviesCardRecyclerModel);
+        binding.inTheatersMovies.setModel(inTheatersCardRecyclerModel);
+        binding.upcomingMovies.setModel(upcomingCardRecyclerModel);
+        binding.popularMovies.setModel(popularCardRecyclerModel);
+        binding.topRatedMovies.setModel(topRatedCardRecyclerModel);
+
+        binding.trendingShows.setModel(trendingShowsRecyclerModel);
+        binding.airingTodayShows.setModel(airingTodayShowsRecyclerModel);
+        binding.onTheAirShows.setModel(onTheAirShowsRecyclerModel);
+        binding.popularShows.setModel(popularShowsRecyclerModel);
+        binding.topRatedShows.setModel(topRatedShowsRecyclerModel);
+
+        binding.popularPeople.setModel(peopleCardRecyclerModel);
+
+        trendingMoviesCardRecyclerModel.setTitle("Trending");
+        trendingMoviesCardRecyclerModel.setType("Movies");
+
+        inTheatersCardRecyclerModel.setTitle("In Theaters");
+        inTheatersCardRecyclerModel.setType("Movies");
+
+        upcomingCardRecyclerModel.setTitle("Upcoming");
+        upcomingCardRecyclerModel.setType("Movies");
+
+        popularCardRecyclerModel.setTitle("Popular");
+        popularCardRecyclerModel.setType("Movies");
+
+        topRatedCardRecyclerModel.setTitle("Top Rated");
+        topRatedCardRecyclerModel.setType("Movies");
 
 
-        inTheatersCard = (RelativeLayout) inflater.inflate(
-                R.layout.card_horizontal_recycler,
-                linearLayout, false);
+        trendingShowsRecyclerModel.setTitle("Trending");
+        trendingShowsRecyclerModel.setType("Shows");
 
-        onTvCard = (RelativeLayout) inflater.inflate(
-                R.layout.card_horizontal_recycler,
-                linearLayout, false);
+        airingTodayShowsRecyclerModel.setTitle("Airing Today");
+        airingTodayShowsRecyclerModel.setType("Shows");
 
-        ((TextView) inTheatersCard.findViewById(R.id.card_header_text)).setText("In Theaters");
-        ((TextView) onTvCard.findViewById(R.id.card_header_text)).setText("On TV");
+        onTheAirShowsRecyclerModel.setTitle("On The Air");
+        onTheAirShowsRecyclerModel.setType("Shows");
 
-        recyclerViewOnTv = onTvCard.findViewById(R.id.horizontal_list_recycler);
-        recyclerViewInTheaters = inTheatersCard.findViewById(R.id.horizontal_list_recycler);
+        popularShowsRecyclerModel.setTitle("Popular");
+        popularShowsRecyclerModel.setType("Shows");
 
-        List<LinearLayoutManager> linearLayoutManagers = new ArrayList<>();
-        for (int i = 1; i <= 2; i++) {
-            linearLayoutManagers.add(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        }
+        topRatedShowsRecyclerModel.setTitle("Top Rated");
+        topRatedShowsRecyclerModel.setType("Shows");
 
-        recyclerViewOnTv.setLayoutManager(linearLayoutManagers.get(0));
-        recyclerViewInTheaters.setLayoutManager(linearLayoutManagers.get(1));
+        peopleCardRecyclerModel.setTitle("Popular");
+        peopleCardRecyclerModel.setType("People");
 
-        EndlessRecyclerViewScrollListener scrollListenerForOnTv =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewOnTv.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        presenter.loadMore(ListType.OnTv, pageToLoad);
-                        onTvCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                    }
-                };
-
-        EndlessRecyclerViewScrollListener scrollListenerForInTheaters =
-                new EndlessRecyclerViewScrollListener((LinearLayoutManager) recyclerViewInTheaters.getLayoutManager()) {
-                    @Override
-                    public void onLoadMore(int pageToLoad, int totalItemsCount, RecyclerView view) {
-                        presenter.loadMore(ListType.InTheaters, pageToLoad);
-                        inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-
-                    }
-                };
-
-        recyclerViewOnTv.addOnScrollListener(scrollListenerForOnTv);
-        recyclerViewInTheaters.addOnScrollListener(scrollListenerForInTheaters);
-
-
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.onCreate();
-            scrollListenerForOnTv.resetState();
-            scrollListenerForInTheaters.resetState();
+        binding.trendingMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "trending", "Trending Movies");
+        });
+        binding.inTheatersMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "now_playing", "Movies Now Playing");
+        });
+        binding.upcomingMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "upcoming", "Upcoming Movies");
+        });
+        binding.popularMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "popular", "Popular Movies");
+        });
+        binding.topRatedMovies.seeAll.setOnClickListener(v -> {
+            startList("movie", "top_rated", "Top Rated Movies");
         });
 
-        linearLayout.addView(inTheatersCard);
-        linearLayout.addView(onTvCard);
 
-        swipeRefreshLayout.setRefreshing(true);
-        return swipeRefreshLayout;
+        binding.trendingShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "trending", "Trending Shows");
+        });
+        binding.airingTodayShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "airing_today", "Shows Airing Today");
+        });
+        binding.onTheAirShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "on_the_air", "On The Air Shows");
+        });
+        binding.popularShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "popular", "Popular Shows");
+        });
+        binding.topRatedShows.seeAll.setOnClickListener(v -> {
+            startList("tv", "top_rated", "Top Rated Shows");
+        });
+
+        binding.popularPeople.seeAll.setOnClickListener(v -> {
+            //TODO
+            Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.trendingMovies.horizontalListRecycler.setAdapter(trendingMoviesAdapter);
+        binding.inTheatersMovies.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
+        binding.upcomingMovies.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
+        binding.popularMovies.horizontalListRecycler.setAdapter(popularMoviesAdapter);
+        binding.topRatedMovies.horizontalListRecycler.setAdapter(topRatedMoviesAdapter);
+
+        binding.trendingShows.horizontalListRecycler.setAdapter(trendingShowsAdapter);
+        binding.airingTodayShows.horizontalListRecycler.setAdapter(airingTodayAdapter);
+        binding.onTheAirShows.horizontalListRecycler.setAdapter(onTheAirAdapter);
+        binding.popularShows.horizontalListRecycler.setAdapter(popularAdapter);
+        binding.topRatedShows.horizontalListRecycler.setAdapter(topRatedAdapter);
+
+        binding.popularPeople.horizontalListRecycler.setAdapter(peopleAdapter);
+
+        binding.searchBar.setOnClickListener(v -> {
+            Intent intent = new Intent(this.getContext(), SearchActivity.class);
+            startActivity(intent);
+        });
+
+
+        trendingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        inTheatersMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        upcomingMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        popularMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        topRatedMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+
+        trendingShowsAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        airingTodayAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        onTheAirAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        popularAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        topRatedAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+
+        peopleAdapter.setClickListener(peopleModel -> {
+            Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.load();
+
+            trendingMoviesCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            inTheatersCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            upcomingCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            popularCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            topRatedCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+            trendingShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            airingTodayShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            onTheAirShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            popularShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            topRatedShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+            peopleCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+        });
+
+        binding.swipeRefreshLayout.setRefreshing(true);
+        return binding.getRoot();
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -147,91 +265,36 @@ public class HomeFragment extends Fragment implements HomeFragmentMvpContract.Vi
         if (actionBar != null) {
             actionBar.setTitle("WatchNext - Home");
         }
-        MainActivityComponent mainActivityComponent = ((MainActivity) getActivity()).getComponent();
 
-        DaggerHomeFragmentComponent.builder().
-                mainActivityComponent(mainActivityComponent)
-                .homeFragmentModule(new HomeFragmentModule(this))
-                .build().inject(this);
+        viewModel.getTrendingMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingMoviesAdapter, trendingMoviesCardRecyclerModel));
+        viewModel.getInTheatersMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, inTheatersMoviesAdapter, inTheatersCardRecyclerModel));
+        viewModel.getUpcomingMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, upcomingMoviesAdapter, upcomingCardRecyclerModel));
+        viewModel.getPopularMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, popularMoviesAdapter, popularCardRecyclerModel));
+        viewModel.getTopRatedMoviesLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, topRatedMoviesAdapter, topRatedCardRecyclerModel));
 
-        onTvRecyclerAdapter.setListType(ListType.OnTv);
-        inTheatersRecyclerAdapter.setListType(ListType.InTheaters);
 
-        presenter.onCreate();
+        viewModel.getTrendingShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, trendingShowsAdapter, trendingShowsRecyclerModel));
+        viewModel.getAiringTodayShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, airingTodayAdapter, airingTodayShowsRecyclerModel));
+        viewModel.getOnTheAirShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, onTheAirAdapter, onTheAirShowsRecyclerModel));
+        viewModel.getPopularShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, popularAdapter, popularShowsRecyclerModel));
+        viewModel.getTopRatedShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, topRatedAdapter, topRatedShowsRecyclerModel));
+
+        viewModel.getPopularPeopleLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, peopleAdapter, peopleCardRecyclerModel));
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        presenter.onDestroy();
-    }
-
-
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onSucceedLoadingList(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                recyclerViewInTheaters.setAdapter(inTheatersRecyclerAdapter);
-                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.GONE);
-                break;
-            default:
-                recyclerViewOnTv.setAdapter(onTvRecyclerAdapter);
-                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                onTvCard.findViewById(R.id.error_text).setVisibility(View.GONE);
-
-        }
-        swipeRefreshLayout.setRefreshing(false);
-
-    }
-
-    @Override
-    public void onErrorLoadingList(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                inTheatersCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-                inTheatersCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-                break;
-            default:
-                onTvCard.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-                onTvCard.findViewById(R.id.please_wait_text).setVisibility(View.GONE);
-        }
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void startMovieDetailActivity(int movieId) {
-
-        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        intent.putExtra("movie_id", movieId);
-        startActivity(intent);
-    }
-
-    @Override
-    public void startTvDetailActivity(int tv_id) {
-
-        Intent intent = new Intent(getContext(), TvDetailActivity.class);
-        intent.putExtra("tv_id", tv_id);
-        startActivity(intent);
-    }
-
-    @Override
-    public void notifyAdaptersNewData(ListType listType) {
-        switch (listType) {
-            case InTheaters:
-                inTheatersRecyclerAdapter.notifyDataSetChanged();
-                inTheatersCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-                break;
-            case OnTv:
-                onTvRecyclerAdapter.notifyDataSetChanged();
-                onTvCard.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-                break;
-        }
+    protected void stopSwipeRefresh() {
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 }

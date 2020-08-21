@@ -1,8 +1,12 @@
 package com.sagar.watchnext.activities.search.tv;
 
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.search.SearchCard;
-import com.sagar.watchnext.network.models.tv.Show;
-import com.sagar.watchnext.network.repo.TmdbTvRepo;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.utils.GenreUtil;
 
 import java.util.List;
@@ -20,33 +24,29 @@ import io.reactivex.subjects.Subject;
  * Created by SAGAR MAHOBIA on 12-Jul-18. at 14:16
  */
 @TvSearchFragmentScope
-public class Presenter implements TvSearchFragmentMvpContract.Presenter {
-
-    private TvSearchFragmentMvpContract.Model model;
-
-    private TvSearchFragmentMvpContract.View view;
+public class Presenter implements Contract.Presenter {
+    private Contract.View view;
+    private TMDBRepository tmdbRepository;
 
     private CompositeDisposable disposable;
 
-    private TmdbTvRepo tvRepo;
-
-    private List<Show> searchResult;
+    private List<CardItem> searchResult;
     private String forQuery;
 
     private Subject<String> throttle;
 
 
     @Inject
-    public Presenter(TvSearchFragmentMvpContract.Model model, TvSearchFragmentMvpContract.View view, TmdbTvRepo tvRepo) {
-        this.model = model;
+    public Presenter(Contract.View view, TMDBRepository tmdbRepository) {
         this.view = view;
-        this.tvRepo = tvRepo;
-        disposable = new CompositeDisposable();
-        throttle = PublishSubject.create();
+        this.tmdbRepository = tmdbRepository;
+
     }
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
+        disposable = new CompositeDisposable();
+        throttle = PublishSubject.create();
         disposable.add(throttle.filter(q -> q.length() > 0)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -58,29 +58,27 @@ public class Presenter implements TvSearchFragmentMvpContract.Presenter {
                     view.showProgress();
                     view.resetEndlessLoader();
                     disposable.add(
-                            tvRepo.searchByQuery(q).
+                            tmdbRepository.searchByQuery("tv", q, 1).
                                     subscribeOn(Schedulers.io()).
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(shows -> {
-                                                if (shows.getShows().size() < 1) {
+                                                if (shows.getCardItems().size() < 1) {
                                                     view.showNoMatchMessage();
                                                 } else {
                                                     view.hideErrorMessage();
                                                 }
                                                 view.hideProgress();
-                                                searchResult = shows.getShows();
+                                                searchResult = shows.getCardItems();
                                                 view.notifyAdapter();
                                             },
-                                            error -> {
-                                                view.onErrorLoadingShowList();
-                                            })
+                                            error -> view.onErrorLoadingShowList())
                     );
 
                 })
         );
     }
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         disposable.dispose();
     }
@@ -101,10 +99,10 @@ public class Presenter implements TvSearchFragmentMvpContract.Presenter {
     public void onBindCard(SearchCard card, int position) {
 
         card.setImage(searchResult.get(position).getPosterPath());
-        card.setTitle(searchResult.get(position).getName());
+        card.setTitle(searchResult.get(position).getTitle());
 
-        String firstAirDate = searchResult.get(position).getFirstAirDate();
-        if (!firstAirDate.isEmpty()) {
+        String firstAirDate = searchResult.get(position).getReleaseOrFirstAirDate();
+        if (!(firstAirDate == null || firstAirDate.isEmpty())) {
             card.setYear(firstAirDate.substring(0, 4));
         }
 
@@ -132,14 +130,14 @@ public class Presenter implements TvSearchFragmentMvpContract.Presenter {
     public void onLoadMore(int pageToLoad) {
         String cQuery = forQuery;
         view.showProgress();
-        disposable.add(tvRepo.searchByQuery(cQuery, pageToLoad).
+        disposable.add(tmdbRepository.searchByQuery("tv", cQuery, pageToLoad).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(shows -> {
                             if (!forQuery.equalsIgnoreCase(cQuery)) {
                                 return;
                             }
-                            searchResult.addAll(shows.getShows());
+                            searchResult.addAll(shows.getCardItems());
                             view.notifyAdapter();
                             view.hideProgress();
                         }

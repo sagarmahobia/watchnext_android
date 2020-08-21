@@ -1,150 +1,232 @@
 package com.sagar.watchnext.activities.moviedetail;
 
-import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
-import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
-import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
-import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
-import com.sagar.watchnext.utils.ImageUrlUtil;
-import com.sagar.watchnext.utils.PixelDensityUtil;
-import com.squareup.picasso.Picasso;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.constraint.Group;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.text.NumberFormat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.sagar.watchnext.R;
+import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoAdapter;
+import com.sagar.watchnext.adapters.video.VideoModel;
+import com.sagar.watchnext.databinding.ActivityMovieDetailBinding;
+import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
+import com.sagar.watchnext.observablemodels.HeaderModel;
+import com.sagar.watchnext.response.Response;
+import com.sagar.watchnext.response.Status;
+import com.sagar.watchnext.utils.PixelDensityUtil;
+import com.sagar.watchnext.viewmodelfactories.ApplicationViewModelFactory;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
+
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
-public class MovieDetailActivity extends AppCompatActivity implements MovieDetailActivityMvpContract.View {
-
-
-    //dagger
-    @Inject
-    MovieDetailActivityMvpContract.Presenter presenter;
-
-    @Inject
-    Picasso picasso;
+public class MovieDetailActivity extends AppCompatActivity {
 
     @Inject
     PixelDensityUtil pixelDensityUtil;
 
+    @Inject
+    ApplicationViewModelFactory viewModelFactory;
 
-    //butter knife
-    @BindView(R.id.content_scroll_view)
-    ScrollView scrollView;
+    @Inject
+    CardAdapter recommendationAdapter;
 
-    @BindView(R.id.error_message_text_and_image)
-    Group errorMessageGroup;
+    @Inject
+    CardAdapter similarAdapter;
 
-    @BindView(R.id.backdrop_image)
-    ImageView backDropImage;
+    @Inject
+    VideoAdapter videoAdapter;
 
-    @BindView(R.id.poster_image)
-    ImageView posterImage;
+    private MovieDetailActivityViewModel viewModel;
 
-    @BindView(R.id.title)
-    TextView movieTitle;
+    private MovieDetailActivityDataModel dataModel;
 
-    @BindView(R.id.year)
-    TextView movieYear;
+    private MovieDetailActivityModel activityModel;
+    private ContentVisibilityModel visibilityModel;
+    private HeaderModel headerModel;
 
-    @BindView(R.id.runtime)
-    TextView movieRuntime;
+    private int movie_id;
 
-    @BindView(R.id.genres)
-    TextView movieGenres;
-
-    @BindView(R.id.overview_text)
-    TextView overviewText;
-
-    @BindView(R.id.original_title_text)
-    TextView originalTitleText;
-
-    @BindView(R.id.original_language_text)
-    TextView originalLanguageText;
-
-    @BindView(R.id.status_text)
-    TextView statusText;
-
-    @BindView(R.id.release_date_text)
-    TextView releaseDateText;
-
-    @BindView(R.id.budget_text)
-    TextView budgetText;
-
-    @BindView(R.id.revenue_text)
-    TextView revenueText;
-
-    @BindView(R.id.production_companies_text)
-    TextView productionCompaniesText;
-
-    @BindView(R.id.homepage_text)
-    TextView homepageText;
-
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+    private ActivityMovieDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
+
+
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        DaggerMovieDetailActivityComponent.
-                builder().
-                watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
-                movieDetailActivityModule(new MovieDetailActivityModule(this)).
-                build().
-                injectMovieDetailActivity(this);
+            supportActionBar.setTitle("Detail");
 
-        ButterKnife.bind(this);
+        }
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
 
         RelativeLayout.LayoutParams lp =
                 new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                         pixelDensityUtil.getBackDropImageHeight()
                 );
-        backDropImage.setLayoutParams(lp);
+        binding.header.backdropImage.setLayoutParams(lp);
 
         Intent intent = getIntent();
-        int movie_id = intent.getIntExtra("movie_id", -1);
-
+        movie_id = intent.getIntExtra("movie_id", -1);
         if (movie_id == -1) {
             //todo handle error in getting movie_id
             this.finish();
             return;
         }
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(movie_id));
 
-        presenter.onCreate(movie_id);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(MovieDetailActivityViewModel.class);
+
+        dataModel = viewModel.getDataModel();
+        activityModel = viewModel.getActivityModel();
+        headerModel = viewModel.getHeaderModel();
+        visibilityModel = viewModel.getVisibilityModel();
+
+        binding.swipeRefreshLayout.setRefreshing(true);
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.load();
+        });
+
+        dataModel.setMovieId(movie_id);
+
+        binding.setModel(activityModel);
+        binding.setVisibilityModel(visibilityModel);
+        binding.header.setModel(headerModel);
+
+
+        /*VIDEOS*/
+
+        viewModel.getVideoCardRecycleModel().setTitle("Videos");
+
+        binding.videos.horizontalListRecycler.setAdapter(videoAdapter);
+        binding.videos.setModel(viewModel.getVideoCardRecycleModel());
+
+        videoAdapter.setClickListener(videoModel -> {
+            Intent youTubeIntent = new Intent(Intent.ACTION_VIEW);
+            youTubeIntent.setData(Uri.parse(videoModel.getUrl()));
+            startActivity(youTubeIntent);
+        });
+
+        /* Recommendation */
+
+        binding.recommendations.setModel(viewModel.getRecommendationCardRecyclerModel());
+        binding.recommendations.horizontalListRecycler.setAdapter(recommendationAdapter);
+
+        viewModel.getRecommendationCardRecyclerModel().setTitle("Recommended");
+        binding.recommendations.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "movie");
+            listActivityIntent.putExtra("subtype", "recommendations");
+            listActivityIntent.putExtra("id", movie_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        recommendationAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, MovieDetailActivity.class);
+            thisActivityIntent.putExtra("movie_id", model.getId());
+            supportActionBar.setTitle("Detail");
+            startActivity(thisActivityIntent);
+
+        });
+
+        /*SIMILAR*/
+        binding.similar.setModel(viewModel.getSimilarCardRecyclerModel());
+        binding.similar.horizontalListRecycler.setAdapter(similarAdapter);
+
+        viewModel.getSimilarCardRecyclerModel().setTitle("Similar");
+        binding.similar.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "movie");
+            listActivityIntent.putExtra("subtype", "similar");
+            listActivityIntent.putExtra("id", movie_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        similarAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, MovieDetailActivity.class);
+            thisActivityIntent.putExtra("movie_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+
+
+        viewModel.load();
+
+        viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
+        viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+        viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+
+    }
+
+    private void observeVideoResponse(Response<List<VideoModel>> response) {
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<VideoModel> data = response.getData();
+            videoAdapter.setVideoModels(data);
+
+            if (data == null || data.isEmpty()) {
+                binding.videos.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+
+    }
+
+    private void observeRecommendationResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+
+            recommendationAdapter.submitList(data);
+
+            if (data == null || data.isEmpty()) {
+                binding.recommendations.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getRecommendationCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getRecommendationCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+    }
+
+    private void observeSimilarResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            similarAdapter.submitList(data);
+            if (data == null || data.isEmpty()) {
+                binding.similar.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
     }
 
     @Override
@@ -156,176 +238,4 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
-    }
-
-    @SuppressLint("DefaultLocale")
-    @Override
-    public void onSucceedLoadingMovieDetail(MovieDetail movieDetail) {
-        swipeRefreshLayout.setRefreshing(false);
-        errorMessageGroup.setVisibility(View.GONE);
-        getSupportActionBar().setTitle(movieDetail.getTitle());
-        scrollView.setVisibility(View.VISIBLE);
-
-        picasso.load(ImageUrlUtil.getBackdropImageUrl(movieDetail.getBackdropPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(backDropImage);
-        picasso.load(ImageUrlUtil.getPosterImageUrl(movieDetail.getPosterPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(posterImage);
-
-        movieTitle.setText(movieDetail.getTitle());
-
-        String releaseDate = movieDetail.getReleaseDate();
-        if (releaseDate != null && releaseDate.length() > 4) {
-            movieYear.setText(releaseDate.substring(0, 4));
-        }
-        int t = movieDetail.getRuntime();
-        int hours = t / 60; //since both are ints, you get an int
-        int minutes = t % 60;
-
-        if (hours == 0 && minutes == 0) {
-            movieRuntime.setText("");
-        } else if (hours == 0) {
-            movieRuntime.setText(String.format("%02dm", minutes));
-        } else if (minutes == 0) {
-            movieRuntime.setText(String.format("%02dh", hours));
-        } else {
-            movieRuntime.setText(String.format("%02dh %02dm", hours, minutes));
-        }
-
-        StringBuilder genreString = new StringBuilder();
-        List<Genre> genres = movieDetail.getGenres();
-        int index = 1;
-        int size = genres.size();
-        for (Genre genre : movieDetail.getGenres()) {
-            if (index++ < size) {
-                genreString.append(genre.getName()).append(", ");
-            } else {
-                genreString.append(genre.getName());
-            }
-        }
-
-        if (size > 0) {
-            movieGenres.setText(genreString.toString());
-        }
-
-        String overview = movieDetail.getOverview();
-        if (overview != null) {
-            overviewText.setText(overview);
-        }
-
-        String originalTitle = movieDetail.getOriginalTitle();
-        if (originalTitle != null) {
-            originalTitleText.setText(originalTitle);
-        }
-
-        String originalLanguage = movieDetail.getOriginalLanguage();
-        if (originalLanguage != null) {
-            Locale loc = new Locale(originalLanguage);
-            originalLanguage = loc.getDisplayLanguage(loc);
-            originalLanguageText.setText(originalLanguage);
-        }
-
-        String status = movieDetail.getStatus();
-        if (status != null) {
-            statusText.setText(status);
-        }
-
-        if (releaseDate != null) {
-            releaseDateText.setText(releaseDate);
-        }
-
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
-        format.setMaximumFractionDigits(0);
-
-        int budget = movieDetail.getBudget();
-        if (budget != 0) {
-            budgetText.setText(format.format(budget));
-        }
-
-        int revenue = movieDetail.getRevenue();
-        if (revenue != 0) {
-            revenueText.setText(format.format(revenue));
-        }
-
-        StringBuilder productionCompanyString = new StringBuilder();
-        index = 1;
-        size = movieDetail.getProductionCompanies().size();
-        for (ProductionCompany productionCompany : movieDetail.getProductionCompanies()) {
-            if (index++ < size) {
-                productionCompanyString.append(productionCompany.getName()).append(", ");
-            } else {
-                productionCompanyString.append(productionCompany.getName());
-            }
-        }
-        if (size > 0) {
-            productionCompaniesText.setText(productionCompanyString);
-        }
-
-        String homepage = movieDetail.getHomepage();
-        if (homepage != null && homepage.length() > 0) {
-            SpannableString spannableString = new SpannableString(homepage);
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(View view) {
-                    Log.d("SPAN", "clicked");
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(homepage));
-                    startActivity(i);
-                }
-            };
-            spannableString.setSpan(clickableSpan, 0, homepage.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), 0, homepage.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            homepageText.setText(spannableString);
-            homepageText.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-
-    }
-
-    @Override
-    public void onErrorLoadingMovieDetail() {
-        scrollView.setVisibility(View.INVISIBLE);
-        swipeRefreshLayout.setRefreshing(false);
-        errorMessageGroup.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

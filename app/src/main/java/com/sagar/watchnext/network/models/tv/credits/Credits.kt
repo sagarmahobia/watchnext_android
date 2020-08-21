@@ -1,0 +1,15 @@
+package com.sagar.watchnext.network.models.tv.credits
+
+import com.google.gson.annotations.SerializedName
+
+class Credits {
+
+    @SerializedName("id")
+    val id: Int = 0
+
+    @SerializedName("cast")
+    val casts: List<Cast>? = null
+
+    @SerializedName("crew")
+    val crews: List<Crew>? = null
+}

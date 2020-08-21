@@ -9,6 +9,8 @@
 # Java class files
 *.class
 
+*.aab
+
 # Generated files
 bin/
 gen/
@@ -50,6 +52,8 @@ captures/
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+
+
 
 # Freeline
 freeline.py

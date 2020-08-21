@@ -1,69 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:paddingBottom="10dp"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/backdrop_image"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:contentDescription="Backdrop Image" />
+    <data>
 
-    <ImageView
-        android:id="@+id/poster_image"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:layout_below="@+id/backdrop_image"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="-20dp"
-        android:contentDescription="Poster Image" />
+        <variable
+            name="model"
+            type="com.sagar.watchnext.observablemodels.HeaderModel" />
 
-    <TextView
-        android:id="@+id/title"
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/backdrop_image"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_toEndOf="@+id/poster_image"
-        android:gravity="center_vertical|start"
-        android:textColor="#fff"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/title"
-        android:layout_below="@+id/title"
-        android:layout_marginTop="5dp"
-        android:textColor="#fff"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/backdrop_image"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            bind:image_url="@{model.backDropImageUrl}" />
 
-    <TextView
-        android:id="@+id/runtime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/year"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/year"
-        android:textColor="#fff"
-        android:textSize="14sp" />
+        <ImageView
+            android:id="@+id/poster_image"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_below="@+id/backdrop_image"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-20dp"
+            bind:image_url="@{model.posterImageUrl}" />
 
-    <TextView
-        android:id="@+id/genres"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/title"
-        android:layout_alignStart="@+id/title"
-        android:layout_below="@+id/year"
-        android:layout_marginTop="5dp"
-        android:textColor="#fff"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/backdrop_image"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toEndOf="@+id/poster_image"
+            android:gravity="center_vertical|start"
+            android:text="@{model.title}"
+            android:textColor="#fff"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_alignStart="@+id/title"
+            android:layout_marginTop="5dp"
+            android:text="@{model.year}"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/runtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/year"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/year"
+            android:text="@{model.runTime}"
+            android:textColor="#fff"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/genres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/year"
+            android:layout_alignStart="@+id/title"
+            android:layout_alignEnd="@+id/title"
+            android:layout_marginTop="5dp"
+            android:text="@{model.genres}"
+            android:textColor="#fff"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+</layout>

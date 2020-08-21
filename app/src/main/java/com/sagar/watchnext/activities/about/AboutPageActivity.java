@@ -2,8 +2,6 @@ package com.sagar.watchnext.activities.about;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -14,14 +12,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
 public class AboutPageActivity extends AppCompatActivity {
+
+    @Inject
+    Picasso picasso;
 
     @BindView(R.id.about_logo_image)
     ImageView logoImage;
@@ -34,6 +40,7 @@ public class AboutPageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
 
@@ -43,7 +50,6 @@ public class AboutPageActivity extends AppCompatActivity {
         }
         ButterKnife.bind(this);
 
-        Picasso picasso = WatchNextApplication.get(this).getComponent().providesPicasso();
         picasso.load(R.drawable.watch_next_feature_graphics).into(logoImage);
 
 

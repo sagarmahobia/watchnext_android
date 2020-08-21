@@ -1,49 +1,43 @@
 package com.sagar.watchnext.activities.tvdetail;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.Group;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
-import com.sagar.watchnext.network.models.tv.details.Details;
-import com.sagar.watchnext.network.models.tv.details.Genre;
-import com.sagar.watchnext.network.models.tv.details.Network;
-import com.sagar.watchnext.network.models.tv.details.ProductionCompany;
-import com.sagar.watchnext.utils.ImageUrlUtil;
+import com.sagar.watchnext.activities.list.ListActivity;
+import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoAdapter;
+import com.sagar.watchnext.adapters.video.VideoModel;
+import com.sagar.watchnext.databinding.ActivityTvDetailBinding;
+import com.sagar.watchnext.response.Response;
+import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.utils.PixelDensityUtil;
+import com.sagar.watchnext.viewmodelfactories.ApplicationViewModelFactory;
+import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
-public class TvDetailActivity extends AppCompatActivity implements TvDetailActivityMvpContract.View {
-
+public class TvDetailActivity extends AppCompatActivity {
 
     @Inject
-    TvDetailActivityMvpContract.Presenter presenter;
+    ApplicationViewModelFactory viewModelFactory;
 
     @Inject
     Picasso picasso;
@@ -51,98 +45,175 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
     @Inject
     PixelDensityUtil pixelDensityUtil;
 
-    //butter knife
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+    @Inject
+    CardAdapter recommendationAdapter;
 
-    @BindView(R.id.content_scroll_view)
-    ScrollView scrollView;
+    @Inject
+    CardAdapter similarAdapter;
 
-    @BindView(R.id.error_message_text_and_image)
-    Group errorMessage;
+    @Inject
+    VideoAdapter videoAdapter;
 
-    @BindView(R.id.backdrop_image)
-    ImageView backDropImage;
+    private int tv_id;
 
-    @BindView(R.id.poster_image)
-    ImageView posterImage;
+    private ActivityTvDetailBinding binding;
+    private TvDetailActivityViewModel viewModel;
 
-    @BindView(R.id.title)
-    TextView title;
-
-    @BindView(R.id.year)
-    TextView year;
-
-    @BindView(R.id.runtime)
-    TextView runtime;
-
-    @BindView(R.id.genres)
-    TextView genres;
-
-    @BindView(R.id.overview_text)
-    TextView overviewText;
-
-    @BindView(R.id.original_name_text)
-    TextView originalNameText;
-
-    @BindView(R.id.original_language_text)
-    TextView originalLanguageText;
-
-    @BindView(R.id.show_type_text)
-    TextView showTypeText;
-
-    @BindView(R.id.show_status_text)
-    TextView showStatusText;
-
-    @BindView(R.id.first_air_date_text)
-    TextView firstAirDateText;
-
-    @BindView(R.id.last_air_date_text)
-    TextView lastAirDateText;
-
-    @BindView(R.id.networks_text)
-    TextView networkText;
-
-    @BindView(R.id.production_companies_text)
-    TextView productionCompaniesText;
-
-    @BindView(R.id.homepage_text)
-    TextView homepageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tv_detail);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_tv_detail);
+
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(TvDetailActivityViewModel.class);
+
+        binding.setModel(viewModel.getActivityModel());
+        binding.header.setModel(viewModel.getHeaderModel());
+        binding.setVisibilityModel(viewModel.getVisibilityModel());
+
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle("Detail");
         }
-        DaggerTvDetailActivityComponent.builder().
-                watchNextApplicationComponent(WatchNextApplication.get(this).getComponent()).
-                tvDetailActivityModule(new TvDetailActivityModule(this)).
-                build().
-                injectTvDetailActivity(this);
-
-        ButterKnife.bind(this);
 
         RelativeLayout.LayoutParams lp =
                 new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                         pixelDensityUtil.getBackDropImageHeight()
                 );
-        backDropImage.setLayoutParams(lp);
+        binding.header.backdropImage.setLayoutParams(lp);
 
         Intent intent = getIntent();
-        int tv_id = intent.getIntExtra("tv_id", -1);
+        tv_id = intent.getIntExtra("tv_id", -1);
+
+        viewModel.getDataModel().setTvId(tv_id);
 
         if (tv_id == -1) {
             //todo handle error in getting tv_id
             this.finish();
             return;
         }
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.onCreate(tv_id));
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> viewModel.load());
 
-        presenter.onCreate(tv_id);
+        /* Trailers*/
+
+
+        viewModel.getVideoCardRecycleModel().setTitle("Videos");
+
+        binding.videos.horizontalListRecycler.setAdapter(videoAdapter);
+        binding.videos.setModel(viewModel.getVideoCardRecycleModel());
+
+        videoAdapter.setClickListener(videoModel -> {
+            Intent youTubeIntent = new Intent(Intent.ACTION_VIEW);
+            youTubeIntent.setData(Uri.parse(videoModel.getUrl()));
+            startActivity(youTubeIntent);
+        });
+
+
+        /* Recommendations */
+
+        binding.recommendations.setModel(viewModel.getRecommendedCardRecyclerModel());
+        binding.recommendations.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.recommendations.horizontalListRecycler.setAdapter(recommendationAdapter);
+
+        viewModel.getRecommendedCardRecyclerModel().setTitle("Recommended");
+        binding.recommendations.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "tv");
+            listActivityIntent.putExtra("subtype", "recommendations");
+            listActivityIntent.putExtra("id", tv_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        recommendationAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, TvDetailActivity.class);
+            thisActivityIntent.putExtra("tv_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+        /*Similar*/
+
+        binding.similar.setModel(viewModel.getSimilarCardRecyclerModel());
+        binding.similar.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        binding.similar.horizontalListRecycler.setAdapter(similarAdapter);
+
+        viewModel.getSimilarCardRecyclerModel().setTitle("Similar");
+        binding.similar.seeAll.setOnClickListener(v -> {
+
+            Intent listActivityIntent = new Intent(this, ListActivity.class);
+            listActivityIntent.putExtra("type", "tv");
+            listActivityIntent.putExtra("subtype", "similar");
+            listActivityIntent.putExtra("id", tv_id);
+            startActivity(listActivityIntent);
+
+        });
+
+        similarAdapter.setAdapterListener(model -> {
+            Intent thisActivityIntent = new Intent(this, TvDetailActivity.class);
+            thisActivityIntent.putExtra("tv_id", model.getId());
+            startActivity(thisActivityIntent);
+
+        });
+
+
+        viewModel.load();
+        viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
+        viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+        viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+    }
+
+
+    private void observeVideoResponse(Response<List<VideoModel>> response) {
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<VideoModel> data = response.getData();
+            videoAdapter.setVideoModels(data);
+
+            if (data == null || data.isEmpty()) {
+                binding.videos.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+
+    }
+
+    private void observeRecommendationResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            recommendationAdapter.submitList(data);
+            if (data == null || data.isEmpty()) {
+                binding.recommendations.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getRecommendedCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getRecommendedCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+    }
+
+    private void observeSimilarResponse(Response<List<CardModel>> response) {
+        if (response.getStatus() == Status.SUCCESS) {
+            List<CardModel> data = response.getData();
+            similarAdapter.submitList(data);
+            if (data == null || data.isEmpty()) {
+                binding.similar.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
     }
 
     @Override
@@ -153,158 +224,5 @@ public class TvDetailActivity extends AppCompatActivity implements TvDetailActiv
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
-    }
-
-    @SuppressLint("DefaultLocale")
-    @Override
-    public void onSucceedLoadingTvDetail(Details tvDetails) {
-        swipeRefreshLayout.setRefreshing(false);
-        errorMessage.setVisibility(View.GONE);
-        getSupportActionBar().setTitle(tvDetails.getName());
-        scrollView.setVisibility(View.VISIBLE);
-
-        picasso.load(ImageUrlUtil.getBackdropImageUrl(tvDetails.getBackdropPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(backDropImage);
-        picasso.load(ImageUrlUtil.getPosterImageUrl(tvDetails.getPosterPath()))
-                .error(R.drawable.ic_broken_image)
-                .placeholder(R.drawable.ic_image)
-                .into(posterImage);
-
-        title.setText(tvDetails.getName());
-        String firstAirDate = tvDetails.getFirstAirDate();
-        if (firstAirDate != null && firstAirDate.length() >= 4) {
-            year.setText(firstAirDate.substring(0, 4));
-        }
-
-        int t = tvDetails.getEpisodeRunTimeList().get(0);
-        int hours = t / 60; //since both are ints, you get an int
-        int minutes = t % 60;
-
-        if (hours == 0 && minutes == 0) {
-            runtime.setText("");
-        } else if (hours == 0) {
-            runtime.setText(String.format("%02dm", minutes));
-        } else if (minutes == 0) {
-            runtime.setText(String.format("%02dh", hours));
-        } else {
-            runtime.setText(String.format("%02dh %02dm", hours, minutes));
-        }
-        StringBuilder genreString = new StringBuilder();
-        List<Genre> genres = tvDetails.getGenres();
-        int index = 1;
-        int size = genres.size();
-        for (Genre genre : tvDetails.getGenres()) {
-            if (index++ < size) {
-                genreString.append(genre.getName()).append(", ");
-            } else {
-                genreString.append(genre.getName());
-            }
-        }
-
-        if (size > 0) {
-            this.genres.setText(genreString.toString());
-        }
-
-        String overview = tvDetails.getOverview();
-        if (overview != null) {
-            overviewText.setText(overview);
-        }
-
-        String originalName = tvDetails.getOriginalName();
-        if (originalName != null) {
-            originalNameText.setText(originalName);
-        }
-
-        String originalLanguage = tvDetails.getOriginalLanguage();
-        if (originalLanguage != null) {
-            Locale loc = new Locale(originalLanguage);
-            originalLanguage = loc.getDisplayLanguage(loc);
-            originalLanguageText.setText(originalLanguage);
-        }
-
-        String showType = tvDetails.getType();
-        if (showType != null) {
-            showTypeText.setText(showType);
-        }
-
-        String showStatus = tvDetails.getStatus();
-        if (showStatus != null) {
-            showStatusText.setText(showStatus);
-        }
-
-        if (firstAirDate != null) {
-            firstAirDateText.setText(firstAirDate);
-        }
-
-        String lastAirDate = tvDetails.getLastAirDate();
-        if (lastAirDate != null) {
-            lastAirDateText.setText(lastAirDate);
-        }
-
-        StringBuilder networkStringBuilder = new StringBuilder();
-        index = 1;
-        size = tvDetails.getNetworks().size();
-        for (Network network : tvDetails.getNetworks()) {
-            if (index++ < size) {
-                networkStringBuilder.append(network.getName()).append(", ");
-            } else {
-                networkStringBuilder.append(network.getName());
-            }
-        }
-        if (size > 0) {
-            networkText.setText(networkStringBuilder.toString());
-        }
-
-        StringBuilder productionCompanyString = new StringBuilder();
-        index = 1;
-        size = tvDetails.getProductionCompanies().size();
-        for (ProductionCompany productionCompany : tvDetails.getProductionCompanies()) {
-            if (index++ < size) {
-                productionCompanyString.append(productionCompany.getName()).append(", ");
-            } else {
-                productionCompanyString.append(productionCompany.getName());
-            }
-        }
-        if (size > 0) {
-            productionCompaniesText.setText(productionCompanyString);
-        }
-
-        String homepage = tvDetails.getHomepage();
-        if (homepage != null && homepage.length() > 0) {
-            SpannableString spannableString = new SpannableString(homepage);
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(homepage));
-                    startActivity(i);
-                }
-            };
-            spannableString.setSpan(clickableSpan, 0, homepage.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), 0, homepage.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            homepageText.setText(spannableString);
-            homepageText.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-    }
-
-
-    @Override
-    public void onErrorLoadingMovieDetail() {
-        scrollView.setVisibility(View.INVISIBLE);
-        errorMessage.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

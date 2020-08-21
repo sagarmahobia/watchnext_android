@@ -1,16 +1,16 @@
 package com.sagar.watchnext.activities.search;
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
 import com.sagar.watchnext.activities.search.adapters.ViewPagerAdapter;
 import com.sagar.watchnext.activities.search.movies.MovieSearchFragment;
 import com.sagar.watchnext.activities.search.tv.TvSearchFragment;
@@ -18,10 +18,20 @@ import com.sagar.watchnext.activities.search.tv.TvSearchFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
 
-public class SearchActivity extends AppCompatActivity implements TextWatcher {
+public class SearchActivity extends AppCompatActivity implements TextWatcher, HasAndroidInjector {
+
+    @Inject
+    DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
+
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
@@ -38,24 +48,18 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
     @BindView(R.id.back_icon)
     ImageButton backButton;
 
-    private ViewPagerAdapter viewPagerAdapter;
-
     private List<ActivityStateObserver> activityStateObservers;
 
-    private SearchActivityComponent component;
-
-    public SearchActivityComponent getComponent() {
-        return component;
-    }
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         getSupportActionBar().hide();
 
         ButterKnife.bind(this);
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         activityStateObservers = new ArrayList<>();
         viewPagerAdapter.addFragment(new MovieSearchFragment(), "Movies");
         viewPagerAdapter.addFragment(new TvSearchFragment(), "Tv");
@@ -66,18 +70,11 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
 
         searchBarEditText.addTextChangedListener(this);
 
-        clearButton.setOnClickListener(view -> {
-            searchBarEditText.setText("");
-        });
+        clearButton.setOnClickListener(view -> searchBarEditText.setText(""));
 
-        backButton.setOnClickListener(view -> {
-            this.onBackPressed();
-        });
+        backButton.setOnClickListener(view -> this.onBackPressed());
 
-        component = DaggerSearchActivityComponent.builder().
-                watchNextApplicationComponent(((WatchNextApplication) getApplication()).getComponent()).
-                build();
-        component.injectSearchActivity(this);
+
     }
 
     @Override
@@ -111,5 +108,11 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
         for (ActivityStateObserver activityStateObserver : activityStateObservers) {
             activityStateObserver.onQuery(editable.toString());
         }
+    }
+
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return fragmentDispatchingAndroidInjector;
     }
 }

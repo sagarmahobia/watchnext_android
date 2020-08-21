@@ -1,15 +1,15 @@
 package com.sagar.watchnext.adapters.search;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.utils.ImageUrlUtil;
 import com.squareup.picasso.Picasso;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

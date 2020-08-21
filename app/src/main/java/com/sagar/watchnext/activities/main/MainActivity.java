@@ -1,133 +1,76 @@
 package com.sagar.watchnext.activities.main;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sagar.watchnext.R;
-import com.sagar.watchnext.WatchNextApplication;
-import com.sagar.watchnext.activities.about.AboutPageActivity;
 import com.sagar.watchnext.activities.main.home.HomeFragment;
 import com.sagar.watchnext.activities.main.movies.MoviesFragment;
 import com.sagar.watchnext.activities.main.tv.TvFragment;
-import com.sagar.watchnext.activities.search.SearchActivity;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import javax.inject.Inject;
 
-    MainActivityComponent component;
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
 
-    public MainActivityComponent getComponent() {
-        return component;
-    }
+public class MainActivity extends AppCompatActivity implements HasAndroidInjector {
+
+    @Inject
+    DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.content_main);
 
+        ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener(v -> {
+            int id = v.getItemId();
+            Fragment fragment = null;
+            if (id == R.id.home) {
+                fragment = new HomeFragment();
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+            } else if (id == R.id.movies) {
+                fragment = new MoviesFragment();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+            } else if (id == R.id.tv) {
+                fragment = new TvFragment();
 
-        component = DaggerMainActivityComponent.builder()
-                .watchNextApplicationComponent(WatchNextApplication.get(this).getComponent())
-                .mainActivityModule(new MainActivityModule(this))
-                .build();
-        component.inject(this);
-        onNavigationItemSelected(navigationView.getMenu().getItem(0));
-        navigationView.getMenu().getItem(0).setChecked(true);
+            }
+            if (fragment != null) {
+                transactFragment(fragment);
+            }
+            return true;
+        });
+
+        transactFragment(new HomeFragment());
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+    /*
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
+     String shareBody = "WatchNext - Discover Movies & TV. \n" +
+       "https://play.google.com/store/apps/details?id=com.sagar.watchnext";
+       Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+       sharingIntent.setType("text/plain");
+       sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+       this.startActivity(Intent.createChooser(sharingIntent, "Share via"));
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.action_search) {
-            Intent intent = new Intent(this, SearchActivity.class);
-            startActivity(intent);
-        } else if (R.id.action_about == id) {
-            Intent intent = new Intent(this, AboutPageActivity.class);
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Fragment fragment = null;
-        if (id == R.id.home) {
-            fragment = HomeFragment.newInstance();
-
-        } else if (id == R.id.movies) {
-            fragment = MoviesFragment.newInstance();
-
-        } else if (id == R.id.tv) {
-            fragment = TvFragment.newInstance();
-
-        } else if (id == R.id.nav_share) {
-            String shareBody = "WatchNext - Discover Movies & TV. \n" +
-                    "https://play.google.com/store/apps/details?id=com.sagar.watchnext";
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-            this.startActivity(Intent.createChooser(sharingIntent, "Share via"));
-        }
-        if (fragment != null) {
-            transactFragment(fragment);
-        }
-
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
+    */
     void transactFragment(Fragment fragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_view, fragment);
         ft.commit();
     }
 
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return fragmentDispatchingAndroidInjector;
+    }
 }

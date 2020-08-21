@@ -1,7 +1,12 @@
 package com.sagar.watchnext.activities.search.movies;
 
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import com.sagar.watchnext.adapters.search.SearchCard;
-import com.sagar.watchnext.network.models.movies.Movie;
+import com.sagar.watchnext.network.newmodels.CardItem;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.utils.GenreUtil;
 
@@ -21,36 +26,32 @@ import io.reactivex.subjects.Subject;
  */
 
 @MovieSearchFragmentScope
-public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
+public class Presenter implements Contract.Presenter {
+    private Contract.View view;
 
-    private MovieSearchFragmentMvpContract.View view;
-
-    private MovieSearchFragmentMvpContract.Model model;
-
+    private TMDBRepository tmdbRepository;
+    private TmdbMovieRepo movieRepo;
 
     private CompositeDisposable disposable;
 
-    private TmdbMovieRepo movieRepo;
-
-    private List<Movie> searchResult;
+    private List<CardItem> searchResult;
     private String forQuery;
 
     private Subject<String> throttle;
 
 
     @Inject
-    public Presenter(MovieSearchFragmentMvpContract.View view, MovieSearchFragmentMvpContract.Model model, TmdbMovieRepo movieRepo) {
+    public Presenter(Contract.View view, TMDBRepository tmdbRepository, TmdbMovieRepo movieRepo) {
         this.view = view;
-        this.model = model;
-
+        this.tmdbRepository = tmdbRepository;
         this.movieRepo = movieRepo;
-        disposable = new CompositeDisposable();
-        throttle = PublishSubject.create();
     }
 
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
+        disposable = new CompositeDisposable();
+        throttle = PublishSubject.create();
         disposable.add(throttle.filter(q -> q.length() > 0)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -62,29 +63,27 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
                     view.showProgress();
                     view.resetEndlessLoader();
                     disposable.add(
-                            movieRepo.searchByQuery(q).
+                            tmdbRepository.searchByQuery("movie", q,1).
                                     subscribeOn(Schedulers.io()).
                                     observeOn(AndroidSchedulers.mainThread()).
                                     subscribe(movieList -> {
-                                                if (movieList.getMovies().size() < 1) {
+                                                if (movieList.getCardItems().size() < 1) {
                                                     view.showNoMatchMessage();
                                                 } else {
                                                     view.hideErrorMessage();
                                                 }
-                                                searchResult = movieList.getMovies();
+                                                searchResult = movieList.getCardItems();
                                                 view.hideProgress();
                                                 view.notifyAdapter();
                                             },
-                                            error -> {
-                                                view.onErrorLoadingShowList();
-                                            })
+                                            error -> view.onErrorLoadingShowList())
                     );
 
                 })
         );
     }
 
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         disposable.dispose();
     }
@@ -107,8 +106,8 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
         card.setImage(searchResult.get(position).getPosterPath());
         card.setTitle(searchResult.get(position).getTitle());
 
-        String releaseDate = searchResult.get(position).getReleaseDate();
-        if (!releaseDate.isEmpty()) {
+        String releaseDate = searchResult.get(position).getReleaseOrFirstAirDate();
+        if (releaseDate!= null && !releaseDate.isEmpty()) {
             card.setYear(releaseDate.substring(0, 4));
         }
 
@@ -136,14 +135,14 @@ public class Presenter implements MovieSearchFragmentMvpContract.Presenter {
     public void onLoadMore(int pageToLoad) {
         String cQuery = forQuery;
         view.showProgress();
-        disposable.add(movieRepo.searchByQuery(cQuery, pageToLoad).
+        disposable.add(tmdbRepository.searchByQuery("movie", cQuery, pageToLoad).
                 subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe(movieList -> {
                             if (!forQuery.equalsIgnoreCase(cQuery)) {
                                 return;
                             }
-                            searchResult.addAll(movieList.getMovies());
+                            searchResult.addAll(movieList.getCardItems());
                             view.notifyAdapter();
                             view.hideProgress();
                         }

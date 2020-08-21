@@ -1,30 +1,28 @@
 package com.sagar.watchnext;
 
-import com.sagar.watchnext.network.repo.TmdbMovieRepo;
-import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
-import com.sagar.watchnext.network.repo.TmdbTvRepo;
-import com.sagar.watchnext.utils.PixelDensityUtil;
-import com.squareup.picasso.Picasso;
 
+import android.app.Application;
+
+import dagger.BindsInstance;
 import dagger.Component;
+import dagger.android.support.AndroidSupportInjectionModule;
 
 /**
  * Created by SAGAR MAHOBIA on 30-Jun-18. at 12:46
  */
 
 @ApplicationScope
-@Component(modules = {ApplicationContextModule.class, NetworkModule.class})
+@Component(modules = {ApplicationContextModule.class,
+        NetworkModule.class,
+        AndroidSupportInjectionModule.class,
+        ActivityProvider.class})
 public interface WatchNextApplicationComponent {
 
-    void inject(WatchNextApplication watchNextApplication);
+    @Component.Factory
+    interface Factory {
+        WatchNextApplicationComponent create(@BindsInstance Application application);
+    }
 
-    TmdbMovieRepo provideTmdbMovieRepo();
+    void inject(WatchNextApplication application);
 
-    TmdbPeopleRepo provideTmdbPeopleRepo();
-
-    TmdbTvRepo provideTmdbTvRepo();
-
-    Picasso providesPicasso();
-
-    PixelDensityUtil providePixelDensityUtil();
 }

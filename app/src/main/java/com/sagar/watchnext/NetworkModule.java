@@ -3,6 +3,7 @@ package com.sagar.watchnext;
 import android.content.Context;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.network.repo.TmdbMovieRepo;
 import com.sagar.watchnext.network.repo.TmdbPeopleRepo;
 import com.sagar.watchnext.network.repo.TmdbTvRepo;
@@ -59,10 +60,12 @@ public class NetworkModule {
     @ApplicationScope
     OkHttpClient provideOkHttpClient(Interceptor interceptor, HttpLoggingInterceptor httpLoggingInterceptor) {
 
-        return new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .addInterceptor(httpLoggingInterceptor)//todo remove
-                .build();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(interceptor);
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(httpLoggingInterceptor);
+        }
+        return builder.build();
     }
 
     @Provides
@@ -85,8 +88,11 @@ public class NetworkModule {
         Picasso picasso = new Picasso.Builder(context)
                 .downloader(new OkHttp3Downloader(context, Integer.MAX_VALUE))
                 .build();
-        picasso.setIndicatorsEnabled(true);//todo remove
-        picasso.setLoggingEnabled(true);//todo remove
+
+        if (BuildConfig.DEBUG) {
+            picasso.setIndicatorsEnabled(true);//todo remove
+            picasso.setLoggingEnabled(true);//todo remove
+        }
         return picasso;
     }
 
@@ -110,6 +116,13 @@ public class NetworkModule {
     TmdbTvRepo provideTmdbTvRepo(Retrofit retrofit) {
 
         return retrofit.create(TmdbTvRepo.class);
+    }
+
+    @Provides
+    @ApplicationScope
+    TMDBRepository tmdbRepository(Retrofit retrofit) {
+
+        return retrofit.create(TMDBRepository.class);
     }
 
 }
