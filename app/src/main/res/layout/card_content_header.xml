@@ -7,6 +7,7 @@
         <variable
             name="model"
             type="com.sagar.watchnext.observablemodels.HeaderModel" />
+
     </data>
 
     <RelativeLayout

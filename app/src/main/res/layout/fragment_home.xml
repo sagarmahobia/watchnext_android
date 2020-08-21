@@ -75,7 +75,7 @@
                             android:paddingTop="12dp"
                             android:paddingEnd="24dp"
                             android:paddingBottom="12dp"
-                            android:text="Explore..."
+                            android:text="Search Movies &amp; Shows..."
                             android:textColor="@color/colorLightText"
                             android:textSize="18sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -199,6 +199,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/top_rated_movies" />
 
+                <include
+                    android:id="@+id/popular_people"
+                    layout="@layout/card_horizontal_people"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/top_rated_shows" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -208,8 +218,7 @@
                     android:text="A lot more coming soon."
                     android:textColor="@color/colorLightText"
                     android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@+id/top_rated_shows" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/popular_people" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -27,6 +27,8 @@ public class HomeFragmentViewModel extends BaseViewModel {
         loadPopularShows();
         loadTopRatedShows();
 
+        loadPopularPeoples();
+
     }
 
 }

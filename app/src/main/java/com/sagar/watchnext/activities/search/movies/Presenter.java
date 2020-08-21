@@ -107,7 +107,7 @@ public class Presenter implements Contract.Presenter {
         card.setTitle(searchResult.get(position).getTitle());
 
         String releaseDate = searchResult.get(position).getReleaseOrFirstAirDate();
-        if (!releaseDate.isEmpty()) {
+        if (releaseDate!= null && !releaseDate.isEmpty()) {
             card.setYear(releaseDate.substring(0, 4));
         }
 

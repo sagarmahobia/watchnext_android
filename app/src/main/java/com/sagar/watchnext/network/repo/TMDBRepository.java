@@ -1,6 +1,8 @@
 package com.sagar.watchnext.network.repo;
 
 import com.sagar.watchnext.network.models.movies.moviedetail.MovieDetail;
+import com.sagar.watchnext.network.models.people.Persons;
+import com.sagar.watchnext.network.models.people.detail.Detail;
 import com.sagar.watchnext.network.models.tv.details.Details;
 import com.sagar.watchnext.network.models.tv.reviews.Reviews;
 import com.sagar.watchnext.network.models.tv.videos.Videos;
@@ -8,6 +10,7 @@ import com.sagar.watchnext.network.newmodels.Images;
 import com.sagar.watchnext.network.newmodels.Result;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -62,9 +65,23 @@ public interface TMDBRepository {
     Observable<Result> getListWithId(@Path("type") String type, @Path("id") int id, @Path("subtype") String subtype, @Query("page") int page);
 
     @GET("{type}/{id}/videos")
-    Observable<Videos> getVideos(@Path("type") String type, @Path("id") int tvId);
+    Single<Videos> getVideos(@Path("type") String type, @Path("id") int tvId);
 
     @GET("{type}/{id}/reviews")
-    Observable<Reviews> getReviews(@Path("type") String type, @Path("id") int id, @Query("page") int page);
+    Single<Reviews> getReviews(@Path("type") String type, @Path("id") int id, @Query("page") int page);
+
+
+
+    /*
+     *
+     * People
+     *
+     * */
+
+    @GET("person/popular")
+    Observable<Persons> getPopularPeople();
+
+    @GET("person/{person_id}")
+    Observable<Detail> getDetail(@Path("person_id") int personId);
 
 }

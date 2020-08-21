@@ -8,5 +8,5 @@ class Videos {
     val id: Int = 0
 
     @SerializedName("results")
-    val videos: List<Video>? = null
+    val videos: List<Video>? = ArrayList()
 }

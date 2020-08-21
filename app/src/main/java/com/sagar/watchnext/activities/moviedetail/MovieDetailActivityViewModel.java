@@ -5,8 +5,10 @@ import android.annotation.SuppressLint;
 import androidx.lifecycle.MutableLiveData;
 
 import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.network.models.movies.moviedetail.Genre;
 import com.sagar.watchnext.network.models.movies.moviedetail.ProductionCompany;
+import com.sagar.watchnext.network.models.tv.videos.Video;
 import com.sagar.watchnext.network.newmodels.CardItem;
 import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
@@ -35,9 +37,12 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
 
     private CardRecyclerModel recommendationCardRecyclerModel = new CardRecyclerModel();
     private CardRecyclerModel similarCardRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel videoCardRecycleModel = new CardRecyclerModel();
+
 
     private MutableLiveData<Response> recommendationResponse = new MutableLiveData<>();
     private MutableLiveData<Response> similarResponse = new MutableLiveData<>();
+    private MutableLiveData<Response> videosResponse = new MutableLiveData<>();
 
     public MovieDetailActivityViewModel(TMDBRepository tmdbRepository) {
         super();
@@ -72,8 +77,17 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
         return recommendationCardRecyclerModel;
     }
 
+    public MutableLiveData<Response> getVideosResponse() {
+        return videosResponse;
+    }
+
     public CardRecyclerModel getSimilarCardRecyclerModel() {
         return similarCardRecyclerModel;
+    }
+
+
+    public CardRecyclerModel getVideoCardRecycleModel() {
+        return videoCardRecycleModel;
     }
 
     @SuppressLint("DefaultLocale")
@@ -170,14 +184,14 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
                             NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
                             format.setMaximumFractionDigits(0);
 
-                            int budget = movieDetail.getBudget();
+                            long budget = movieDetail.getBudget();
                             if (budget != 0) {
                                 activityModel.setBudget(format.format(budget));
                             } else {
                                 activityModel.setBudget("N/A");
                             }
 
-                            int revenue = movieDetail.getRevenue();
+                            long revenue = movieDetail.getRevenue();
                             if (revenue != 0) {
                                 activityModel.setRevenue(format.format(revenue));
                             } else {
@@ -245,6 +259,46 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
 
                 }));
 
+
+        videoCardRecycleModel.setStatus(CardRecyclerModel.Status.LOADING);
+        disposable.add(tmdbRepository.getVideos("movie", dataModel.getMovieId())
+                .map(result -> {
+
+                    List<VideoModel> videoModels = new ArrayList<>();
+
+
+                    for (Video video : result.getVideos()) {
+                        VideoModel videoModel = new VideoModel();
+
+
+                        String site = video.getSite();
+                        if (site == null || !site.equalsIgnoreCase("YouTube")) {
+                            continue;
+                        }
+
+                        String image = "https://img.youtube.com/vi/" + video.getKey() + "/mqdefault.jpg";
+                        String url = "https://www.youtube.com/watch?v=" + video.getKey();
+
+                        videoModel.setImage(image);
+                        videoModel.setUrl(url);
+                        videoModel.setId(video.getKey());
+                        videoModel.setType(video.getType());
+                        videoModel.setTitle(video.getName());
+
+                        videoModels.add(videoModel);
+
+
+                    }
+
+                    return videoModels;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        videos -> videosResponse.setValue(Response.success(videos)),
+                        throwable -> videosResponse.setValue(Response.error(throwable))
+                )
+        );
     }
 
     private List<CardModel> populateCardModels(List<CardItem> cardItems) {

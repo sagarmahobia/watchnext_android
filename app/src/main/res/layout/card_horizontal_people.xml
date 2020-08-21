@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.sagar.watchnext.views.cardrecycler.CardRecyclerModel.Status" />
+
+        <variable
+            name="model"
+            type="com.sagar.watchnext.views.cardrecycler.CardRecyclerModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/please_wait_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="180dp"
+                    android:text="Please wait..."
+                    android:textColor="@color/colorLightText"
+                    android:visibility="@{model.status == Status.LOADING ? View.VISIBLE : View.GONE}" />
+
+                <TextView
+                    android:id="@+id/error_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="180dp"
+                    android:text="Couldn't load content !"
+                    android:textColor="@color/colorLightText"
+                    android:visibility="@{model.status == Status.ERROR ? View.VISIBLE : View.GONE}" />
+
+                <RelativeLayout
+                    android:id="@+id/card_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp">
+
+                    <TextView
+                        android:id="@+id/card_header_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="8dp"
+                        android:padding="8dp"
+                        android:text="@{model.title}"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/card_header_type_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_toEndOf="@+id/card_header_text"
+                        android:padding="4dp"
+                        android:text="@{model.type}"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/see_all"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="8dp"
+                        android:text="MORE"
+                        android:textColor="@color/colorAccent" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/horizontal_list_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="185dp"
+                    android:layout_below="@+id/card_header"
+                    android:layout_alignParentStart="true"
+                    android:orientation="horizontal"
+                    android:visibility="@{(model.status == Status.ERROR || model.status == Status.LOADING)? View.INVISIBLE: View.VISIBLE}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</layout>

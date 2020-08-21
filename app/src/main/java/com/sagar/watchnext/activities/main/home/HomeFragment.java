@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.sagar.watchnext.activities.main.BaseFragment;
 import com.sagar.watchnext.activities.main.MainActivity;
 import com.sagar.watchnext.activities.search.SearchActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
+import com.sagar.watchnext.adapters.people.PeopleAdapter;
 import com.sagar.watchnext.databinding.FragmentHomeBinding;
 import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
 
@@ -57,6 +59,8 @@ public class HomeFragment extends BaseFragment {
     @Inject
     CardAdapter topRatedAdapter;
 
+    @Inject
+    PeopleAdapter peopleAdapter;
 
     @Inject
     HomeFragmentViewModelFactory viewModelFactory;
@@ -77,6 +81,7 @@ public class HomeFragment extends BaseFragment {
     private CardRecyclerModel popularShowsRecyclerModel;
     private CardRecyclerModel topRatedShowsRecyclerModel;
 
+    private CardRecyclerModel peopleCardRecyclerModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,6 +101,9 @@ public class HomeFragment extends BaseFragment {
         onTheAirShowsRecyclerModel = viewModel.getOnTheAirShowsRecyclerModel();
         popularShowsRecyclerModel = viewModel.getPopularShowsRecyclerModel();
         topRatedShowsRecyclerModel = viewModel.getTopRatedShowsRecyclerModel();
+
+        peopleCardRecyclerModel = viewModel.getPeopleRecyclerModel();
+
     }
 
     @Override
@@ -116,6 +124,8 @@ public class HomeFragment extends BaseFragment {
         binding.onTheAirShows.setModel(onTheAirShowsRecyclerModel);
         binding.popularShows.setModel(popularShowsRecyclerModel);
         binding.topRatedShows.setModel(topRatedShowsRecyclerModel);
+
+        binding.popularPeople.setModel(peopleCardRecyclerModel);
 
         trendingMoviesCardRecyclerModel.setTitle("Trending");
         trendingMoviesCardRecyclerModel.setType("Movies");
@@ -148,6 +158,8 @@ public class HomeFragment extends BaseFragment {
         topRatedShowsRecyclerModel.setTitle("Top Rated");
         topRatedShowsRecyclerModel.setType("Shows");
 
+        peopleCardRecyclerModel.setTitle("Popular");
+        peopleCardRecyclerModel.setType("People");
 
         binding.trendingMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "trending", "Trending Movies");
@@ -182,6 +194,11 @@ public class HomeFragment extends BaseFragment {
             startList("tv", "top_rated", "Top Rated Shows");
         });
 
+        binding.popularPeople.seeAll.setOnClickListener(v -> {
+            //TODO
+            Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
+        });
+
         binding.trendingMovies.horizontalListRecycler.setAdapter(trendingMoviesAdapter);
         binding.inTheatersMovies.horizontalListRecycler.setAdapter(inTheatersMoviesAdapter);
         binding.upcomingMovies.horizontalListRecycler.setAdapter(upcomingMoviesAdapter);
@@ -193,6 +210,8 @@ public class HomeFragment extends BaseFragment {
         binding.onTheAirShows.horizontalListRecycler.setAdapter(onTheAirAdapter);
         binding.popularShows.horizontalListRecycler.setAdapter(popularAdapter);
         binding.topRatedShows.horizontalListRecycler.setAdapter(topRatedAdapter);
+
+        binding.popularPeople.horizontalListRecycler.setAdapter(peopleAdapter);
 
         binding.searchBar.setOnClickListener(v -> {
             Intent intent = new Intent(this.getContext(), SearchActivity.class);
@@ -206,11 +225,15 @@ public class HomeFragment extends BaseFragment {
         popularMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
         topRatedMoviesAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
 
-        trendingShowsAdapter.setAdapterListener(model -> this.startMovieDetailActivity(model.getId()));
+        trendingShowsAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         airingTodayAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         onTheAirAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         popularAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         topRatedAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+
+        peopleAdapter.setClickListener(peopleModel -> {
+            Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
+        });
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             viewModel.load();
@@ -227,7 +250,7 @@ public class HomeFragment extends BaseFragment {
             popularShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             topRatedShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
 
-
+            peopleCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
         });
 
         binding.swipeRefreshLayout.setRefreshing(true);
@@ -266,6 +289,8 @@ public class HomeFragment extends BaseFragment {
         viewModel.getTopRatedShowsLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, topRatedAdapter, topRatedShowsRecyclerModel));
 
+        viewModel.getPopularPeopleLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, peopleAdapter, peopleCardRecyclerModel));
     }
 
     @Override

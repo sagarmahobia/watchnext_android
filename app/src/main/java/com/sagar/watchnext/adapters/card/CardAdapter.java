@@ -19,6 +19,7 @@ import javax.inject.Inject;
 /**
  * Created by SAGAR MAHOBIA on 16-Feb-19. at 00:49
  */
+
 public class CardAdapter extends ListAdapter<CardModel, CardViewHolder> {
     private LayoutInflater layoutInflater;
     private AdapterListener adapterListener;

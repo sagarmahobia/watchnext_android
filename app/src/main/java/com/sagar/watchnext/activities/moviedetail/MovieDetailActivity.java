@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.moviedetail;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,13 +11,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoAdapter;
+import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.databinding.ActivityMovieDetailBinding;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
@@ -45,6 +46,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     @Inject
     CardAdapter similarAdapter;
+
+    @Inject
+    VideoAdapter videoAdapter;
 
     private MovieDetailActivityViewModel viewModel;
 
@@ -106,10 +110,22 @@ public class MovieDetailActivity extends AppCompatActivity {
         binding.header.setModel(headerModel);
 
 
+        /*VIDEOS*/
+
+        viewModel.getVideoCardRecycleModel().setTitle("Videos");
+
+        binding.videos.horizontalListRecycler.setAdapter(videoAdapter);
+        binding.videos.setModel(viewModel.getVideoCardRecycleModel());
+
+        videoAdapter.setClickListener(videoModel -> {
+            Intent youTubeIntent = new Intent(Intent.ACTION_VIEW);
+            youTubeIntent.setData(Uri.parse(videoModel.getUrl()));
+            startActivity(youTubeIntent);
+        });
+
         /* Recommendation */
 
         binding.recommendations.setModel(viewModel.getRecommendationCardRecyclerModel());
-        binding.recommendations.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         binding.recommendations.horizontalListRecycler.setAdapter(recommendationAdapter);
 
         viewModel.getRecommendationCardRecyclerModel().setTitle("Recommended");
@@ -133,7 +149,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         /*SIMILAR*/
         binding.similar.setModel(viewModel.getSimilarCardRecyclerModel());
-        binding.similar.horizontalListRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         binding.similar.horizontalListRecycler.setAdapter(similarAdapter);
 
         viewModel.getSimilarCardRecyclerModel().setTitle("Similar");
@@ -154,10 +169,32 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         });
 
+
         viewModel.load();
 
         viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
         viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+        viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+
+    }
+
+    private void observeVideoResponse(Response<List<VideoModel>> response) {
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<VideoModel> data = response.getData();
+            videoAdapter.setVideoModels(data);
+
+            if (data == null || data.isEmpty()) {
+                binding.videos.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+
     }
 
     private void observeRecommendationResponse(Response<List<CardModel>> response) {

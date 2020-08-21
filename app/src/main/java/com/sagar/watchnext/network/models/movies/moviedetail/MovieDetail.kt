@@ -23,7 +23,7 @@ class MovieDetail {
     val belongsToCollection: Any? = null
 
     @SerializedName("budget")
-    val budget: Int = 0
+    val budget: Long = 0
 
     @SerializedName("genres")
     val genres: List<Genre>? = null
@@ -62,7 +62,7 @@ class MovieDetail {
     val releaseDate: String? = null
 
     @SerializedName("revenue")
-    val revenue: Int = 0
+    val revenue: Long = 0
 
     @SerializedName("runtime")
     val runtime: Int = 0

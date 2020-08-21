@@ -10,6 +10,8 @@ import com.sagar.watchnext.activities.moviedetail.MovieDetailActivity;
 import com.sagar.watchnext.activities.tvdetail.TvDetailActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.people.PeopleAdapter;
+import com.sagar.watchnext.adapters.people.PeopleModel;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel;
@@ -32,6 +34,20 @@ public abstract class BaseFragment extends Fragment {
         if (response.getStatus() == Status.SUCCESS) {
 
             List<CardModel> data = (List<CardModel>) response.getData();
+            cardAdapter.submitList(data);
+            recyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
+
+        } else if (response.getStatus() == Status.ERROR) {
+            recyclerModel.setStatus(CardRecyclerModel.Status.ERROR);
+        }
+    }
+
+    protected void onResponse(Response response, PeopleAdapter cardAdapter, CardRecyclerModel recyclerModel) {
+        stopSwipeRefresh();
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<PeopleModel> data = (List<PeopleModel>) response.getData();
             cardAdapter.submitList(data);
             recyclerModel.setStatus(CardRecyclerModel.Status.SUCCESS);
 

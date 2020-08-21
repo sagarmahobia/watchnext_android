@@ -3,6 +3,8 @@ package com.sagar.watchnext.activities.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sagar.watchnext.adapters.card.CardModel
+import com.sagar.watchnext.adapters.people.PeopleModel
+import com.sagar.watchnext.network.models.people.Persons
 import com.sagar.watchnext.network.newmodels.CardItem
 import com.sagar.watchnext.network.newmodels.Result
 import com.sagar.watchnext.network.repo.TMDBRepository
@@ -12,7 +14,6 @@ import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel() {
     private val disposables = CompositeDisposable()
@@ -31,6 +32,9 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     private val popularShows: MutableList<CardModel> = ArrayList()
     private val topRatedShows: MutableList<CardModel> = ArrayList()
 
+    //PEOPLE
+    private val popularPeople: MutableList<PeopleModel> = ArrayList();
+
     //MOVIES
     val trendingMoviesLiveData = MutableLiveData<Response<*>>()
     val inTheatersMoviesLiveData = MutableLiveData<Response<*>>()
@@ -44,6 +48,9 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     val onTheAirShowsLiveData = MutableLiveData<Response<*>>()
     val popularShowsLiveData = MutableLiveData<Response<*>>()
     val topRatedShowsLiveData = MutableLiveData<Response<*>>()
+
+    //PEOPLE
+    val popularPeopleLiveData = MutableLiveData<Response<*>>()
 
     //MOVIES
     val trendingMoviesCardRecyclerModel = CardRecyclerModel()
@@ -59,6 +66,9 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     val popularShowsRecyclerModel = CardRecyclerModel()
     val topRatedShowsRecyclerModel = CardRecyclerModel()
 
+    //PEOPLE
+    val peopleRecyclerModel = CardRecyclerModel()
+
     fun loadTrendingMovies() {
         disposables.add(tmdbRepository.getTrending("movie")
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -67,7 +77,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     populateCardModels(trendingMovies, movies.cardItems)
                     trendingMoviesLiveData.setValue(Response.success<List<CardModel>>(trendingMovies))
                 }
-                ) { e: Throwable? -> upcomingMoviesLiveData.setValue(Response.error(e!!)) })
+                        , { e: Throwable? -> upcomingMoviesLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadInTheatersMovies() {
@@ -78,7 +88,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     populateCardModels(inTheatersMovies, movies.cardItems)
                     inTheatersMoviesLiveData.setValue(Response.success<List<CardModel>>(inTheatersMovies))
                 }
-                ) { e: Throwable? -> inTheatersMoviesLiveData.setValue(Response.error(e!!)) })
+                        , { e: Throwable? -> inTheatersMoviesLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadUpcomingMovies() {
@@ -89,7 +99,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     populateCardModels(upcomingMovies, movies.cardItems)
                     upcomingMoviesLiveData.setValue(Response.success<List<CardModel>>(upcomingMovies))
                 }
-                ) { e: Throwable? -> upcomingMoviesLiveData.setValue(Response.error(e!!)) })
+                        , { e: Throwable? -> upcomingMoviesLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadPopularMovies() {
@@ -100,7 +110,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     populateCardModels(popularMovies, movies.cardItems)
                     popularMoviesLiveData.setValue(Response.success<List<CardModel>>(popularMovies))
                 }
-                ) { e: Throwable? -> popularMoviesLiveData.setValue(Response.error(e!!)) })
+                        , { e: Throwable? -> popularMoviesLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadTopRatedMovies() {
@@ -111,7 +121,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     populateCardModels(topRatedMovies, movies.cardItems)
                     topRatedMoviesLiveData.setValue(Response.success<List<CardModel>>(topRatedMovies))
                 }
-                ) { e: Throwable? -> topRatedMoviesLiveData.setValue(Response.error(e!!)) })
+                        , { e: Throwable? -> topRatedMoviesLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadTrendingShows() {
@@ -121,7 +131,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     trendingShows.clear()
                     populateCardModels(trendingShows, shows.cardItems)
                     trendingShowsLiveData.setValue(Response.success<List<CardModel>>(trendingShows))
-                }) { e: Throwable? -> trendingShowsLiveData.setValue(Response.error(e!!)) })
+                }, { e: Throwable? -> trendingShowsLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadAiringTodayShows() {
@@ -131,7 +141,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     airingTodayShows.clear()
                     populateCardModels(airingTodayShows, shows.cardItems)
                     airingTodayShowsLiveData.setValue(Response.success<List<CardModel>>(airingTodayShows))
-                }) { e: Throwable? -> airingTodayShowsLiveData.setValue(Response.error(e!!)) })
+                }, { e: Throwable? -> airingTodayShowsLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadOnTheAirTodayShows() {
@@ -141,7 +151,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     onTheAirShows.clear()
                     populateCardModels(onTheAirShows, shows.cardItems)
                     onTheAirShowsLiveData.setValue(Response.success<List<CardModel>>(onTheAirShows))
-                }) { e: Throwable? -> onTheAirShowsLiveData.setValue(Response.error(e!!)) })
+                }, { e: Throwable? -> onTheAirShowsLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadPopularShows() {
@@ -151,7 +161,7 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     popularShows.clear()
                     populateCardModels(popularShows, shows.cardItems)
                     popularShowsLiveData.setValue(Response.success<List<CardModel>>(popularShows))
-                }) { e: Throwable? -> popularShowsLiveData.setValue(Response.error(e!!)) })
+                }, { e: Throwable? -> popularShowsLiveData.setValue(Response.error(e!!)) }))
     }
 
     fun loadTopRatedShows() {
@@ -161,7 +171,19 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                     topRatedShows.clear()
                     populateCardModels(topRatedShows, shows.cardItems)
                     topRatedShowsLiveData.setValue(Response.success<List<CardModel>>(topRatedShows))
-                }) { e: Throwable? -> topRatedShowsLiveData.setValue(Response.error(e!!)) })
+                }, { e: Throwable? -> topRatedShowsLiveData.setValue(Response.error(e!!)) }))
+    }
+
+    fun loadPopularPeoples() {
+        disposables.add(
+                tmdbRepository.getPopularPeople()
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ people: Persons ->
+                            popularPeople.clear()
+                            populatePeopleModel(popularPeople, people)
+                            popularPeopleLiveData.setValue(Response.success<List<PeopleModel>>(popularPeople))
+
+                        }, { e: Throwable? -> popularPeopleLiveData.setValue(Response.error(e!!)) }))
     }
 
     private fun populateCardModels(cardModels: MutableList<CardModel>, cardItems: List<CardItem>?) {
@@ -173,9 +195,23 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
             cardModel.id = cardItem.id
             cardModel.imageUrl = ImageUrlUtil.getPosterImageUrl(cardItem.posterPath)
             cardModel.title = cardItem.title
-            cardModel.rating =   cardItem.voteAverage.toString()
+            cardModel.rating = cardItem.voteAverage.toString()
             cardModels.add(cardModel)
         }
+    }
+
+    private fun populatePeopleModel(peopleModels: MutableList<PeopleModel>, persons: Persons) {
+        if (persons.persons == null) {
+            return
+        }
+        for (person in persons.persons) {
+            var model = PeopleModel()
+            model.title = person.name
+            model.id = person.id
+            model.image = ImageUrlUtil.getPosterImageUrl(person.profilePath)
+            peopleModels.add(model)
+        }
+
     }
 
     override fun onCleared() {

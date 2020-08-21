@@ -5,9 +5,11 @@ import android.annotation.SuppressLint;
 import androidx.lifecycle.MutableLiveData;
 
 import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.network.models.tv.details.Genre;
 import com.sagar.watchnext.network.models.tv.details.Network;
 import com.sagar.watchnext.network.models.tv.details.ProductionCompany;
+import com.sagar.watchnext.network.models.tv.videos.Video;
 import com.sagar.watchnext.network.newmodels.CardItem;
 import com.sagar.watchnext.network.repo.TMDBRepository;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
@@ -36,8 +38,11 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
 
     private CardRecyclerModel recommendedCardRecyclerModel = new CardRecyclerModel();
     private CardRecyclerModel similarCardRecyclerModel = new CardRecyclerModel();
+    private CardRecyclerModel videoCardRecycleModel = new CardRecyclerModel();
+
     private MutableLiveData<Response> recommendationResponse = new MutableLiveData<>();
     private MutableLiveData<Response> similarResponse = new MutableLiveData<>();
+    private MutableLiveData<Response> videosResponse = new MutableLiveData<>();
 
     public TvDetailActivityViewModel(TMDBRepository tmdbRepository) {
 
@@ -72,9 +77,19 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
         return recommendedCardRecyclerModel;
     }
 
+
+    public MutableLiveData<Response> getVideosResponse() {
+        return videosResponse;
+    }
+
+    public CardRecyclerModel getVideoCardRecycleModel() {
+        return videoCardRecycleModel;
+    }
+
     public CardRecyclerModel getSimilarCardRecyclerModel() {
         return similarCardRecyclerModel;
     }
+
 
     @SuppressLint("DefaultLocale")
     public void load() {
@@ -266,6 +281,47 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
                     similarResponse.setValue(Response.error(throwable));
 
                 }));
+
+
+        videoCardRecycleModel.setStatus(CardRecyclerModel.Status.LOADING);
+        disposable.add(tmdbRepository.getVideos("tv", dataModel.getTvId())
+                .map(result -> {
+
+                    List<VideoModel> videoModels = new ArrayList<>();
+
+
+                    for (Video video : result.getVideos()) {
+                        VideoModel videoModel = new VideoModel();
+
+
+                        String site = video.getSite();
+                        if (site == null || !site.equalsIgnoreCase("YouTube")) {
+                            continue;
+                        }
+
+                        String image = "https://img.youtube.com/vi/" + video.getKey() + "/mqdefault.jpg";
+                        String url = "https://www.youtube.com/watch?v=" + video.getKey();
+
+                        videoModel.setImage(image);
+                        videoModel.setUrl(url);
+                        videoModel.setId(video.getKey());
+                        videoModel.setType(video.getType());
+                        videoModel.setTitle(video.getName());
+
+                        videoModels.add(videoModel);
+
+
+                    }
+
+                    return videoModels;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        videos -> videosResponse.setValue(Response.success(videos)),
+                        throwable -> videosResponse.setValue(Response.error(throwable))
+                )
+        );
     }
 
 

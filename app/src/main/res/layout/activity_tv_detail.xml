@@ -323,13 +323,24 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <include
+                        android:id="@+id/videos"
+                        layout="@layout/card_horizontal_videos"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+
+
+                    <include
                         android:id="@+id/recommendations"
                         layout="@layout/card_horizontal_recycler"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+                        app:layout_constraintTop_toBottomOf="@+id/videos" />
 
                     <include
                         android:id="@+id/similar"

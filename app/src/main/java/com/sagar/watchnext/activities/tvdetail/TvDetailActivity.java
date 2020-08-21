@@ -1,6 +1,7 @@
 package com.sagar.watchnext.activities.tvdetail;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.widget.RelativeLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,8 @@ import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
+import com.sagar.watchnext.adapters.video.VideoAdapter;
+import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.databinding.ActivityTvDetailBinding;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
@@ -33,7 +36,6 @@ import dagger.android.AndroidInjection;
 
 public class TvDetailActivity extends AppCompatActivity {
 
-
     @Inject
     ApplicationViewModelFactory viewModelFactory;
 
@@ -49,10 +51,14 @@ public class TvDetailActivity extends AppCompatActivity {
     @Inject
     CardAdapter similarAdapter;
 
+    @Inject
+    VideoAdapter videoAdapter;
+
     private int tv_id;
 
     private ActivityTvDetailBinding binding;
     private TvDetailActivityViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,7 @@ public class TvDetailActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_tv_detail);
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(TvDetailActivityViewModel.class);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(TvDetailActivityViewModel.class);
 
         binding.setModel(viewModel.getActivityModel());
         binding.header.setModel(viewModel.getHeaderModel());
@@ -90,6 +96,20 @@ public class TvDetailActivity extends AppCompatActivity {
             return;
         }
         binding.swipeRefreshLayout.setOnRefreshListener(() -> viewModel.load());
+
+        /* Trailers*/
+
+
+        viewModel.getVideoCardRecycleModel().setTitle("Videos");
+
+        binding.videos.horizontalListRecycler.setAdapter(videoAdapter);
+        binding.videos.setModel(viewModel.getVideoCardRecycleModel());
+
+        videoAdapter.setClickListener(videoModel -> {
+            Intent youTubeIntent = new Intent(Intent.ACTION_VIEW);
+            youTubeIntent.setData(Uri.parse(videoModel.getUrl()));
+            startActivity(youTubeIntent);
+        });
 
 
         /* Recommendations */
@@ -143,6 +163,27 @@ public class TvDetailActivity extends AppCompatActivity {
         viewModel.load();
         viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
         viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
+        viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+    }
+
+
+    private void observeVideoResponse(Response<List<VideoModel>> response) {
+
+        if (response.getStatus() == Status.SUCCESS) {
+
+            List<VideoModel> data = response.getData();
+            videoAdapter.setVideoModels(data);
+
+            if (data == null || data.isEmpty()) {
+                binding.videos.root.setVisibility(View.GONE);
+                return;
+            }
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.SUCCESS);
+        } else if (response.getStatus() == Status.ERROR) {
+
+            viewModel.getVideoCardRecycleModel().setStatus(CardRecyclerModel.Status.ERROR);
+        }
+
     }
 
     private void observeRecommendationResponse(Response<List<CardModel>> response) {

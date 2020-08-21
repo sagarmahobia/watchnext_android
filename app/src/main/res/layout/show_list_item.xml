@@ -74,6 +74,7 @@
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="@+id/imagePoster"
                     app:layout_constraintTop_toBottomOf="@+id/imagePoster" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
