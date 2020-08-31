@@ -143,6 +143,10 @@ public class TvDetailActivityViewModel extends DisposableViewModel {
                                         headerModel.setGenres("");
                                     }
 
+
+                                    headerModel.setVote(details.getVoteAverage());
+                                    headerModel.setVoteCount(details.getVoteCount());
+
                                     String overview = details.getOverview();
                                     if (overview != null) {
                                         activityModel.setOverViewText(overview);

@@ -96,7 +96,7 @@ public class ListActivity extends AppCompatActivity implements ListActivityHandl
 
         adapter.setClickListener(showModel -> {
 
-            if (type.equalsIgnoreCase("tv")) {
+            if (type.equalsIgnoreCase("tv") || type.equalsIgnoreCase("tv_f")) {
 
                 Intent intent = new Intent(this, TvDetailActivity.class);
                 intent.putExtra("tv_id", showModel.getId());

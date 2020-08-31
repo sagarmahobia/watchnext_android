@@ -81,5 +81,28 @@
             android:textColor="#fff"
             android:textSize="12sp" />
 
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/genres"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/poster_image"
+            android:text="@{model.vote}"
+            android:textColor="@android:color/white" />
+
+
+        <TextView
+            android:id="@+id/rate_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/genres"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/rating"
+            android:text="@{`(`+model.voteCount+` votes)`}"
+            android:textColor="@android:color/white" />
+
     </RelativeLayout>
 </layout>

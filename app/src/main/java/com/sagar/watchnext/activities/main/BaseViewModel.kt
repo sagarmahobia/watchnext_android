@@ -8,6 +8,7 @@ import com.sagar.watchnext.network.models.people.Persons
 import com.sagar.watchnext.network.newmodels.CardItem
 import com.sagar.watchnext.network.newmodels.Result
 import com.sagar.watchnext.network.repo.TMDBRepository
+import com.sagar.watchnext.network.repo.TmdbTvRepo
 import com.sagar.watchnext.response.Response
 import com.sagar.watchnext.utils.ImageUrlUtil
 import com.sagar.watchnext.views.cardrecycler.CardRecyclerModel
@@ -15,7 +16,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel() {
+open class BaseViewModel(private val tmdbRepository: TMDBRepository,
+                         private val tvRepository: TmdbTvRepo) : ViewModel() {
     private val disposables = CompositeDisposable()
 
     //MOVIES
@@ -31,6 +33,11 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     private val onTheAirShows: MutableList<CardModel> = ArrayList()
     private val popularShows: MutableList<CardModel> = ArrayList()
     private val topRatedShows: MutableList<CardModel> = ArrayList()
+
+    private val netflixShows: MutableList<CardModel> = ArrayList()
+    private val appleShows: MutableList<CardModel> = ArrayList()
+    private val amazonPrimeShows: MutableList<CardModel> = ArrayList()
+    private val disneyPlusShows: MutableList<CardModel> = ArrayList()
 
     //PEOPLE
     private val popularPeople: MutableList<PeopleModel> = ArrayList();
@@ -49,6 +56,12 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     val popularShowsLiveData = MutableLiveData<Response<*>>()
     val topRatedShowsLiveData = MutableLiveData<Response<*>>()
 
+    val netflixShowLiveData = MutableLiveData<Response<*>>()
+    val appleShowsLivaData = MutableLiveData<Response<*>>()
+    val amazonPrimeShowsLiveData = MutableLiveData<Response<*>>()
+    val disneyPlusShowsLiveData = MutableLiveData<Response<*>>()
+
+
     //PEOPLE
     val popularPeopleLiveData = MutableLiveData<Response<*>>()
 
@@ -65,6 +78,12 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
     val onTheAirShowsRecyclerModel = CardRecyclerModel()
     val popularShowsRecyclerModel = CardRecyclerModel()
     val topRatedShowsRecyclerModel = CardRecyclerModel()
+
+    val netflixShowsRecyclerModel = CardRecyclerModel()
+    val appleShowsRecyclerModel = CardRecyclerModel()
+    val amazonPrimeShowsRecyclerModel = CardRecyclerModel()
+    val disneyPlusShowsRecyclerModel = CardRecyclerModel()
+
 
     //PEOPLE
     val peopleRecyclerModel = CardRecyclerModel()
@@ -184,6 +203,46 @@ open class BaseViewModel(private val tmdbRepository: TMDBRepository) : ViewModel
                             popularPeopleLiveData.setValue(Response.success<List<PeopleModel>>(popularPeople))
 
                         }, { e: Throwable? -> popularPeopleLiveData.setValue(Response.error(e!!)) }))
+    }
+
+    fun loadNetflixShows() {
+        disposables.add(tvRepository.getNetflixShows(1)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ shows: Result ->
+                    netflixShows.clear()
+                    populateCardModels(netflixShows, shows.cardItems)
+                    netflixShowLiveData.setValue(Response.success<List<CardModel>>(netflixShows))
+                }, { e: Throwable? -> netflixShowLiveData.setValue(Response.error(e!!)) }))
+    }
+
+    fun loadAppleTvShows() {
+        disposables.add(tvRepository.getAppleTVShows(1)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ shows: Result ->
+                    appleShows.clear()
+                    populateCardModels(appleShows, shows.cardItems)
+                    appleShowsLivaData.setValue(Response.success<List<CardModel>>(appleShows))
+                }, { e: Throwable? -> appleShowsLivaData.setValue(Response.error(e!!)) }))
+    }
+
+    fun loadAmazonPrimeShows() {
+        disposables.add(tvRepository.getAmazonShows(1)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ shows: Result ->
+                    amazonPrimeShows.clear()
+                    populateCardModels(amazonPrimeShows, shows.cardItems)
+                    amazonPrimeShowsLiveData.setValue(Response.success<List<CardModel>>(amazonPrimeShows))
+                }, { e: Throwable? -> amazonPrimeShowsLiveData.setValue(Response.error(e!!)) }))
+    }
+
+    fun loadDisneyPlusShows() {
+        disposables.add(tvRepository.getDisneyPlusShows(1)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ shows: Result ->
+                    disneyPlusShows.clear()
+                    populateCardModels(disneyPlusShows, shows.cardItems)
+                    disneyPlusShowsLiveData.setValue(Response.success<List<CardModel>>(disneyPlusShows))
+                }, { e: Throwable? -> disneyPlusShowsLiveData.setValue(Response.error(e!!)) }))
     }
 
     private fun populateCardModels(cardModels: MutableList<CardModel>, cardItems: List<CardItem>?) {

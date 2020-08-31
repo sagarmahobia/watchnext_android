@@ -9,6 +9,7 @@ import androidx.paging.PagedList;
 import com.sagar.watchnext.activities.list.showadapter.ShowDataSourceFactory;
 import com.sagar.watchnext.activities.list.showadapter.ShowModel;
 import com.sagar.watchnext.network.repo.TMDBRepository;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 import com.sagar.watchnext.response.PagingState;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -24,10 +25,12 @@ public class ListActivityViewModel extends ViewModel {
     private ShowDataSourceFactory showDataSourceFactory;
     private LiveData<PagedList<ShowModel>> pagedListLiveData;
     private TMDBRepository tmdbRepository;
+    private TmdbTvRepo tmdbTvRepo;
 
-    public ListActivityViewModel(TMDBRepository tmdbRepository) {
+    public ListActivityViewModel(TMDBRepository tmdbRepository, TmdbTvRepo tmdbTvRepo) {
 
         this.tmdbRepository = tmdbRepository;
+        this.tmdbTvRepo = tmdbTvRepo;
     }
 
     MutableLiveData<PagingState> getPagedListStateLiveData() {
@@ -43,7 +46,7 @@ public class ListActivityViewModel extends ViewModel {
     }
 
     void prepare(String type, String subtype, int id) {
-        showDataSourceFactory = new ShowDataSourceFactory(disposable, pagedListStateLiveData, type, subtype,id, tmdbRepository);
+        showDataSourceFactory = new ShowDataSourceFactory(disposable, pagedListStateLiveData, type, subtype, id, tmdbRepository, tmdbTvRepo);
 
         PagedList.Config build = new PagedList.Config.Builder().setPrefetchDistance(20).build();
 

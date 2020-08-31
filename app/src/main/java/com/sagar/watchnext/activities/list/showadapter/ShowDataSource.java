@@ -7,6 +7,7 @@ import androidx.paging.ItemKeyedDataSource;
 import com.sagar.watchnext.network.newmodels.CardItem;
 import com.sagar.watchnext.network.newmodels.Result;
 import com.sagar.watchnext.network.repo.TMDBRepository;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 import com.sagar.watchnext.response.PagingState;
 import com.sagar.watchnext.utils.ImageUrlUtil;
 
@@ -19,6 +20,7 @@ import io.reactivex.disposables.CompositeDisposable;
 public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
 
     private TMDBRepository tmdbRepository;
+    private TmdbTvRepo tmdbTvRepo;
     private CompositeDisposable disposable;
 
     private MutableLiveData<PagingState> stateLiveData;
@@ -28,12 +30,12 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
     private String subtype;
     private int id;
 
-
     ShowDataSource(
-            TMDBRepository tmdbRepository, @NonNull CompositeDisposable disposable,
+            TMDBRepository tmdbRepository, TmdbTvRepo tmdbTvRepo, @NonNull CompositeDisposable disposable,
             @NonNull MutableLiveData<PagingState> stateLiveData,
             String type, String subtype, int id) {
         this.tmdbRepository = tmdbRepository;
+        this.tmdbTvRepo = tmdbTvRepo;
 
         this.disposable = disposable;
         this.stateLiveData = stateLiveData;
@@ -47,14 +49,28 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
         stateLiveData.postValue(PagingState.loading());
         Observable<Result> pagedList;
 
-        if (subtype.equalsIgnoreCase("trending")) {
-            pagedList = tmdbRepository.getTrending(type, 1);
-        } else if (id == -1) {
-            pagedList = tmdbRepository.getPagedList(type, subtype, 1);
-        } else {
-            pagedList = tmdbRepository.getListWithId(type, id, subtype, 1);
-        }
+        if (type.equalsIgnoreCase("tv_f")) {
 
+            if (subtype.equalsIgnoreCase("netflix")) {
+                pagedList = tmdbTvRepo.getNetflixShows(1);
+            } else if (subtype.equalsIgnoreCase("amazon")) {
+                pagedList = tmdbTvRepo.getAmazonShows(1);
+            } else if (subtype.equalsIgnoreCase("apple")) {
+                pagedList = tmdbTvRepo.getAppleTVShows(1);
+            } else if (subtype.equalsIgnoreCase("disney")) {
+                pagedList = tmdbTvRepo.getDisneyPlusShows(1);
+            } else return;
+
+        } else {
+
+            if (subtype.equalsIgnoreCase("trending")) {
+                pagedList = tmdbRepository.getTrending(type, 1);
+            } else if (id == -1) {
+                pagedList = tmdbRepository.getPagedList(type, subtype, 1);
+            } else {
+                pagedList = tmdbRepository.getListWithId(type, id, subtype, 1);
+            }
+        }
         disposable.add(pagedList.map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
                     callback.onResult(feeds);
                     page = 2;
@@ -71,14 +87,28 @@ public class ShowDataSource extends ItemKeyedDataSource<Integer, ShowModel> {
         stateLiveData.postValue(PagingState.loading());
         Observable<Result> pagedList;
 
-        if (subtype.equalsIgnoreCase("trending")) {
-            pagedList = tmdbRepository.getTrending(type, page);
-        } else if (id == -1) {
-            pagedList = tmdbRepository.getPagedList(type, subtype, page);
-        } else {
-            pagedList = tmdbRepository.getListWithId(type, id, subtype, page);
-        }
+        if (type.equalsIgnoreCase("tv_f")) {
 
+            if (subtype.equalsIgnoreCase("netflix")) {
+                pagedList = tmdbTvRepo.getNetflixShows(page);
+            } else if (subtype.equalsIgnoreCase("amazon")) {
+                pagedList = tmdbTvRepo.getAmazonShows(page);
+            } else if (subtype.equalsIgnoreCase("apple")) {
+                pagedList = tmdbTvRepo.getAppleTVShows(page);
+            } else if (subtype.equalsIgnoreCase("disney")) {
+                pagedList = tmdbTvRepo.getDisneyPlusShows(page);
+            } else return;
+
+        } else {
+
+            if (subtype.equalsIgnoreCase("trending")) {
+                pagedList = tmdbRepository.getTrending(type, page);
+            } else if (id == -1) {
+                pagedList = tmdbRepository.getPagedList(type, subtype, page);
+            } else {
+                pagedList = tmdbRepository.getListWithId(type, id, subtype, page);
+            }
+        }
         disposable.add(pagedList.map(result -> populateCardModels(result.getCardItems())).subscribe(feeds -> {
                     callback.onResult(feeds);
                     page++;

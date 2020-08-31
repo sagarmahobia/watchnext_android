@@ -158,6 +158,45 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/upcoming_movies" />
 
+                <include
+                    android:id="@+id/netflix_shows"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/on_the_air_shows" />
+
+                <include
+                    android:id="@+id/amazon_prime_shows"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/netflix_shows" />
+
+                <include
+                    android:id="@+id/apple_tv_shows"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/amazon_prime_shows" />
+
+                <include
+                    android:id="@+id/disney_plus_shows"
+                    layout="@layout/card_horizontal_recycler"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/apple_tv_shows" />
 
                 <include
                     android:id="@+id/popular_movies"
@@ -167,7 +206,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/on_the_air_shows" />
+                    app:layout_constraintTop_toBottomOf="@+id/disney_plus_shows" />
 
                 <include
                     android:id="@+id/popular_shows"
@@ -205,6 +244,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/top_rated_shows" />

@@ -2,6 +2,7 @@ package com.sagar.watchnext.activities.main.home;
 
 import com.sagar.watchnext.activities.main.BaseViewModel;
 import com.sagar.watchnext.network.repo.TMDBRepository;
+import com.sagar.watchnext.network.repo.TmdbTvRepo;
 
 /**
  * Created by SAGAR MAHOBIA on 16-Feb-19. at 01:47
@@ -9,8 +10,8 @@ import com.sagar.watchnext.network.repo.TMDBRepository;
 
 public class HomeFragmentViewModel extends BaseViewModel {
 
-    HomeFragmentViewModel(TMDBRepository tmdbRepository) {
-        super(tmdbRepository);
+    HomeFragmentViewModel(TMDBRepository tmdbRepository, TmdbTvRepo tmdbTvRepo) {
+        super(tmdbRepository, tmdbTvRepo);
         load();
     }
 
@@ -26,6 +27,11 @@ public class HomeFragmentViewModel extends BaseViewModel {
         loadOnTheAirTodayShows();
         loadPopularShows();
         loadTopRatedShows();
+
+        loadNetflixShows();
+        loadAmazonPrimeShows();
+        loadAppleTvShows();
+        loadDisneyPlusShows();
 
         loadPopularPeoples();
 

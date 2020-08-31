@@ -19,6 +19,10 @@ public class HeaderModel extends BaseObservable {
 
     private String genres;
 
+    private float vote;
+    private int voteCount;
+
+
     @Bindable
     public String getBackDropImageUrl() {
         return backDropImageUrl;
@@ -79,4 +83,27 @@ public class HeaderModel extends BaseObservable {
         this.genres = genres;
         notifyPropertyChanged(BR.genres);
     }
+
+
+    @Bindable
+    public String getVote() {
+        return String.valueOf(vote);
+    }
+
+
+    @Bindable
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVote(float vote) {
+        this.vote = vote;
+        notifyPropertyChanged(com.sagar.watchnext.BR.vote);
+    }
+
+    public void setVoteCount(float voteCount) {
+        this.voteCount = (int) voteCount;
+        notifyPropertyChanged(com.sagar.watchnext.BR.voteCount);
+    }
+
 }

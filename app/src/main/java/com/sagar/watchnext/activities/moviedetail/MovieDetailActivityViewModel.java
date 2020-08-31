@@ -144,6 +144,9 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
                                 headerModel.setGenres("N/A");
                             }
 
+                            headerModel.setVote(movieDetail.getVoteAverage());
+                            headerModel.setVoteCount(movieDetail.getVoteCount());
+
                             String overview = movieDetail.getOverview();
                             if (overview != null) {
                                 activityModel.setOverViewText(overview);
@@ -286,10 +289,7 @@ public class MovieDetailActivityViewModel extends DisposableViewModel {
                         videoModel.setTitle(video.getName());
 
                         videoModels.add(videoModel);
-
-
                     }
-
                     return videoModels;
                 })
                 .subscribeOn(Schedulers.io())

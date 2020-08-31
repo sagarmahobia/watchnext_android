@@ -60,7 +60,20 @@ public class HomeFragment extends BaseFragment {
     CardAdapter topRatedAdapter;
 
     @Inject
+    CardAdapter netflixAdapter;
+
+    @Inject
+    CardAdapter amazonPrimeAdapter;
+
+    @Inject
+    CardAdapter appleTvAdapter;
+
+    @Inject
+    CardAdapter disneyPlusAdapter;
+
+    @Inject
     PeopleAdapter peopleAdapter;
+
 
     @Inject
     HomeFragmentViewModelFactory viewModelFactory;
@@ -81,6 +94,11 @@ public class HomeFragment extends BaseFragment {
     private CardRecyclerModel popularShowsRecyclerModel;
     private CardRecyclerModel topRatedShowsRecyclerModel;
 
+    private CardRecyclerModel netflixShowsRecyclerModel;
+    private CardRecyclerModel amazonPrimeShowsRecyclerModel;
+    private CardRecyclerModel appleTvShowsRecyclerModel;
+    private CardRecyclerModel disneyPlusShowsRecyclerModel;
+
     private CardRecyclerModel peopleCardRecyclerModel;
 
     @Override
@@ -95,12 +113,16 @@ public class HomeFragment extends BaseFragment {
         popularCardRecyclerModel = viewModel.getPopularCardRecyclerModel();
         upcomingCardRecyclerModel = viewModel.getUpcomingCardRecyclerModel();
 
-
         trendingShowsRecyclerModel = viewModel.getTrendingShowsRecyclerModel();
         airingTodayShowsRecyclerModel = viewModel.getAiringTodayShowsRecyclerModel();
         onTheAirShowsRecyclerModel = viewModel.getOnTheAirShowsRecyclerModel();
         popularShowsRecyclerModel = viewModel.getPopularShowsRecyclerModel();
         topRatedShowsRecyclerModel = viewModel.getTopRatedShowsRecyclerModel();
+
+        netflixShowsRecyclerModel = viewModel.getNetflixShowsRecyclerModel();
+        amazonPrimeShowsRecyclerModel = viewModel.getAmazonPrimeShowsRecyclerModel();
+        appleTvShowsRecyclerModel = viewModel.getAppleShowsRecyclerModel();
+        disneyPlusShowsRecyclerModel = viewModel.getDisneyPlusShowsRecyclerModel();
 
         peopleCardRecyclerModel = viewModel.getPeopleRecyclerModel();
 
@@ -124,6 +146,11 @@ public class HomeFragment extends BaseFragment {
         binding.onTheAirShows.setModel(onTheAirShowsRecyclerModel);
         binding.popularShows.setModel(popularShowsRecyclerModel);
         binding.topRatedShows.setModel(topRatedShowsRecyclerModel);
+
+        binding.netflixShows.setModel(netflixShowsRecyclerModel);
+        binding.amazonPrimeShows.setModel(amazonPrimeShowsRecyclerModel);
+        binding.appleTvShows.setModel(appleTvShowsRecyclerModel);
+        binding.disneyPlusShows.setModel(disneyPlusShowsRecyclerModel);
 
         binding.popularPeople.setModel(peopleCardRecyclerModel);
 
@@ -161,6 +188,18 @@ public class HomeFragment extends BaseFragment {
         peopleCardRecyclerModel.setTitle("Popular");
         peopleCardRecyclerModel.setType("People");
 
+        netflixShowsRecyclerModel.setTitle("Netflix");
+        netflixShowsRecyclerModel.setType("Shows");
+
+        amazonPrimeShowsRecyclerModel.setTitle("Amazon Prime");
+        amazonPrimeShowsRecyclerModel.setType("Shows");
+
+        appleTvShowsRecyclerModel.setTitle("Apple Tv");
+        appleTvShowsRecyclerModel.setType("Shows");
+
+        disneyPlusShowsRecyclerModel.setTitle("Disney Plus");
+        disneyPlusShowsRecyclerModel.setType("Shows");
+
         binding.trendingMovies.seeAll.setOnClickListener(v -> {
             startList("movie", "trending", "Trending Movies");
         });
@@ -194,6 +233,20 @@ public class HomeFragment extends BaseFragment {
             startList("tv", "top_rated", "Top Rated Shows");
         });
 
+        binding.netflixShows.seeAll.setOnClickListener(v -> {
+            startList("tv_f", "netflix", "Netflix");
+        });
+        binding.amazonPrimeShows.seeAll.setOnClickListener(v -> {
+            startList("tv_f", "amazon", "Amazon Prime");
+        });
+        binding.appleTvShows.seeAll.setOnClickListener(v -> {
+            startList("tv_f", "apple", "Apple Tv");
+        });
+        binding.disneyPlusShows.seeAll.setOnClickListener(v -> {
+            startList("tv_f", "disney", "Disney Plus");
+        });
+
+
         binding.popularPeople.seeAll.setOnClickListener(v -> {
             //TODO
             Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
@@ -210,6 +263,11 @@ public class HomeFragment extends BaseFragment {
         binding.onTheAirShows.horizontalListRecycler.setAdapter(onTheAirAdapter);
         binding.popularShows.horizontalListRecycler.setAdapter(popularAdapter);
         binding.topRatedShows.horizontalListRecycler.setAdapter(topRatedAdapter);
+
+        binding.netflixShows.horizontalListRecycler.setAdapter(netflixAdapter);
+        binding.amazonPrimeShows.horizontalListRecycler.setAdapter(amazonPrimeAdapter);
+        binding.appleTvShows.horizontalListRecycler.setAdapter(appleTvAdapter);
+        binding.disneyPlusShows.horizontalListRecycler.setAdapter(disneyPlusAdapter);
 
         binding.popularPeople.horizontalListRecycler.setAdapter(peopleAdapter);
 
@@ -231,6 +289,11 @@ public class HomeFragment extends BaseFragment {
         popularAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
         topRatedAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
 
+        netflixAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        amazonPrimeAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        appleTvAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+        disneyPlusAdapter.setAdapterListener(model -> this.startTvDetailActivity(model.getId()));
+
         peopleAdapter.setClickListener(peopleModel -> {
             Toast.makeText(getContext(), "Coming Soon.", Toast.LENGTH_SHORT).show();
         });
@@ -249,6 +312,12 @@ public class HomeFragment extends BaseFragment {
             onTheAirShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             popularShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
             topRatedShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
+            netflixShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            amazonPrimeShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            appleTvShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+            disneyPlusShowsRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
+
 
             peopleCardRecyclerModel.setStatus(CardRecyclerModel.Status.LOADING);
         });
@@ -289,6 +358,14 @@ public class HomeFragment extends BaseFragment {
         viewModel.getTopRatedShowsLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, topRatedAdapter, topRatedShowsRecyclerModel));
 
+        viewModel.getNetflixShowLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, netflixAdapter, netflixShowsRecyclerModel));
+        viewModel.getAmazonPrimeShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, amazonPrimeAdapter, amazonPrimeShowsRecyclerModel));
+        viewModel.getAppleShowsLivaData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, appleTvAdapter, appleTvShowsRecyclerModel));
+        viewModel.getDisneyPlusShowsLiveData().observe(this.getViewLifecycleOwner(),
+                response -> onResponse(response, disneyPlusAdapter, disneyPlusShowsRecyclerModel));
         viewModel.getPopularPeopleLiveData().observe(this.getViewLifecycleOwner(),
                 response -> onResponse(response, peopleAdapter, peopleCardRecyclerModel));
     }
