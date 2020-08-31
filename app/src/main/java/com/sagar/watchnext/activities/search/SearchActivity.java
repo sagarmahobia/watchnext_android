@@ -67,14 +67,13 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ha
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-
         searchBarEditText.addTextChangedListener(this);
 
         clearButton.setOnClickListener(view -> searchBarEditText.setText(""));
 
         backButton.setOnClickListener(view -> this.onBackPressed());
 
-
+        searchBarEditText.requestFocus();
     }
 
     @Override
@@ -93,7 +92,6 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ha
         activityStateObservers.add(activityStateObserver);
     }
 
-
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -109,7 +107,6 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ha
             activityStateObserver.onQuery(editable.toString());
         }
     }
-
 
     @Override
     public AndroidInjector<Object> androidInjector() {
