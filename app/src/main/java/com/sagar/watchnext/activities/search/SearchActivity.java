@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.tabs.TabLayout;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.search.adapters.ViewPagerAdapter;
@@ -74,6 +76,14 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ha
         backButton.setOnClickListener(view -> this.onBackPressed());
 
         searchBarEditText.requestFocus();
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        AdView adView = findViewById(R.id.adView);
+
+        adView.loadAd(adRequest);
+
     }
 
     @Override

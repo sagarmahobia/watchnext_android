@@ -1,6 +1,8 @@
 package com.sagar.watchnext.activities.moviedetail;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
@@ -19,6 +23,8 @@ import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.adapters.video.VideoAdapter;
 import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.databinding.ActivityMovieDetailBinding;
+import com.sagar.watchnext.nativeadview.NativeTemplateStyle;
+import com.sagar.watchnext.nativeadview.TemplateView;
 import com.sagar.watchnext.observablemodels.ContentVisibilityModel;
 import com.sagar.watchnext.observablemodels.HeaderModel;
 import com.sagar.watchnext.response.Response;
@@ -175,7 +181,29 @@ public class MovieDetailActivity extends AppCompatActivity {
         viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
         viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
         viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+        load();
+    }
 
+    void load() {
+        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.detail_screen_native_ad));
+
+
+        builder.forUnifiedNativeAd(unifiedNativeAd -> {
+            NativeTemplateStyle styles = new
+                    NativeTemplateStyle.Builder().withMainBackgroundColor(new ColorDrawable(Color.TRANSPARENT)).build();
+
+            binding.midNativeAd.setVisibility(View.VISIBLE);
+            TemplateView template = binding.midNativeAd;
+            template.setStyles(styles);
+            template.setNativeAd(unifiedNativeAd);
+
+        });
+
+
+        AdLoader adLoader = builder
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
     }
 
     private void observeVideoResponse(Response<List<VideoModel>> response) {

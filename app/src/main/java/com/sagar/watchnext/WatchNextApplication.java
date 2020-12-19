@@ -2,6 +2,12 @@ package com.sagar.watchnext;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
@@ -27,6 +33,12 @@ public class WatchNextApplication extends Application implements HasAndroidInjec
                 .factory()
                 .create(this)
                 .inject(this);
+
+        List<String> testDeviceIds;
+        testDeviceIds = Arrays.asList("581D451C272C7D013BF03C28DB6A66EC");
+        RequestConfiguration configuration =
+                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
     }
 
 

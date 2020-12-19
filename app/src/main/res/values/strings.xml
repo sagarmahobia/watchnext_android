@@ -7,4 +7,9 @@
     <string name="nav_header_subtitle">Discover Movies &amp; TV</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+
+    <string name="admob_app_id">ca-app-pub-5244380836127327~3828975975</string>
+    <string name="detail_screen_native_ad">ca-app-pub-5244380836127327/5449450845</string>
+    <string name="search_bottom_banner">ca-app-pub-5244380836127327/5091531658</string>
 </resources>

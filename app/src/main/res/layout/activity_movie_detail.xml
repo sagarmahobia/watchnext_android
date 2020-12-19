@@ -295,7 +295,21 @@
                                 app:layout_constraintGuide_percent="0.96" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </com.google.android.material.card.MaterialCardView>
+
+
+                    <com.sagar.watchnext.nativeadview.TemplateView
+                        android:id="@+id/mid_native_ad"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        app:gnt_template_type="@layout/gnt_medium_template_view"
+
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+
 
                     <include
                         android:id="@+id/videos"
@@ -305,7 +319,7 @@
                         android:layout_marginTop="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+                        app:layout_constraintTop_toBottomOf="@+id/mid_native_ad" />
 
                     <include
                         android:id="@+id/recommendations"
