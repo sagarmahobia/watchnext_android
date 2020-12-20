@@ -307,7 +307,7 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 app:layout_constraintEnd_toEndOf="@id/end_guideline"
-                                app:layout_constraintGuide_percent="0.04"
+                                app:layout_constraintGuide_percent="0.02"
                                 app:layout_constraintStart_toStartOf="@id/start_guideline" />
 
                             <androidx.constraintlayout.widget.Guideline
@@ -316,11 +316,24 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 app:layout_constraintEnd_toEndOf="@id/end_guideline"
-                                app:layout_constraintGuide_percent="0.96"
+                                app:layout_constraintGuide_percent="0.97"
                                 app:layout_constraintStart_toStartOf="@id/start_guideline" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
+
+
+                    <com.sagar.watchnext.nativeadview.TemplateView
+                        android:id="@+id/mid_native_ad"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="12dp"
+                        app:gnt_template_type="@layout/gnt_medium_template_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
 
                     <include
                         android:id="@+id/videos"
@@ -330,7 +343,7 @@
                         android:layout_marginTop="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/detail_card" />
+                        app:layout_constraintTop_toBottomOf="@+id/mid_native_ad" />
 
 
                     <include

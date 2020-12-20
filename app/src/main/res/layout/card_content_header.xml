@@ -26,7 +26,7 @@
             android:layout_width="100dp"
             android:layout_height="150dp"
             android:layout_below="@+id/backdrop_image"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="-20dp"
             bind:image_url="@{model.posterImageUrl}" />
 

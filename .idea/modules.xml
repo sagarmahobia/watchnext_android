@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WatchNext.iml" filepath="$PROJECT_DIR$/WatchNext.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WatchNext.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WatchNext.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/watchnext_android.iml" filepath="$PROJECT_DIR$/.idea/modules/watchnext_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/watchnext_android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/watchnext_android.app.iml" />
     </modules>
   </component>
 </project>

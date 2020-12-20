@@ -62,7 +62,6 @@
                         android:elevation="0dp"
                         app:cardBackgroundColor="@color/colorBackground"
                         app:cardCornerRadius="0dp"
-                        app:contentPadding="5dp"
                         app:contentPaddingBottom="8dp"
                         app:contentPaddingTop="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -285,14 +284,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                app:layout_constraintGuide_percent="0.04" />
+                                app:layout_constraintGuide_percent="0.03" />
 
                             <androidx.constraintlayout.widget.Guideline
                                 android:id="@+id/end_guideline"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                app:layout_constraintGuide_percent="0.96" />
+                                app:layout_constraintGuide_percent="0.97" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -303,9 +302,10 @@
                         android:id="@+id/mid_native_ad"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="12dp"
                         app:gnt_template_type="@layout/gnt_medium_template_view"
-
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/detail_card" />

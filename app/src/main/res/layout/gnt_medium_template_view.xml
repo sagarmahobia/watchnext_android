@@ -12,7 +12,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -22,12 +21,10 @@
                 android:id="@+id/ad_notification_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="Advertisement"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,14 +32,15 @@
                 android:id="@+id/middle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ad_notification_view">
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:scaleType="fitCenter"
@@ -56,12 +54,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:background="@android:color/transparent"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:textColor="@color/colorLightText"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -131,12 +129,14 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:lines="1"
-                android:textColor="@android:color/white"
-                app:backgroundTint="@color/colorAccent"
+                android:textColor="@color/colorAccent"
+                app:backgroundTint="@color/colorBackgroundCard"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/body" />
+                app:layout_constraintTop_toBottomOf="@id/body"
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.gms.ads.formats.UnifiedNativeAdView>

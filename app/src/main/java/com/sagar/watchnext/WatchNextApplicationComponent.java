@@ -3,6 +3,8 @@ package com.sagar.watchnext;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.AdRequest;
+
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.support.AndroidSupportInjectionModule;
@@ -14,6 +16,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @ApplicationScope
 @Component(modules = {ApplicationContextModule.class,
         NetworkModule.class,
+        AdmobModule.class,
         AndroidSupportInjectionModule.class,
         ActivityProvider.class})
 public interface WatchNextApplicationComponent {
@@ -25,4 +28,5 @@ public interface WatchNextApplicationComponent {
 
     void inject(WatchNextApplication application);
 
+    AdRequest adRequest();
 }

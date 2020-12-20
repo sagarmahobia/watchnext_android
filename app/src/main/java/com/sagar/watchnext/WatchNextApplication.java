@@ -35,7 +35,7 @@ public class WatchNextApplication extends Application implements HasAndroidInjec
                 .inject(this);
 
         List<String> testDeviceIds;
-        testDeviceIds = Arrays.asList("581D451C272C7D013BF03C28DB6A66EC");
+        testDeviceIds = Arrays.asList("67E7DD5073766409992B5DE33B951204", "4D06A259E0AAA30DEA1436D28C159197");
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);

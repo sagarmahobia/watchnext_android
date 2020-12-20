@@ -1,6 +1,8 @@
 package com.sagar.watchnext.activities.tvdetail;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -14,13 +16,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdLoader;
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.WatchNextApplicationComponent;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.adapters.video.VideoAdapter;
 import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.databinding.ActivityTvDetailBinding;
+import com.sagar.watchnext.nativeadview.NativeTemplateStyle;
+import com.sagar.watchnext.nativeadview.TemplateView;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.utils.PixelDensityUtil;
@@ -53,6 +59,9 @@ public class TvDetailActivity extends AppCompatActivity {
 
     @Inject
     VideoAdapter videoAdapter;
+
+    @Inject
+    WatchNextApplicationComponent component;
 
     private int tv_id;
 
@@ -164,9 +173,32 @@ public class TvDetailActivity extends AppCompatActivity {
         viewModel.getRecommendationResponse().observe(this, this::observeRecommendationResponse);
         viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
         viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
+
+        load();
     }
 
 
+    void load() {
+        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.detail_screen_native_ad));
+
+
+        builder.forUnifiedNativeAd(unifiedNativeAd -> {
+            NativeTemplateStyle styles = new
+                    NativeTemplateStyle.Builder().withMainBackgroundColor(new ColorDrawable(Color.TRANSPARENT)).build();
+
+            binding.midNativeAd.setVisibility(View.VISIBLE);
+            TemplateView template = binding.midNativeAd;
+            template.setStyles(styles);
+            template.setNativeAd(unifiedNativeAd);
+
+        });
+
+
+        AdLoader adLoader = builder
+                .build();
+
+        adLoader.loadAd(component.adRequest());
+    }
     private void observeVideoResponse(Response<List<VideoModel>> response) {
 
         if (response.getStatus() == Status.SUCCESS) {

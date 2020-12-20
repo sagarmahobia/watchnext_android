@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.sagar.watchnext.R;
+import com.sagar.watchnext.WatchNextApplicationComponent;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
@@ -55,6 +56,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     @Inject
     VideoAdapter videoAdapter;
+
+    @Inject
+    WatchNextApplicationComponent component;
+
 
     private MovieDetailActivityViewModel viewModel;
 
@@ -203,7 +208,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         AdLoader adLoader = builder
                 .build();
 
-        adLoader.loadAd(new AdRequest.Builder().build());
+        adLoader.loadAd(component.adRequest());
     }
 
     private void observeVideoResponse(Response<List<VideoModel>> response) {
