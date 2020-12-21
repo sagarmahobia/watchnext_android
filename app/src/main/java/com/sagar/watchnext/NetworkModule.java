@@ -90,8 +90,8 @@ public class NetworkModule {
                 .build();
 
         if (BuildConfig.DEBUG) {
-            picasso.setIndicatorsEnabled(true);//todo remove
-            picasso.setLoggingEnabled(true);//todo remove
+            picasso.setIndicatorsEnabled(true);
+            picasso.setLoggingEnabled(true);
         }
         return picasso;
     }
