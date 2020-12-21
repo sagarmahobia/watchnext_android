@@ -115,7 +115,7 @@
                 android:background="@android:color/transparent"
                 android:text="Body"
                 android:textColor="@color/colorLightText"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/media_view" />

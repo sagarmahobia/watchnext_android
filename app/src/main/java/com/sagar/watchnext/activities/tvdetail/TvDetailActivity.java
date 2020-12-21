@@ -1,32 +1,25 @@
 package com.sagar.watchnext.activities.tvdetail;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdLoader;
 import com.sagar.watchnext.R;
 import com.sagar.watchnext.WatchNextApplicationComponent;
+import com.sagar.watchnext.activities.BaseActivity;
 import com.sagar.watchnext.activities.list.ListActivity;
 import com.sagar.watchnext.adapters.card.CardAdapter;
 import com.sagar.watchnext.adapters.card.CardModel;
 import com.sagar.watchnext.adapters.video.VideoAdapter;
 import com.sagar.watchnext.adapters.video.VideoModel;
 import com.sagar.watchnext.databinding.ActivityTvDetailBinding;
-import com.sagar.watchnext.nativeadview.NativeTemplateStyle;
-import com.sagar.watchnext.nativeadview.TemplateView;
 import com.sagar.watchnext.response.Response;
 import com.sagar.watchnext.response.Status;
 import com.sagar.watchnext.utils.PixelDensityUtil;
@@ -38,9 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
-
-public class TvDetailActivity extends AppCompatActivity {
+public class TvDetailActivity extends BaseActivity {
 
     @Inject
     ApplicationViewModelFactory viewModelFactory;
@@ -71,7 +62,6 @@ public class TvDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_tv_detail);
@@ -115,9 +105,7 @@ public class TvDetailActivity extends AppCompatActivity {
         binding.videos.setModel(viewModel.getVideoCardRecycleModel());
 
         videoAdapter.setClickListener(videoModel -> {
-            Intent youTubeIntent = new Intent(Intent.ACTION_VIEW);
-            youTubeIntent.setData(Uri.parse(videoModel.getUrl()));
-            startActivity(youTubeIntent);
+            openYoutube(videoModel.getUrl());
         });
 
 
@@ -174,31 +162,9 @@ public class TvDetailActivity extends AppCompatActivity {
         viewModel.getSimilarResponse().observe(this, this::observeSimilarResponse);
         viewModel.getVideosResponse().observe(this, this::observeVideoResponse);
 
-        load();
+        load(binding.midNativeAd);
     }
 
-
-    void load() {
-        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.detail_screen_native_ad));
-
-
-        builder.forUnifiedNativeAd(unifiedNativeAd -> {
-            NativeTemplateStyle styles = new
-                    NativeTemplateStyle.Builder().withMainBackgroundColor(new ColorDrawable(Color.TRANSPARENT)).build();
-
-            binding.midNativeAd.setVisibility(View.VISIBLE);
-            TemplateView template = binding.midNativeAd;
-            template.setStyles(styles);
-            template.setNativeAd(unifiedNativeAd);
-
-        });
-
-
-        AdLoader adLoader = builder
-                .build();
-
-        adLoader.loadAd(component.adRequest());
-    }
     private void observeVideoResponse(Response<List<VideoModel>> response) {
 
         if (response.getStatus() == Status.SUCCESS) {
@@ -246,15 +212,5 @@ public class TvDetailActivity extends AppCompatActivity {
 
             viewModel.getSimilarCardRecyclerModel().setStatus(CardRecyclerModel.Status.ERROR);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (android.R.id.home == id) {
-            this.onBackPressed();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

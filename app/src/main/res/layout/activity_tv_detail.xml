@@ -329,6 +329,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
+                        android:visibility="gone"
                         android:layout_marginEnd="12dp"
                         app:gnt_template_type="@layout/gnt_medium_template_view"
                         app:layout_constraintEnd_toEndOf="parent"

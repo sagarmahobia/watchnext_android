@@ -4,6 +4,7 @@ package com.sagar.watchnext;
 import android.app.Application;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import dagger.BindsInstance;
 import dagger.Component;
@@ -21,12 +22,15 @@ import dagger.android.support.AndroidSupportInjectionModule;
         ActivityProvider.class})
 public interface WatchNextApplicationComponent {
 
+
     @Component.Factory
     interface Factory {
+
         WatchNextApplicationComponent create(@BindsInstance Application application);
     }
-
     void inject(WatchNextApplication application);
 
     AdRequest adRequest();
+
+    InterstitialAd interstitialAd();
 }
