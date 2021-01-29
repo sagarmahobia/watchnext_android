@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.sagar.watchnext.utils.SharedPreferenceService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,9 +22,13 @@ import dagger.android.HasAndroidInjector;
 
 public class WatchNextApplication extends Application implements HasAndroidInjector {
 
+
     @Inject
     DispatchingAndroidInjector<Object> activityDispatchingAndroidInjector;
 
+
+    @Inject
+    SharedPreferenceService preferenceService;
 
     @Override
     public void onCreate() {
@@ -39,6 +44,8 @@ public class WatchNextApplication extends Application implements HasAndroidInjec
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);
+
+        preferenceService.incrementLaunchCount();
     }
 
 

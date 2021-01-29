@@ -35,4 +35,12 @@
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 
+
+    <style name="MyAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+
+        <item name="android:colorBackground">@color/colorBackgroundCard</item>
+        <item name="android:windowBackground">@color/colorBackgroundCard</item>
+    </style>
 </resources>

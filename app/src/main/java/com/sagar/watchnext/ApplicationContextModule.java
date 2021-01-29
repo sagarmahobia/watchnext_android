@@ -2,6 +2,8 @@ package com.sagar.watchnext;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,5 +19,12 @@ class ApplicationContextModule {
     @Provides
     Context provideContext(Application context) {
         return context;
+    }
+
+
+    @Provides
+    @ApplicationScope
+    SharedPreferences getSharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }
